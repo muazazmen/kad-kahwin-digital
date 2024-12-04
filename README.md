@@ -100,7 +100,7 @@
 <pre>
   <code>npm run dev</code>
 </pre>
-
+<hr>
 <h3>Additional Notes</h3>
 <p>if using vscode, please use workspace as provided at root folder. All required extensions already setup there.</p>
 
