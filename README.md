@@ -15,11 +15,13 @@
 <h3>Project Structure</h3>
 <pre>
   <code>
-   root-folder/
-├── backend/        # Backend services
-├── frontend/       # Frontend application
-|── .vscode/        # Workspace-specific settings and tasks
-|──.gitignore      # will not include if push to repo
+.
+├── backend                     # handle server-side
+├── frontend                    # handle client-side
+├── .vscode                     # extensions and settings for vscode editor
+├── .gitignore                  # files that ignore from committing in repository
+├── README.md                   # readme notes
+└── wedding-ms.code-workspace   # workspace setup
   </code>
 </pre>
 <hr>
@@ -63,7 +65,7 @@
 </ul>
 <pre>
   <code>
-    PORT=3000
+    PORT=
     DATABASE_URL=your-database-url
     JWT_SECRET=your-jwt-secret
   </code>
