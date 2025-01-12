@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,184 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Address {
+  id            String    @id @default(uuid())
+  addressLine1  String
+  addressLine2  String?
+  city          String
+  state         String
+  country       String
+  postalCode    String
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  createdBy     String?
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?
+  createdByUser User?     @relation("addressCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser User?     @relation("addressUpdatedBy", fields: [updatedBy], references: [id])
+}
+
+model Design {
+  id             String    @id @default(uuid())
+  designCode     String
+  primaryColor   String?
+  secondaryColor String?
+  tertiaryColor  String?
+  themeId        String
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  createdBy      String?
+  updatedAt      DateTime? @updatedAt
+  updatedBy      String?
+  theme          Theme?    @relation(fields: [themeId], references: [id], onDelete: Cascade)
+  createdByUser  User?     @relation("designCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser  User?     @relation("designUpdatedBy", fields: [updatedBy], references: [id])
+}
+
+model FaqAnswer {
+  id            Int         @id @default(autoincrement())
+  answer        String
+  faqQuestionId Int
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  createdBy     String?
+  updatedAt     DateTime?   @updatedAt
+  updatedBy     String?
+  faqQuestion   FaqQuestion @relation(fields: [faqQuestionId], references: [id], onDelete: Cascade)
+  createdByUser User?       @relation("faqAnswerCreatedBy", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_created")
+  updatedByUser User?       @relation("faqAnswerUpdatedBy", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_updated")
+}
+
+model FaqCategory {
+  id            Int           @id @default(autoincrement())
+  categoryName  String
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  createdBy     String?
+  updatedAt     DateTime?     @updatedAt
+  updatedBy     String?
+  faqQuestions  FaqQuestion[]
+  createdByUser User?         @relation("faqCategoryCreatedBy", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_created")
+  updatedByUser User?         @relation("faqCategoryUpdatedBy", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_updated")
+}
+
+model FaqQuestion {
+  id            Int         @id @default(autoincrement())
+  question      String
+  faqCategoryId Int
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  createdBy     String?
+  updatedAt     DateTime?   @updatedAt
+  updatedBy     String?
+  faqCategory   FaqCategory @relation(fields: [faqCategoryId], references: [id], onDelete: Cascade)
+  createdByUser User?       @relation("faqQuestionCreatedBy", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_created")
+  updatedByUser User?       @relation("faqQuestionUpdatedBy", fields: [updatedBy], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_updated")
+  faqAnswers    FaqAnswer[]
+}
+
+model Guest {
+  id         Int       @id @default(autoincrement())
+  name       String // Full name of the guest
+  phone      String?
+  rsvpStatus String    @default("Pending") // e.g., "Pending", "Accepted", "Declined"
+  rsvpDate   DateTime?
+  noOfGuests Int       @default(1)
+  weddingId  String
+  createdAt  DateTime  @default(now())
+}
+
+model Role {
+  id        String    @id @default(uuid())
+  name      String
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  users     User[]
+}
+
+model SsoProvider {
+  id         String    @id @default(uuid())
+  userId     String
+  provider   Provider?
+  providerId String?   @unique
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Theme {
+  id            String    @id @default(uuid())
+  name          String
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  createdBy     String?
+  updatedAt     DateTime? @updatedAt
+  updatedBy     String?
+  createdByUser User?     @relation("themeCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser User?     @relation("themeUpdatedBy", fields: [updatedBy], references: [id])
+  designs       Design[]
+}
+
+model Token {
+  id               Int       @id @default(autoincrement())
+  userId           String
+  token            String
+  refreshToken     String?
+  tokenType        String?
+  expiredAt        DateTime?
+  refreshExpiredAt DateTime?
+  createdAt        DateTime  @default(now())
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                     String        @id @default(uuid())
+  firstName              String
+  lastName               String
+  email                  String        @unique
+  password               String? // Optional because of SSO providers
+  profileImg             String?
+  username               String?
+  phoneNo                String?
+  isActive               Boolean       @default(true)
+  roleId                 String
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime?     @updatedAt
+  ssoProviders           SsoProvider[]
+  role                   Role          @relation(fields: [roleId], references: [id])
+  tokens                 Token[]
+  faqCategoriesCreatedBy FaqCategory[] @relation("faqCategoryCreatedBy")
+  faqCategoriesUpdatedBy FaqCategory[] @relation("faqCategoryUpdatedBy")
+  faqQuestionsCreatedBy  FaqQuestion[] @relation("faqQuestionCreatedBy")
+  faqQuestionsUpdatedBy  FaqQuestion[] @relation("faqQuestionUpdatedBy")
+  faqAnswersCreatedBy    FaqAnswer[]   @relation("faqAnswerCreatedBy")
+  faqAnswersUpdatedBy    FaqAnswer[]   @relation("faqAnswerUpdatedBy")
+  addressesCreatedBy     Address[]     @relation("addressCreatedBy")
+  addressesUpdatedBy     Address[]     @relation("addressUpdatedBy")
+  designsCreatedBy       Design[]      @relation("designCreatedBy")
+  designsUpdatedBy       Design[]      @relation("designUpdatedBy")
+  themesCreatedBy        Theme[]       @relation("themeCreatedBy")
+  themesUpdatedBy        Theme[]       @relation("themeUpdatedBy")
+}
+// TODO erd
+model Wedding {
+  id        String    @id @default(uuid())
+  name      String
+  date      DateTime
+  location  String
+  packageId String? // Foreign key to Package
+  userId    String
+  createdAt DateTime  @default(now())
+  createdBy String?
+  updatedAt DateTime? @updatedAt
+  updatedBy String?
+  // user      User      @relation(fields: [userId], references: [id])
+  // package   Package?  @relation(fields: [packageId], references: [id])
+}
+
+enum Provider {
+  internal
+  google
 }

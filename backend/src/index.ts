@@ -11,7 +11,7 @@ import { adminRouter } from './router/admin.route.ts'
 dotenv.config()
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
@@ -29,6 +29,6 @@ app.use("/api/v1/auth", formData.none(), authRouter);
 app.use("/api/v1/admin", formData.none(), adminRouter);
 app.use("/api/v1", formData.none(), router);
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at port ${port}`);
+app.listen(PORT, () => {
+  console.log(`[server]: Server is running at port ${PORT}`);
 });
