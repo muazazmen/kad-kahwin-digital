@@ -9,6 +9,7 @@ datasource db {
 
 model Address {
   id            String    @id @default(uuid())
+  mainAddress   String // alamat utama (cth: nama dewan)
   addressLine1  String
   addressLine2  String?
   city          String
@@ -24,12 +25,38 @@ model Address {
   updatedByUser User?     @relation("addressUpdatedBy", fields: [updatedBy], references: [id])
 }
 
+model AnimationEffect {
+  id        String    @id @default(uuid())
+  name      String
+  style     String
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  createdBy String?
+  updatedAt DateTime? @updatedAt
+  updatedBy String?
+}
+
+model Contact {
+  id         String    @id @default(uuid())
+  name1      String
+  phone1     String
+  name2      String?
+  phone2     String?
+  isActive   Boolean   @default(true)
+  isWhatsapp Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  createdBy  String?
+  updatedAt  DateTime? @updatedAt
+  updatedBy  String?
+}
+
 model Design {
   id             String    @id @default(uuid())
   designCode     String
   primaryColor   String?
   secondaryColor String?
   tertiaryColor  String?
+  bgImage        String?
   themeId        String
   isActive       Boolean   @default(true)
   createdAt      DateTime  @default(now())
@@ -94,6 +121,24 @@ model Guest {
   createdAt  DateTime  @default(now())
 }
 
+model Music {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  createdBy String?
+  updatedAt DateTime? @updatedAt
+  updatedBy String?
+}
+
+model Qr {
+  id String @id @default(uuid())
+  name String
+  createdAt     DateTime    @default(now())
+  createdBy     String?
+  updatedAt     DateTime?   @updatedAt
+  updatedBy     String?
+}
+
 model Role {
   id        String    @id @default(uuid())
   name      String
@@ -137,6 +182,18 @@ model Token {
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Transition {
+  id        String    @id @default(uuid())
+  name      String
+  stage     String? // ending, start, middle
+  bgColor   String?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  createdBy String?
+  updatedAt DateTime? @updatedAt
+  updatedBy String?
+}
+
 model User {
   id                     String        @id @default(uuid())
   firstName              String
@@ -166,18 +223,43 @@ model User {
   themesCreatedBy        Theme[]       @relation("themeCreatedBy")
   themesUpdatedBy        Theme[]       @relation("themeUpdatedBy")
 }
+
 // TODO erd
 model Wedding {
-  id        String    @id @default(uuid())
-  name      String
-  date      DateTime
-  location  String
-  packageId String? // Foreign key to Package
-  userId    String
-  createdAt DateTime  @default(now())
-  createdBy String?
-  updatedAt DateTime? @updatedAt
-  updatedBy String?
+  id                String    @id @default(uuid())
+  nickName          String
+  fontType          String?
+  fontSize          Int?      @default(12)
+  fontColor         String?
+  fullName          String
+  fullNameFontType  String?
+  fullNameFontSize  Int?
+  ceremonyType      String
+  ceremonyFontSize  Int?      @default(12)
+  startAt           DateTime? // timeOnly
+  endAt             DateTime? // timeOnly
+  dateFontSize      Int?      @default(12)
+  hijriDate         String?
+  greeting1         String?
+  greeting2         String?
+  organizerName1    String // nama bapa atau nama mak pengantin
+  relation1         String?
+  organizerName2    String?
+  relation2         String?
+  organizerFontType String?
+  organizerFontSize Int?      @default(12)
+  location          String
+  agenda            String? // tentative
+  description1      String?
+  description2      String?
+  packageId         String? // Foreign key to Package
+  designId          String
+  transitionId      String
+  userId            String
+  createdAt         DateTime  @default(now())
+  createdBy         String?
+  updatedAt         DateTime? @updatedAt
+  updatedBy         String?
   // user      User      @relation(fields: [userId], references: [id])
   // package   Package?  @relation(fields: [packageId], references: [id])
 }
