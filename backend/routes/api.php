@@ -1,13 +1,14 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
 // Auth
-Route::get('/me', [App\Http\Controllers\AuthController::class, 'me'])->middleware('auth:sanctum');
-Route::post('auth/register', [App\Http\Controllers\AuthController::class, 'register']);
-Route::post('auth/login', [App\Http\Controllers\AuthController::class, 'login']);
-Route::post('auth/logout', [App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
+Route::post('auth/register', [AuthController::class, 'register']);
+Route::post('auth/login', [AuthController::class, 'login']);
+Route::post('auth/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 // Roles
 Route::apiResource('roles', RoleController::class);
