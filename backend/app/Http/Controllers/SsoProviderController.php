@@ -3,48 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Models\SsoProvider;
-use App\Http\Requests\StoreSsoProviderRequest;
-use App\Http\Requests\UpdateSsoProviderRequest;
+use App\Models\User;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 
 class SsoProviderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function googleLogin()
     {
-        //
+        return Socialite::driver('google')->redirect();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreSsoProviderRequest $request)
+    public function googleRedirect()
     {
-        //
-    }
+        try {
+            $googleUser = Socialite::driver('google')->user();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(SsoProvider $ssoProvider)
-    {
-        //
-    }
+            $ssoProvider = SsoProvider::where('provider_id', $googleUser->id)->first();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateSsoProviderRequest $request, SsoProvider $ssoProvider)
-    {
-        //
-    }
+            if ($ssoProvider) {
+                Auth::login($ssoProvider->user);
+                return redirect('/');
+            } else {
+                $user = User::create([
+                    'first_name' => $googleUser->user['given_name'] ?? null, 
+                    'last_name' => $googleUser->user['family_name'] ?? null,
+                    'email' => $googleUser->email,
+                    'username' => $googleUser->nickname ?? null,
+                    'avatar' => $googleUser->avatar ?? null,
+                ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(SsoProvider $ssoProvider)
-    {
-        //
+                SsoProvider::create([
+                    'provider' => 'google',
+                    'provider_id' => $googleUser->id,
+                    'user_id' => $user->id,
+                ]);
+
+                Auth::login($user);
+
+                return redirect('/');
+            }
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+
     }
 }

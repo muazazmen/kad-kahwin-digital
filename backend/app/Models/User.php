@@ -59,8 +59,18 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function ssoProviders()
+    {
+        return $this->hasMany(SsoProvider::class);
+    }
+
     public function addresses()
     {
         return $this->hasMany(Address::class);
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
     }
 }
