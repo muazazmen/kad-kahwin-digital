@@ -73,4 +73,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Contact::class);
     }
+
+    public function fonts()
+    {
+        return $this->hasMany(Font::class);
+    }
 }
