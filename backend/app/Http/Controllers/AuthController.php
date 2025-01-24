@@ -17,6 +17,12 @@ class AuthController extends Controller
             'password' => 'required|confirmed',
         ]);
 
+        // Generate the avatar URL
+        $profilePic = "https://avatar.iran.liara.run/username?username={$fields['first_name']}+{$fields['last_name']}";
+
+        // Add the avatar URL to the $fields array
+        $fields['avatar'] = $profilePic;
+
         $user = User::create($fields);
 
         return response([
