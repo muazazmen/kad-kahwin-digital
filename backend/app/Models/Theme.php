@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AnimationEffect extends Model
+class Theme extends Model
 {
-    /** @use HasFactory<\Database\Factories\AnimationEffectFactory> */
+    /** @use HasFactory<\Database\Factories\ThemeFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
-        'url',
-        'path',
         'created_by',
         'updated_by',
     ];
@@ -27,5 +25,10 @@ class AnimationEffect extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function designs()
+    {
+        return $this->hasMany(Design::class);
     }
 }

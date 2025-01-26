@@ -78,4 +78,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Font::class);
     }
+
+    public function animationEffects()
+    {
+        return $this->hasMany(AnimationEffect::class);
+    }
+
+    public function transitions()
+    {
+        return $this->hasMany(Transition::class);
+    }
+
+    public function themes()
+    {
+        return $this->hasMany(Theme::class);
+    }
 }
