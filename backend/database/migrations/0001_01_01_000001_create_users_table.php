@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('username')->nullable();
             $table->string('phone_no')->nullable();
             $table->string('avatar')->nullable();
-            $table->foreignId('role_id')->default(1)->constrained();
+            $table->string('role')->default('user');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -29,6 +29,7 @@ class User extends Authenticatable
         'username',
         'phone_no',
         'avatar',
+        'role',
     ];
 
     /**
@@ -52,11 +53,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function roles()
-    {
-        return $this->belongsTo(Role::class);
     }
 
     public function ssoProviders()

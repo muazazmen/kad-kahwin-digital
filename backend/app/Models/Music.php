@@ -6,17 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Role extends Model
+class Music extends Model
 {
-    /** @use HasFactory<\Database\Factories\RoleFactory> */
+    /** @use HasFactory<\Database\Factories\MusicFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
+        'title',
+        'artist',
+        'album',
+        'genre',
+        'year',
+        'path',
+        'created_by',
+        'updated_by',
     ];
-
-    public function users()
-    {
-        return $this->hasMany(User::class);
-    }
 }
