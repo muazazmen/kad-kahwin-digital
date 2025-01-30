@@ -28,4 +28,9 @@ class Font extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function organisers()
+    {
+        return $this->hasMany(Organiser::class);
+    }
 }

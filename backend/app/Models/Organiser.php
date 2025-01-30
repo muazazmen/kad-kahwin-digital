@@ -25,8 +25,29 @@ class Organiser extends Model
         'associated_name_2', // nama bapa pengantin perempuan / nama makayah pasangan 2
         'associated_name_2_1', // nama ibu pengantin perempuan
         'organiser_type', // single couple, double couple
+        'image_1',
         'font_id', 
         'created_by',
         'updated_by',
     ];
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function font()
+    {
+        return $this->belongsTo(Font::class);
+    }
+
+    public function events()
+    {
+        return $this->has(Event::class);
+    }
 }

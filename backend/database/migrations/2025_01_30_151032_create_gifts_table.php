@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tentatives', function (Blueprint $table) {
+        Schema::create('gifts', function (Blueprint $table) {
             $table->id()->primary();
-            $table->string('detail');
-            $table->date('date');
+            $table->string('bank_name');
+            $table->string('bank_account_no');
+            $table->text('qr_image');
             $table->foreignId('event_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tentatives');
+        Schema::dropIfExists('gifts');
     }
 };

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\EventStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,7 +26,38 @@ class Event extends Model
         'phone_no_2',
         'phone_no_3',
         'phone_no_4',
+        'status',
+        'organiser_id',
         'created_by',
         'updated_by',
     ];
+
+    protected $casts = [
+        'status' => EventStatus::class,
+    ];
+
+    public function organiser()
+    {
+        return $this->belongsTo(Organiser::class);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function tentatives()
+    {
+        return $this->hasMany(Tentative::class);
+    }
+
+    public function gifts()
+    {
+        return $this->has(Gift::class);
+    }
 }

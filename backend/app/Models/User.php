@@ -89,4 +89,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Theme::class);
     }
+
+    public function organisers()
+    {
+        return $this->hasMany(Organiser::class, 'created_by');
+    }
 }
