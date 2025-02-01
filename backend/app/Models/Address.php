@@ -12,16 +12,15 @@ class Address extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'main_address',
+        'main_address', // nama dewan / alamat utama
         'address_line_1',
         'address_line_2',
         'city',
         'state',
         'postcode',
         'country',
-        'url',
-        'created_by',
-        'updated_by'
+        'event_id',
+        'google_url',
     ];
 
     public function createdBy()

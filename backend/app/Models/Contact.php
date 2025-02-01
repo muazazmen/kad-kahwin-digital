@@ -12,22 +12,15 @@ class Contact extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name_1',
-        'phone_1',
-        'name_2',
-        'phone_2',
+        'name',
+        'phone',
         'is_whatsapp',
-        'created_by',
-        'updated_by'
+        'contact_type',
+        'event_id',
     ];
 
-    public function createdBy()
+    public function event()
     {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(Event::class);
     }
 }

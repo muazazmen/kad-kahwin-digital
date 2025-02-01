@@ -19,15 +19,9 @@ return new class extends Migration
             $table->date('date');
             $table->time('start_at');
             $table->time('end_at');
-            $table->string('venue_name');
-            $table->string('venue_address');
-            $table->text('google_map_url');
-            $table->string('phone_no_1'); // no fon waris 1 / makayah
-            $table->string('phone_no_2')->nullable(); // no fon waris 2 / makayah
-            $table->string('phone_no_3')->nullable();
-            $table->string('phone_no_4')->nullable();
             $table->enum('status', ['draft', 'confirmed', 'completed', 'cancelled'])->default('draft');
             $table->foreignId('organiser_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('package_id')->constrained()->cascadeOnDelete();
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();

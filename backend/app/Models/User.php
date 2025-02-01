@@ -60,16 +60,6 @@ class User extends Authenticatable
         return $this->hasMany(SsoProvider::class);
     }
 
-    public function addresses()
-    {
-        return $this->hasMany(Address::class);
-    }
-
-    public function contacts()
-    {
-        return $this->hasMany(Contact::class);
-    }
-
     public function fonts()
     {
         return $this->hasMany(Font::class);

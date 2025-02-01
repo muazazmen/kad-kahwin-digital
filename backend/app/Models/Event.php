@@ -19,15 +19,9 @@ class Event extends Model
         'date',
         'start_at',
         'end_at',
-        'venue_name',
-        'venue_address',
-        'google_map_url',
-        'phone_no_1',
-        'phone_no_2',
-        'phone_no_3',
-        'phone_no_4',
         'status',
         'organiser_id',
+        'package_id',
         'created_by',
         'updated_by',
     ];
@@ -51,6 +45,21 @@ class Event extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
+    }
+
     public function tentatives()
     {
         return $this->hasMany(Tentative::class);
@@ -59,5 +68,15 @@ class Event extends Model
     public function gifts()
     {
         return $this->has(Gift::class);
+    }
+
+    public function guestSettings()
+    {
+        return $this->has(GuestSetting::class);
+    }
+
+    public function guests()
+    {
+        return $this->hasMany(Guest::class);
     }
 }

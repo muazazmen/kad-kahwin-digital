@@ -15,19 +15,14 @@ return new class extends Migration {
             $table->string('main_address');
             $table->string('address_line_1');
             $table->string('address_line_2')->nullable();
-            $table->string('city');
-            $table->integer('postcode');
-            $table->string('state');
-            $table->string('country');
-            $table->string('url')->nullable();
-            $table->uuid('created_by');
-            $table->uuid('updated_by')->nullable();
+            $table->string('city')->nullable();
+            $table->integer('postcode')->nullable();
+            $table->string('state')->nullable();
+            $table->string('country')->nullable();
+            $table->text('google_url')->nullable();
+            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
-
-            // Define foreign key constraints explicitly
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
         });
     }
 

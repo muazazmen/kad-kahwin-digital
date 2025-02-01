@@ -13,18 +13,12 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id()->primary();
-            $table->string('name_1');
-            $table->string('phone_1');
-            $table->string('name_2')->nullable();
-            $table->string('phone_2')->nullable();
+            $table->string('name');
+            $table->string('phone');
             $table->boolean('is_whatsapp')->default(false);
-            $table->uuid('created_by');
-            $table->uuid('updated_by')->nullable();
+            $table->string('contact_type');
+            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-
-            // Define foreign key constraints explicitly
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
         });
     }
 
