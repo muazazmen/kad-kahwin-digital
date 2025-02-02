@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Package extends Model
 {
     /** @use HasFactory<\Database\Factories\PackageFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasUuids,SoftDeletes;
 
     protected $fillable = [
         'name',

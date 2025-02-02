@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('secondary_color')->nullable();
             $table->string('tertiary_color')->nullable();
             $table->string('bg_image')->nullable();
-            $table->foreignId('theme_id')->constrained();
+            $table->foreignId('theme_id')->constrained()->cascadeOnDelete();
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();

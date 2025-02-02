@@ -12,8 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('frames', function (Blueprint $table) {
-            $table->id();
+            $table->id()->primary();
+            $table->string('name');
+            $table->text('frame');
+            $table->uuid('created_by');
+            $table->uuid('updated_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            // Define foreign key constraints explicitly
+            $table->foreign('created_by')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

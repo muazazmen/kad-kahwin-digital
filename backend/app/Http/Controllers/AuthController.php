@@ -66,4 +66,24 @@ class AuthController extends Controller
     {
         return $request->user();
     }
+
+    public function update(Request $request, User $user) {
+        $fields = $request->validate([
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'email' => 'required|email|unique:users',
+            'avatar' => 'image',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            $fields['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $user->update($fields);
+
+        return response([
+            'message' => 'User updated successfully',
+            'user' => $user,
+        ]);
+    }
 }

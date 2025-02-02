@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('packages', function (Blueprint $table) {
-            $table->id('id')->primary();
-            $table->string('name');
-            $table->text('description');
-            $table->decimal('price', 10, 2);
-            $table->text('image')->nullable();
+        Schema::create('prayers', function (Blueprint $table) {
+            $table->id()->primary();
+            $table->string('title');
+            $table->text('prayer');
+            $table->timestamps();
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
-            $table->timestamps();
             $table->softDeletes();
 
             // Define foreign key constraints explicitly
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('packages');
+        Schema::dropIfExists('prayers');
     }
 };

@@ -20,8 +20,13 @@ return new class extends Migration
             $table->time('start_at');
             $table->time('end_at');
             $table->enum('status', ['draft', 'confirmed', 'completed', 'cancelled'])->default('draft');
-            $table->foreignId('organiser_id')->constrained()->cascadeOnDelete();
+            $table->string('hashtag');
+            $table->text('prayer')->nullable();
             $table->foreignId('package_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('design_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('organiser_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('music_id')->constrained()->cascadeOnDelete()->nullable();
+            $table->foreignId('frame_id')->constrained()->cascadeOnDelete()->nullable();
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();

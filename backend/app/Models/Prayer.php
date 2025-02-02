@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Frame extends Model
+class Prayer extends Model
 {
-    /** @use HasFactory<\Database\Factories\FrameFactory> */
+    /** @use HasFactory<\Database\Factories\PrayerFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'frame',
+        'title',
+        'prayer',
         'created_by',
         'updated_by',
     ];
