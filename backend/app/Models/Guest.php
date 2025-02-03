@@ -17,6 +17,12 @@ class Guest extends Model
         'total_adults',
         'total_kids',
         'timeslot',
+        'praise',
         'event_id',
     ];
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
 }

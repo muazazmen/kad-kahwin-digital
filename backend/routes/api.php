@@ -1,17 +1,18 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SsoProviderController;
 use Illuminate\Support\Facades\Route;
-
+// TODO: postman cannot support put, patch if headers multipart/form-data, need to chnge when frontend were setup
 // Auth
+Route::prefix('auth')->group(function () {
+  Route::post('register', [AuthController::class, 'register']);
+  Route::post('login', [AuthController::class, 'login']);
+  Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+  
+  // googleoAuth
+  Route::get('google', [SsoProviderController::class, 'googleLogin']);
+  Route::get('google/redirect', [SsoProviderController::class, 'googleRedirect']);
+});
 Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
-Route::post('auth/register', [AuthController::class, 'register']);
-Route::post('auth/login', [AuthController::class, 'login']);
-Route::post('auth/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::put('/me/update', [AuthController::class, 'update'])->middleware('auth:sanctum');
-
-// googleoAuth
-Route::get('auth/google', [SsoProviderController::class, 'googleLogin']);
-Route::get('auth/google/redirect', [SsoProviderController::class, 'googleRedirect']);
+Route::match(['put', 'post'],'/me/update', [AuthController::class, 'update'])->middleware('auth:sanctum');

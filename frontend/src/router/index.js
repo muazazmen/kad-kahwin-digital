@@ -6,17 +6,27 @@ const router = createRouter({
     routes: [
         {
             path: '/',
+            name: 'landing',
+            component: () => import('@/views/pages/Landing.vue')
+        },
+        {
+            path: '/',
             component: AppLayout,
             children: [
                 {
-                    path: '/',
+                    path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
-                    path: '/configuration',
-                    name: 'Configuration',
-                    component: () => import('@/views/pages/configuration/Configuration.vue')
+                    path: '/configuration/general',
+                    name: 'config-general',
+                    component: () => import('@/views/pages/configuration/general/General.vue')
+                },
+                {
+                    path: '/configuration/design',
+                    name: 'config-design',
+                    component: () => import('@/views/pages/configuration/design/Design.vue')
                 },
                 {
                     path: '/uikit/formlayout',
@@ -112,16 +122,16 @@ const router = createRouter({
             ]
         },
         {
-            path: '/landing',
-            name: 'landing',
-            component: () => import('@/views/pages/Landing.vue')
-        },
-        {
             path: '/pages/notfound',
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
 
+        {
+            path: '/auth/register',
+            name: 'register',
+            component: () => import('@/views/pages/auth/Register.vue')
+        },
         {
             path: '/auth/login',
             name: 'login',

@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wishlists', function (Blueprint $table) {
+        Schema::create('galleries', function (Blueprint $table) {
             $table->id()->primary();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->string('link')->nullable();
-            $table->string('reserver')->nullable();
-            $table->string('image')->nullable();
+            $table->string('image');
+            $table->string('caption')->nullable();
             $table->foreignId('event_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wishlists');
+        Schema::dropIfExists('galleries');
     }
 };

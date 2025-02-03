@@ -35,11 +35,6 @@ class Event extends Model
         'status' => EventStatus::class,
     ];
 
-    public function organiser()
-    {
-        return $this->belongsTo(Organiser::class);
-    }
-
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -53,6 +48,26 @@ class Event extends Model
     public function package()
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function design()
+    {
+        return $this->belongsTo(Design::class);
+    }
+
+    public function organiser()
+    {
+        return $this->belongsTo(Organiser::class);
+    }
+
+    public function music()
+    {
+        return $this->belongsTo(Music::class);
+    }
+
+    public function frame()
+    {
+        return $this->belongsTo(Frame::class);
     }
 
     public function addresses()
@@ -83,5 +98,20 @@ class Event extends Model
     public function guests()
     {
         return $this->hasMany(Guest::class);
+    }
+
+    public function galleries()
+    {
+        return $this->hasMany(Gallery::class);
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function orders()
+    {
+        return $this->has(Order::class);
     }
 }

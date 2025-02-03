@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Package extends Model
 {
     /** @use HasFactory<\Database\Factories\PackageFactory> */
-    use HasFactory, HasUuids,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -18,4 +18,14 @@ class Package extends Model
         'price',
         'image',
     ];
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

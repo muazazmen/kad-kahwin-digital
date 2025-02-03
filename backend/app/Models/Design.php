@@ -23,8 +23,23 @@ class Design extends Model
         'updated_by',
     ];
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function theme()
     {
         return $this->belongsTo(Theme::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
     }
 }
