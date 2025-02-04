@@ -1,7 +1,6 @@
-import { createApp } from 'vue';
+import { createApp, markRaw } from 'vue';
 import App from './App.vue';
 import router from './router';
-
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 import PrimeVue from 'primevue/config';
@@ -12,8 +11,12 @@ import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
 import { createPinia } from 'pinia';
 
-const pinia = createPinia();
 const app = createApp(App);
+const pinia = createPinia();
+
+pinia.use(({ store }) => {
+    store.router = markRaw(router);
+});
 
 app.use(router);
 

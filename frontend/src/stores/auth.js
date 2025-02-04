@@ -4,10 +4,29 @@ export const useAuthStore = defineStore('authStore', {
   state: () => {
     return {
       user: null,
-      errors: {}
+      errors: {},
+      message: {}
     }
   },
   actions: {
+    /**************** get authenticated user API ******************/
+    async fetchUser() {
+      const accessToken = localStorage.getItem('accessToken')
+      
+      if (accessToken) {
+        const res = await fetch('/api/v1/me', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+        const data = await res.json()
+        if (res.ok) {
+          this.user = data
+        }
+        console.log('ss', data);
+      }
+    },
+    /******************** Login/Register API **********************/
     async authenticate(apiRoute, formData) {
       const res = await fetch(`/api/v1/auth/${apiRoute}`, {
         method: 'POST',
@@ -18,11 +37,19 @@ export const useAuthStore = defineStore('authStore', {
       })
       
       const data = await res.json()
-      if (data.errors) {
-        this.errors = data.errors
-        return
+      if (!data.errors) {
+        if (apiRoute === 'login') {
+          localStorage.setItem('accessToken', data.accessToken);
+          this.user = data.user;
+          this.message = data.message;
+          this.router.push({ name: 'dashboard' });
+        } else {
+          this.router.push({ name: 'landing' });
+        }
       } else {
-        console.log(data);
+        this.message = data.message
+        this.errors = data.errors;
+        return;
       }
     }
   }

@@ -1,7 +1,8 @@
 <template>
     <div class="card" style="text-align: center">
-        <li>theme</li>
-        <li>design</li>
+        <li>animation</li>
+        <li>transition</li>
+        <li>font</li>
     </div>
 </template>
 

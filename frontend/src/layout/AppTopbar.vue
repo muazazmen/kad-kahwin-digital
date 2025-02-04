@@ -1,8 +1,15 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
+import { useAuthStore } from '@/stores/auth';
+import { onMounted } from 'vue';
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
+const authStore = useAuthStore();
+
+onMounted(async() => {
+    await authStore.fetchUser();
+});
 </script>
 
 <template>
@@ -51,7 +58,7 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
                         <span>Messages</span>
                     </button>
                     <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-user"></i>
+                        <Avatar :image="authStore.user?.avatar" shape="circle" />
                         <span>Profile</span>
                     </button>
                 </div>

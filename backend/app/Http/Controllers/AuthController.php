@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -41,6 +40,7 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
+                // FIXME: This message is not seamless yet with toast messages
                 'message' => 'email or password is incorrect'
             ], 401);
         }
@@ -79,7 +79,10 @@ class AuthController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            $fields['avatar'] = $request->file('avatar')->store('avatars');
+            // Store the file in the public disk
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            // Generate the full URL
+            $fields['avatar'] = env('APP_URL') . '/storage/' . $avatarPath;
         }
 
         $user->update($fields);

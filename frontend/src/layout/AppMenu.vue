@@ -24,6 +24,11 @@ const model = ref([
                         icon: 'pi pi-fw pi-wrench',
                         to: '/configuration/design'
                     },
+                    {
+                        label: 'Style',
+                        icon: 'pi pi-fw pi-wrench',
+                        to: '/configuration/style'
+                    },
                 ]
             }
         ]

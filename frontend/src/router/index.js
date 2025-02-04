@@ -29,6 +29,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/configuration/design/Design.vue')
                 },
                 {
+                    path: '/configuration/style',
+                    name: 'config-style',
+                    component: () => import('@/views/pages/configuration/style/Style.vue')
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
