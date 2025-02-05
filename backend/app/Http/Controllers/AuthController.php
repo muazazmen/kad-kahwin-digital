@@ -42,7 +42,7 @@ class AuthController extends Controller
             return response([
                 // FIXME: This message is not seamless yet with toast messages
                 'message' => 'email or password is incorrect'
-            ], 401);
+            ], 422);
         }
 
         $token = $user->createToken($user->email);

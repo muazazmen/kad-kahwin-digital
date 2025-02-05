@@ -3,10 +3,12 @@ import { useAuthStore } from '@/stores/auth';
 import { Form } from '@primevue/forms';
 import { useToast } from 'primevue';
 import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 
 const toast = useToast();
+const router = useRouter();
 
 const loginForm = reactive({
     email: '',
@@ -36,8 +38,12 @@ const handleLogin = async () => {
         // Call the authenticate method in the authStore
         await authStore.authenticate('login', loginForm);
 
-        // FIXME: toast will be detech dinamically from status code response
-        toast.add({ severity: 'error', summary: 'Error', detail: authStore.message, life: 3000 });
+        if (authStore.response.status === 200) {
+            toast.add({ severity: 'success', summary: 'Success', detail: authStore.message, life: 3000 });
+            router.push({ name: 'dashboard' });
+        } else {
+            toast.add({ severity: 'error', summary: 'Error', detail: authStore.message, life: 3000 });
+        }
     } catch (error) {
         console.error('An unexpected error occurred:', error);
     }

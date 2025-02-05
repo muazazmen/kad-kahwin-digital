@@ -5,7 +5,8 @@ export const useAuthStore = defineStore('authStore', {
     return {
       user: null,
       errors: {},
-      message: {}
+      message: {},
+      response: {}
     }
   },
   actions: {
@@ -36,20 +37,36 @@ export const useAuthStore = defineStore('authStore', {
         body: JSON.stringify(formData)
       })
       
+      this.response = res
       const data = await res.json()
+
       if (!data.errors) {
         if (apiRoute === 'login') {
           localStorage.setItem('accessToken', data.accessToken);
           this.user = data.user;
           this.message = data.message;
-          this.router.push({ name: 'dashboard' });
-        } else {
-          this.router.push({ name: 'landing' });
         }
       } else {
         this.message = data.message
         this.errors = data.errors;
         return;
+      }
+    },
+    /********************* Logout API ***************************/
+    async logout() {
+      const res = await fetch('/api/v1/auth/logout', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      });
+
+      const data = await res.json()
+
+      if (res.ok) {
+        localStorage.removeItem('accessToken');
+        this.user = null;
+        this.message = data.message;
       }
     }
   }
