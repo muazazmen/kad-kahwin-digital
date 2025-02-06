@@ -14,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: 'api/v1'
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->append(StartSession::class);
+        $middleware->append(StartSession::class); 
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

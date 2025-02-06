@@ -2,7 +2,7 @@
 import { useAuthStore } from '@/stores/auth';
 import { Form } from '@primevue/forms';
 import { useToast } from 'primevue';
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
@@ -48,10 +48,14 @@ const handleLogin = async () => {
         console.error('An unexpected error occurred:', error);
     }
 };
+
+onMounted(() => {
+    authStore.errors = {};
+    authStore.message = {};
+});
 </script>
 
 <template>
-    <Toast position="top-center" />
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center">
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
@@ -60,6 +64,7 @@ const handleLogin = async () => {
                         <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to Resepsi!</div>
                         <span class="text-muted-color font-medium">Sign in to continue</span>
                     </div>
+                    <!-- <Toast position="top-center" /> -->
 
                     <Form v-slot="$form" :initialValues="loginForm" :resolver @submit="handleLogin">
                         <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium">Email</label>

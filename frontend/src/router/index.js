@@ -1,4 +1,5 @@
 import AppLayout from '@/layout/AppLayout.vue';
+import { useAuthStore } from '@/stores/auth';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -16,118 +17,31 @@ const router = createRouter({
                 {
                     path: '/dashboard',
                     name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
+                    component: () => import('@/views/Dashboard.vue'),
+                    meta: { auth: true, admin: true }
                 },
                 {
                     path: '/configuration/general',
                     name: 'config-general',
-                    component: () => import('@/views/pages/configuration/general/General.vue')
+                    component: () => import('@/views/pages/configuration/general/General.vue'),
+                    meta: { auth: true, admin: true }
                 },
                 {
                     path: '/configuration/design',
                     name: 'config-design',
-                    component: () => import('@/views/pages/configuration/design/Design.vue')
+                    component: () => import('@/views/pages/configuration/design/Design.vue'),
+                    meta: { auth: true, admin: true }
                 },
                 {
                     path: '/configuration/style',
                     name: 'config-style',
-                    component: () => import('@/views/pages/configuration/style/Style.vue')
-                },
-                {
-                    path: '/uikit/formlayout',
-                    name: 'formlayout',
-                    component: () => import('@/views/uikit/FormLayout.vue')
-                },
-                {
-                    path: '/uikit/input',
-                    name: 'input',
-                    component: () => import('@/views/uikit/InputDoc.vue')
-                },
-                {
-                    path: '/uikit/button',
-                    name: 'button',
-                    component: () => import('@/views/uikit/ButtonDoc.vue')
-                },
-                {
-                    path: '/uikit/table',
-                    name: 'table',
-                    component: () => import('@/views/uikit/TableDoc.vue')
-                },
-                {
-                    path: '/uikit/list',
-                    name: 'list',
-                    component: () => import('@/views/uikit/ListDoc.vue')
-                },
-                {
-                    path: '/uikit/tree',
-                    name: 'tree',
-                    component: () => import('@/views/uikit/TreeDoc.vue')
-                },
-                {
-                    path: '/uikit/panel',
-                    name: 'panel',
-                    component: () => import('@/views/uikit/PanelsDoc.vue')
-                },
-
-                {
-                    path: '/uikit/overlay',
-                    name: 'overlay',
-                    component: () => import('@/views/uikit/OverlayDoc.vue')
-                },
-                {
-                    path: '/uikit/media',
-                    name: 'media',
-                    component: () => import('@/views/uikit/MediaDoc.vue')
-                },
-                {
-                    path: '/uikit/message',
-                    name: 'message',
-                    component: () => import('@/views/uikit/MessagesDoc.vue')
-                },
-                {
-                    path: '/uikit/file',
-                    name: 'file',
-                    component: () => import('@/views/uikit/FileDoc.vue')
-                },
-                {
-                    path: '/uikit/menu',
-                    name: 'menu',
-                    component: () => import('@/views/uikit/MenuDoc.vue')
-                },
-                {
-                    path: '/uikit/charts',
-                    name: 'charts',
-                    component: () => import('@/views/uikit/ChartDoc.vue')
-                },
-                {
-                    path: '/uikit/misc',
-                    name: 'misc',
-                    component: () => import('@/views/uikit/MiscDoc.vue')
-                },
-                {
-                    path: '/uikit/timeline',
-                    name: 'timeline',
-                    component: () => import('@/views/uikit/TimelineDoc.vue')
-                },
-                {
-                    path: '/pages/empty',
-                    name: 'empty',
-                    component: () => import('@/views/pages/Empty.vue')
-                },
-                {
-                    path: '/pages/crud',
-                    name: 'crud',
-                    component: () => import('@/views/pages/Crud.vue')
-                },
-                {
-                    path: '/documentation',
-                    name: 'documentation',
-                    component: () => import('@/views/pages/Documentation.vue')
+                    component: () => import('@/views/pages/configuration/style/Style.vue'),
+                    meta: { auth: true, admin: true }
                 }
             ]
         },
         {
-            path: '/pages/notfound',
+            path: '/:pathMatch(.*)*',
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
@@ -135,12 +49,14 @@ const router = createRouter({
         {
             path: '/auth/register',
             name: 'register',
-            component: () => import('@/views/pages/auth/Register.vue')
+            component: () => import('@/views/pages/auth/Register.vue'),
+            meta: { guest: true }
         },
         {
             path: '/auth/login',
             name: 'login',
-            component: () => import('@/views/pages/auth/Login.vue')
+            component: () => import('@/views/pages/auth/Login.vue'),
+            meta: { guest: true }
         },
         {
             path: '/auth/access',
@@ -154,5 +70,33 @@ const router = createRouter({
         }
     ]
 });
+
+router.beforeEach(async (to) => {
+    const authStore = useAuthStore();
+    await authStore.fetchUser();
+
+    if (authStore.user) {
+        // Prevent "user" role from accessing admin routes
+        if (authStore.user.role === 'user' && to.meta.admin) {
+            return { name: 'accessDenied' }; // Redirect to access denied page
+        }
+
+        // Prevent logged-in users from accessing guest routes
+        if (authStore.user && to.meta.guest) {
+            return { name: 'landing' }; // Redirect logged-in users to dashboard
+        }
+    } else {
+        // If the user is not logged in and tries to access an admin route, redirect to login
+        if (to.meta.admin) {
+            return { name: 'login' };
+        }
+
+        // If the user is not logged in and tries to access a authenticated route, redirect to login
+        if (to.meta.auth) {
+            return { name: 'login' };
+        }
+    }
+});
+
 
 export default router;

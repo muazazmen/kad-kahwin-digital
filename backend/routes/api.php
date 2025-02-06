@@ -16,3 +16,6 @@ Route::prefix('auth')->group(function () {
 });
 Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 Route::match(['put', 'post'],'/me/update', [AuthController::class, 'update'])->middleware('auth:sanctum');
+
+/************************************** USER **********************************/
+Route::apiResource('users', App\Http\Controllers\UserController::class)->middleware('auth:sanctum');

@@ -14,11 +14,9 @@ const menu = ref();
 const items = ref([
     {
         label: 'Profile',
-        icon: 'pi pi-user',
     },
     {
         label: 'Logout',
-        icon: 'pi pi-sign-out',
         command: async () => {
             try {
                 authStore.logout();
@@ -26,6 +24,7 @@ const items = ref([
                 console.error('An unexpected error occurred:', error);
             } finally {
                 router.push({ name: 'landing' });
+                
             }
         },
     },
@@ -35,19 +34,22 @@ const toggle = (event) => {
     menu.value.toggle(event);
 };
 
-onMounted(async() => {
-    await authStore.fetchUser();
+onMounted(() => {
+    authStore.errors = {};
+    authStore.message = {};
 });
+
 </script>
 
 <template>
     <div class="layout-topbar">
+        <!-- <Toast position="top-center" /> -->
         <div class="layout-topbar-logo-container">
             <button class="layout-menu-button layout-topbar-action" @click="onMenuToggle">
                 <i class="pi pi-bars"></i>
             </button>
             <router-link to="/" class="layout-topbar-logo">
-                <img src="../../public/demo/images/logo.png" alt="" />
+                <img src="/demo/images/logo.png" alt="" />
             </router-link>
         </div>
 

@@ -40,7 +40,6 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
-                // FIXME: This message is not seamless yet with toast messages
                 'message' => 'email or password is incorrect'
             ], 422);
         }

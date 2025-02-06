@@ -24,7 +24,6 @@ export const useAuthStore = defineStore('authStore', {
         if (res.ok) {
           this.user = data
         }
-        console.log('ss', data);
       }
     },
     /******************** Login/Register API **********************/
