@@ -4,8 +4,13 @@ import { computed, ref, watch } from 'vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
+import { useMenuStore } from '@/stores/menu';
+import { useRoute } from 'vue-router';
 
 const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
+const menuStore = useMenuStore();
+
+const route = useRoute();
 
 const outsideClickListener = ref(null);
 
@@ -16,6 +21,68 @@ watch(isSidebarActive, (newVal) => {
         unbindOutsideClickListener();
     }
 });
+
+// const home = ref({
+//     icon: 'pi pi-home',
+//     route: '/dashboard'
+// });
+
+// const breadcrumbs = computed(() => {
+//     let items = [];
+
+//     // Special handling for dashboard/home route
+//     if (route.name === 'dashboard') {
+//         return [{ 
+//             label: 'Dashboard', 
+//             icon: 'pi pi-fw pi-home',
+//             to: { name: 'dashboard' }
+//         }];
+//     }
+
+//     function findItem(menuItems, parentItems = []) {
+//         for (const item of menuItems) {
+//             // Create a new item with route information if it exists
+//             const currentItem = {
+//                 label: item.label,
+//                 icon: item.icon,
+//                 ...(item.to && { to: item.to }) // Only add 'to' if it exists
+//             };
+            
+//             const currentPath = [...parentItems, currentItem];
+            
+//             if (item.to && item.to.name === route.name) {
+//                 return currentPath;
+//             }
+            
+//             if (item.items) {
+//                 const found = findItem(item.items, currentPath);
+//                 if (found.length) {
+//                     return found;
+//                 }
+//             }
+//         }
+//         return [];
+//     }
+
+//     // Search through the menu model
+//     for (const menu of menuStore.model) {
+//         // Include the menu label if it exists
+//         const parentItems = menu.label ? [{
+//             label: menu.label,
+//             icon: menu.icon
+//         }] : [];
+        
+//         if (menu.items) {
+//             const found = findItem(menu.items, parentItems);
+//             if (found.length) {
+//                 items = found;
+//                 break;
+//             }
+//         }
+//     }
+
+//     return items;
+// });
 
 const containerClass = computed(() => {
     return {
@@ -59,6 +126,23 @@ function isOutsideClicked(event) {
         <app-sidebar></app-sidebar>
         <div class="layout-main-container">
             <div class="layout-main">
+                <!-- TODO: Breadcrumb -->
+                <!-- <Breadcrumb :home="home" :model="breadcrumbs">
+                        <template #item="{ item }">
+                            <router-link 
+                                v-if="item.to" 
+                                :to="item.to"
+                                custom
+                            >
+                                <span :class="[item.icon, 'text-color mr-2']" />
+                                <span class="text-primary font-semibold">{{ item.label }}</span>
+                            </router-link>
+                            <span v-else>
+                                <span :class="[item.icon, 'text-color mr-2']" />
+                                <span class="text-surface-700 dark:text-surface-0">{{ item.label }}</span>
+                            </span>
+                        </template>
+                    </Breadcrumb> -->
                 <router-view></router-view>
             </div>
             <app-footer></app-footer>

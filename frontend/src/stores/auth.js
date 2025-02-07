@@ -40,14 +40,9 @@ export const useAuthStore = defineStore('authStore', {
       const data = await res.json()
 
       if (!data.errors) {
-        if (apiRoute === 'login') {
           localStorage.setItem('accessToken', data.accessToken);
           this.user = data.user;
           this.message = data.message;
-        }
-      } else {
-        this.message = data.message
-        this.errors = data.errors;
         return;
       }
     },

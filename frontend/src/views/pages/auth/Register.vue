@@ -1,9 +1,16 @@
 <script setup>
+import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 import { Form } from '@primevue/forms';
+import { useToast } from 'primevue';
+import { computed } from 'vue';
 import { reactive } from 'vue';
 
 const authStore = useAuthStore();
+
+const toast = useToast();
+
+const message = computed(() => authStore.message);
 
 const registerForm = reactive({
     first_name: '',
@@ -26,6 +33,22 @@ const resolver = ({ values }) => {
         errors
     };
 };
+
+const handleRegister = async () => {
+    try {
+        // Call the authenticate method in the authStore
+        await authStore.authenticate('register', registerForm);
+
+        if (authStore.response.status >= 200 && authStore.response.status < 300) {
+            toast.add({ severity: 'success', summary: 'Success', detail: message, life: 3000 });
+            router.push({ name: 'dashboard' });
+        } else {
+            toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+        }
+    } catch (error) {
+        console.error('An unexpected error occurred:', error);
+    }
+};
 </script>
 
 <template>
@@ -38,7 +61,7 @@ const resolver = ({ values }) => {
                         <span class="text-muted-color font-medium">Register a new account</span>
                     </div>
 
-                    <Form v-slot="$form" :initialValues="registerForm" :resolver class="w-full" @submit="() => {authStore.authenticate('register', registerForm)}">
+                    <Form v-slot="$form" :initialValues="registerForm" :resolver class="w-full" @submit="handleRegister">
                         <label for="firstName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">First Name</label>
                         <InputText name="first_name" id="firstName" type="text" placeholder="First Name" class="w-full md:w-[30rem]" v-model="registerForm.first_name" />
                         <Message v-if="authStore.errors.first_name" severity="error" size="small" variant="simple">{{ authStore.errors.first_name[0] }}</Message>

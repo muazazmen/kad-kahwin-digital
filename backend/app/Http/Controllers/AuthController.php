@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -24,9 +26,12 @@ class AuthController extends Controller
 
         $user = User::create($fields);
 
+        $token = $user->createToken($user->email);
+
         return response([
             'message' => 'User registered successfully',
             'user' => $user,
+            'accessToken' => $token->plainTextToken
         ], 201);
     }
 
@@ -63,7 +68,21 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        return $request->user();
+        $user = $request->user();
+        $avatar = $user->avatar;
+
+        // Check if the avatar field starts with 'http'
+        if (!Str::startsWith($avatar, 'http')) {
+            $avatar = url(Storage::url($avatar));
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email' => $user->email,
+            'avatar' => $avatar,
+        ]);
     }
 
     public function update(Request $request)
@@ -78,10 +97,7 @@ class AuthController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            // Store the file in the public disk
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            // Generate the full URL
-            $fields['avatar'] = env('APP_URL') . '/storage/' . $avatarPath;
+            $fields['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
         $user->update($fields);

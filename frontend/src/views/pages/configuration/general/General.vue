@@ -1,7 +1,6 @@
 <template>
     <div class="card" style="text-align: center">
         <li>users</li>
-        <li>design</li>
         <li>music</li>
         <li>prayer</li>
         <li>frame</li>

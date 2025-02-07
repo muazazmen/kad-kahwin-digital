@@ -1,19 +1,20 @@
 <script setup>
+import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 import { Form } from '@primevue/forms';
 import { useToast } from 'primevue';
-import { onMounted, reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, reactive, ref } from 'vue';
 
 const authStore = useAuthStore();
 
 const toast = useToast();
-const router = useRouter();
 
 const loginForm = reactive({
     email: '',
     password: '',
 });
+
+const message = computed(() => authStore.message);
 
 const resolver = ({ values }) => {
     const errors = {};
@@ -39,20 +40,15 @@ const handleLogin = async () => {
         await authStore.authenticate('login', loginForm);
 
         if (authStore.response.status === 200) {
-            toast.add({ severity: 'success', summary: 'Success', detail: authStore.message, life: 3000 });
+            toast.add({ severity: 'success', summary: 'Success', detail: message, life: 3000 });
             router.push({ name: 'dashboard' });
         } else {
-            toast.add({ severity: 'error', summary: 'Error', detail: authStore.message, life: 3000 });
+            toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
         }
     } catch (error) {
         console.error('An unexpected error occurred:', error);
     }
 };
-
-onMounted(() => {
-    authStore.errors = {};
-    authStore.message = {};
-});
 </script>
 
 <template>

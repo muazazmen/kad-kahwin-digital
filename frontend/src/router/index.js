@@ -13,24 +13,27 @@ const router = createRouter({
         {
             path: '/',
             component: AppLayout,
+            meta: { auth: true, admin: true },
             children: [
                 {
                     path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue'),
-                    meta: { auth: true, admin: true }
+                },
+                {
+                    path: '/payment',
+                    name: 'payment',
+                    component: () => import('@/views/pages/payment/PaymentTab.vue'),
                 },
                 {
                     path: '/configuration/general',
                     name: 'config-general',
                     component: () => import('@/views/pages/configuration/general/General.vue'),
-                    meta: { auth: true, admin: true }
                 },
                 {
-                    path: '/configuration/design',
-                    name: 'config-design',
-                    component: () => import('@/views/pages/configuration/design/Design.vue'),
-                    meta: { auth: true, admin: true }
+                    path: '/design',
+                    name: 'design',
+                    component: () => import('@/views/pages/design/Design.vue'),
                 },
                 {
                     path: '/configuration/style',
@@ -82,9 +85,9 @@ router.beforeEach(async (to) => {
         }
 
         // Prevent logged-in users from accessing guest routes
-        if (authStore.user && to.meta.guest) {
-            return { name: 'landing' }; // Redirect logged-in users to dashboard
-        }
+        // if (authStore.user && to.meta.guest) {
+        //     return { name: 'landing' }; // Redirect logged-in users to dashboard
+        // }
     } else {
         // If the user is not logged in and tries to access an admin route, redirect to login
         if (to.meta.admin) {

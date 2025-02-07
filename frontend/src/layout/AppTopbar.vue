@@ -2,13 +2,16 @@
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
 import { useAuthStore } from '@/stores/auth';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, ref } from 'vue';
+import router from '@/router';
+import { useToast } from 'primevue';
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 const authStore = useAuthStore();
 
-const router = useRouter();
+const toast = useToast()
+
+const message = computed(() => authStore.message);
 
 const menu = ref();
 const items = ref([
@@ -19,12 +22,12 @@ const items = ref([
         label: 'Logout',
         command: async () => {
             try {
-                authStore.logout();
+                await authStore.logout();
             } catch (error) {
                 console.error('An unexpected error occurred:', error);
             } finally {
+                toast.add({ severity: 'success', summary: 'Success', detail: message, life: 3000 });
                 router.push({ name: 'landing' });
-                
             }
         },
     },
@@ -33,11 +36,6 @@ const items = ref([
 const toggle = (event) => {
     menu.value.toggle(event);
 };
-
-onMounted(() => {
-    authStore.errors = {};
-    authStore.message = {};
-});
 
 </script>
 
@@ -97,7 +95,7 @@ onMounted(() => {
                 <button type="button" class="layout-topbar-action">
                     <i class="pi pi-bell"></i>
                 </button>
-                <button type="button" class="layout-topbar-action" aria-haspopup="true" aria-controls="overlay_menu" @click="toggle">
+                <button type="button" class="layout-topbar-action" aria-haspopup="true" aria-controls="overlay_menu" @click="toggle" v-tooltip.left="`${authStore.user?.first_name}`">
                     <Avatar :image="authStore.user?.avatar" shape="circle" />
                 </button>
                 <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
