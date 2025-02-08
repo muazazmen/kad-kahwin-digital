@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('introduction');
             $table->text('greeting');
             $table->date('date');
-            $table->time('start_at');
-            $table->time('end_at');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->enum('status', ['draft', 'confirmed', 'completed', 'cancelled'])->default('draft');
             $table->string('hashtag');
             $table->text('prayer')->nullable();

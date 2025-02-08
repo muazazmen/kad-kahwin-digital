@@ -14,10 +14,7 @@ class UserController extends Controller
     {
         $users =User::withTrashed()->paginate();
 
-        return response([
-            'message' => 'User list',
-            'users' => $users,
-        ]);
+        return $users;
     }
 // TODO: user module
     /**
@@ -25,7 +22,26 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $fields = $request->validate([
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|confirmed',
+            'role' => 'nullable|in:admin,user',
+        ]);
+
+        // Generate the avatar URL
+        $profilePic = "https://avatar.iran.liara.run/username?username={$fields['first_name']}+{$fields['last_name']}";
+
+        // Add the avatar URL to the $fields array
+        $fields['avatar'] = $profilePic;
+
+        $user = User::create($fields);
+
+        return response([
+            'message' => 'User registered successfully',
+            'user' => $user,
+        ], 201);
     }
 
     /**
