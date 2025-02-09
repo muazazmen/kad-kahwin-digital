@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SsoProviderController;
-use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 // TODO: postman cannot support put, patch if headers multipart/form-data, need to chnge when frontend were setup
 // Auth
@@ -21,5 +21,7 @@ Route::match(['put', 'post'],'/me/update', [AuthController::class, 'update'])->m
 /************************************** ADMIN **********************************/
 // users
 Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function () {
-  Route::apiResource('users', App\Http\Controllers\UserController::class);
+  Route::apiResource('users', UserController::class);
+  Route::post('users/{user}/update', [UserController::class, 'update']);
+  Route::put('users/{user}/restore', [UserController::class, 'restore']);
 });

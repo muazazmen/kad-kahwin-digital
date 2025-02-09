@@ -16,13 +16,17 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(5)->create();
 
-            // User::factory()->create([
-            //     'first_name' => 'Test',
-            //     'last_name' => 'User',
-            //     'email' => 'test@example.com',
-            //     'password' => Hash::make('123'),
-            //     'username' => 'test',
-            //     'phone_no' => '1234567890',
-            // ]);
+        if (!User::where('email', 'muhammad@example.com')->exists()) {
+            User::factory()->create([
+                'first_name' => 'Muhammad',
+                'last_name' => 'Abdullah',
+                'email' => 'muhammad@example.com',
+                'password' => Hash::make('123'),
+                'username' => 'muhammad',
+                'phone_no' => '1234567890',
+                'avatar' => 'https://avatar.iran.liara.run/username?username=Muhammad+Abdullah',
+                'role' => 'admin',
+            ]);
+        }
     }
 }

@@ -21,6 +21,11 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue'),
                 },
                 {
+                    path: '/profile',
+                    name: 'profile',
+                    component: () => import('@/views/pages/account/Account.vue'),
+                },
+                {
                     path: '/payment',
                     name: 'payment',
                     component: () => import('@/views/pages/payment/PaymentTab.vue'),

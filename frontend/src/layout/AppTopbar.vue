@@ -17,6 +17,9 @@ const menu = ref();
 const items = ref([
     {
         label: 'Profile',
+        command: () => {
+            router.push({ name: 'profile' });
+        },
     },
     {
         label: 'Logout',

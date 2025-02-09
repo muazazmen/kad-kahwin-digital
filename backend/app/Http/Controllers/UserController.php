@@ -47,24 +47,56 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user)
     {
-        //
+        return $user;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $fields = $request->validate([
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'password' => 'nullable',
+            'role' => 'nullable|in:admin,user',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            $fields['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $user->update($fields);
+
+        return response([
+            'message' => 'User updated successfully',
+            'user' => $user,
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+
+        return response([
+            'message' => 'User deleted successfully',
+        ]);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore($id)
+    {
+        User::withTrashed()->find($id)->restore();
+
+        return response([
+            'message' => 'User restored successfully',
+        ]);
     }
 }
