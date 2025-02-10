@@ -15,8 +15,15 @@ Route::prefix('auth')->group(function () {
   Route::get('google', [SsoProviderController::class, 'googleLogin']);
   Route::get('google/redirect', [SsoProviderController::class, 'googleRedirect']);
 });
-Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
-Route::match(['put', 'post'],'/me/update', [AuthController::class, 'update'])->middleware('auth:sanctum');
+
+/************************************** AUTHENTICATE USER **********************************/
+Route::middleware('auth:sanctum')->group(function () {
+  // profile
+  Route::get('/me', [AuthController::class, 'me']);
+  Route::match(['put', 'post'],'/me/update', [AuthController::class, 'update']);
+  Route::put('/me/update-password', [AuthController::class, 'updatePassword']);
+  Route::delete('/me', [AuthController::class, 'destroy']);
+});
 
 /************************************** ADMIN **********************************/
 // users

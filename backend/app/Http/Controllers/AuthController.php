@@ -76,12 +76,8 @@ class AuthController extends Controller
             $avatar = url(Storage::url($avatar));
         }
 
-        return response()->json([
-            'id' => $user->id,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'email' => $user->email,
-            'avatar' => $avatar,
+        return response([
+            'data' => $user,
         ]);
     }
 
@@ -107,4 +103,39 @@ class AuthController extends Controller
             'user' => $user,
         ]);
     }
+
+    public function updatePassword(Request $request)
+    {
+        $user = $request->user();
+
+        $fields = $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|confirmed',
+        ]);
+
+        if (!Hash::check($fields['current_password'], $user->password)) {
+            return response([
+                'message' => 'Current password is incorrect'
+            ], 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($fields['password'])
+        ]);
+
+        return response([
+            'message' => 'Password updated successfully'
+        ]);
+    }
+
+    public function destroy(Request $request)
+    {
+        $request->user()->delete();
+
+        return response([
+            'message' => 'User deleted successfully'
+        ]);
+    }
+
+    // TODO: forgot, reset password
 }
