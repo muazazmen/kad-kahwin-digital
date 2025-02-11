@@ -12,8 +12,9 @@ export const useAuthStore = defineStore('authStore', {
   actions: {
     /**************** get authenticated user API ******************/
     async fetchUser() {
+      if (this.user) return;
+
       const accessToken = localStorage.getItem('accessToken')
-      
       if (accessToken) {
         const res = await fetch('/api/v1/me', {
           headers: {

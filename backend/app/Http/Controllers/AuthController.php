@@ -76,9 +76,7 @@ class AuthController extends Controller
             $avatar = url(Storage::url($avatar));
         }
 
-        return response([
-            'data' => $user,
-        ]);
+        return $user;
     }
 
     public function update(Request $request)

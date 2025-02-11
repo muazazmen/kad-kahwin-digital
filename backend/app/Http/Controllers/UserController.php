@@ -16,7 +16,7 @@ class UserController extends Controller
 
         return $users;
     }
-// TODO: user module
+    
     /**
      * Store a newly created resource in storage.
      */

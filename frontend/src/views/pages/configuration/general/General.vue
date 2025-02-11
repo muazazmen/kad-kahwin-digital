@@ -8,9 +8,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { getUsers } from '@/service/GeneralService';
+import { onMounted, ref } from 'vue';
 
-const value = ref(null);
-const value1 = ref(null);
-const value2 = ref(null);
+const users = ref([]);
+
+const fetchUsers = async () => {
+    const res = await getUsers();
+    console.log('sini', res);
+    const data = await res.json();
+    users.value = data;
+    console.log('data', data);
+    
+};
+
+onMounted(() => {
+    fetchUsers();
+});
 </script>
