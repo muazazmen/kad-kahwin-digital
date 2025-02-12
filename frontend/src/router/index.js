@@ -99,7 +99,6 @@ router.beforeEach(async (to) => {
             return { name: 'login' };
         }
 
-        // TODO: checking for expired accessToken will delete accessToken localStorage
         // If the user is not logged in and tries to access a authenticated route, redirect to login
         if (to.meta.auth) {
             return { name: 'login' };

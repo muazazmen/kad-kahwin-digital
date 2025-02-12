@@ -1,0 +1,14 @@
+.layout-right-menu-active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.layout-right-menu-inactive {
+    background-color: var(--surface-background) !important;
+
+    &:hover {
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color);
+        border-left: 0.5px solid var(--primary-color);
+    }
+}

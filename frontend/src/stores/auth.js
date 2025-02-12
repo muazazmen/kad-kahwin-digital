@@ -14,17 +14,30 @@ export const useAuthStore = defineStore('authStore', {
     async fetchUser() {
       if (this.user) return;
 
-      const accessToken = localStorage.getItem('accessToken')
-      if (accessToken) {
-        const res = await fetch('/api/v1/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) return;
+
+      try {
+          const res = await fetch('/api/v1/me', {
+              headers: {
+                  Authorization: `Bearer ${accessToken}`
+              }
+          });
+
+          if (!res.ok) {
+              // Token is invalid or expired
+              console.warn('Token expired or invalid, logging out...');
+              localStorage.removeItem('accessToken');
+              this.user = null;
+              return;
           }
-        });
-        const data = await res.json()
-        if (res.ok) {
-          this.user = data
-        }
+
+          const data = await res.json();
+          this.user = data;
+      } catch (error) {
+          console.error('Error fetching user:', error);
+          // localStorage.removeItem('accessToken');
+          // this.user = null;
       }
     },
     /******************** Login/Register API **********************/
