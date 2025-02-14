@@ -1,4 +1,5 @@
 <script setup>
+import { updateAccount } from '@/service/AccountService';
 import { useAuthStore } from '@/stores/auth';
 import { ProgressSpinner, useToast } from 'primevue';
 import { onMounted, ref, computed } from 'vue'
@@ -8,91 +9,88 @@ const authStore = useAuthStore();
 const toast = useToast();
 
 const previewImageUrl = ref(null);
-const profileImg = ref(null);
+const avatar = ref(null);
 
-// const unchangedData = ref(null);
-// const loading = ref(false);
+const unchangedData = ref(null);
+const loading = ref(false);
 
-// const uploadImage = (event) => {
-//   const file = event.target.files[0];
-//   if (file) {
-//     previewImageUrl.value = URL.createObjectURL(file);
-//     profileImg.value = file;
-//   }
-// };
+const uploadImage = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    previewImageUrl.value = URL.createObjectURL(file);
+    avatar.value = file;
+  }
+};
 
-// // Compare current user data with the original user data
-// const isChanged = computed(() => {
-//   if (!unchangedData.value) return false;
+// Compare current user data with the original user data
+const isChanged = computed(() => {
+  if (!unchangedData.value) return false;
 
-//   return (
-//     meStore.user.first_name !== unchangedData.value.first_name ||
-//     meStore.user.last_name !== unchangedData.value.last_name ||
-//     meStore.user.username !== unchangedData.value.username ||
-//     meStore.user.phone_no !== unchangedData.value.phone_no ||
-//     meStore.user.birth_at !== unchangedData.value.birth_at ||
-//     !!profileImg.value // Check if a new profile image is selected
-//   );
-// });
+  return (
+    authStore.user.first_name !== unchangedData.value.first_name ||
+    authStore.user.last_name !== unchangedData.value.last_name ||
+    authStore.user.username !== unchangedData.value.username ||
+    authStore.user.phone_no !== unchangedData.value.phone_no ||
+    !!avatar.value // Check if a new profile image is selected
+  );
+});
 
-// const fetchUpdateMe = async () => {
-//   loading.value = true;
-//   try {
-//     const formData = new FormData();
+const fetchUpdateAccount = async () => {
+  loading.value = true;
+  try {
+    const formData = new FormData();
 
-//     formData.append('firstName', meStore.user.first_name);
-//     formData.append('lastName', meStore.user.last_name);
-//     formData.append('username', meStore.user.username);
-//     formData.append('phoneNo', meStore.user.phone_no);
-//     formData.append('birthAt', meStore.user.birth_at);
+    formData.append('first_name', authStore.user.first_name);
+    formData.append('last_name', authStore.user.last_name);
+    formData.append('username', authStore.user.username);
+    formData.append('phoneNo', authStore.user.phone_no);
 
-//     if (profileImg.value) {
-//       formData.append('profileImg', profileImg.value);
-//     }
+    if (avatar.value) {
+      formData.append('avatar', avatar.value);
+    }
 
-//     const { data } = await updateMe(formData);
+    const res = await updateAccount(formData);
 
-//     if (data.response.status === 200) {
-//       toast.add({
-//         severity: 'success',
-//         summary: 'Success',
-//         detail: data.resData.message,
-//         life: 3000
-//       });
-//       await meStore.fetchMe();
+    if (res.ok) {
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: res.data.message,
+        life: 3000
+      });
+      await authStore.fetchUser();
 
-//       // Update the original user data to the latest data
-//       unchangedData.value = { ...meStore.user };
-//     } else {
-//       toast.add({
-//         severity: 'error',
-//         summary: 'Error',
-//         detail: data.resData.message,
-//         life: 3000
-//       });
-//     }
-//   } catch (error) {
-//     console.error(error.message);
-//   } finally {
-//     loading.value = false;
-//   }
-// };
+      // Update the original user data to the latest data
+      unchangedData.value = { ...authStore.user };
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: res.data.message,
+        life: 3000
+      });
+    }
+  } catch (error) {
+    console.error(error.message);
+  } finally {
+    loading.value = false;
+  }
+};
 
-// onMounted(async () => {
-//   await meStore.fetchMe();
-//   // Set original user data after fetching
-//   unchangedData.value = { ...meStore.user };
-// });
+onMounted(async () => {
+  // Set original user data after fetching
+  unchangedData.value = { ...authStore.user };
+});
 </script>
 
 <template>
-  <div v-if="meStore.user" class="grid md:grid-cols-2 sm:grid-cols-1 m-4 gap-4">
+  <div v-if="authStore.user" class="grid md:grid-cols-2 sm:grid-cols-1 m-4 gap-4">
     <div class="md:col-span-2 sm:col-span-1 flex flex-col justify-center items-center gap-4 mb-4">
       <label
         class="absolute top-32 md:top-28 flex items-center justify-center md:w-36 md:h-36 w-24 h-24 bg-gray-200 rounded-full cursor-pointer overflow-hidden group">
         <input type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*"
           @change="uploadImage" />
-        <img id="profileImage" :src="previewImageUrl || meStore.user.profile_img" alt="profile"
+        <img id="profileImage" :src="previewImageUrl || authStore.user.avatar" alt="profile"
           class="w-full h-full object-cover rounded-full" />
         <div
           class="absolute inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
@@ -100,36 +98,31 @@ const profileImg = ref(null);
         </div>
       </label>
     </div>
-    <div class="flex flex-col gap-4 mb-2">
+    <div class="flex flex-col gap-2 mb-2">
       <label for="firstName">First Name</label>
-      <InputText v-model="meStore.user.first_name" id="firstName" type="text" placeholder="First Name"
+      <InputText v-model="authStore.user.first_name" id="firstName" type="text" placeholder="First Name"
         variant="filled" />
     </div>
-    <div class="flex flex-col gap-4 mb-2">
+    <div class="flex flex-col gap-2 mb-2">
       <label for="lastName">Last Name</label>
-      <InputText v-model="meStore.user.last_name" id="lastName" type="text" placeholder="Last Name" variant="filled" />
+      <InputText v-model="authStore.user.last_name" id="lastName" type="text" placeholder="Last Name" variant="filled" />
     </div>
-    <div class="flex flex-col gap-4 mb-2">
+    <div class="flex flex-col gap-2 mb-2">
       <label for="email">Email</label>
-      <InputText v-model="meStore.user.email" id="email" type="email" placeholder="Email" disabled />
+      <InputText v-model="authStore.user.email" id="email" type="email" placeholder="Email" disabled />
     </div>
-    <div class="flex flex-col gap-4 mb-2">
+    <div class="flex flex-col gap-2 mb-2">
       <label for="username">Username</label>
-      <InputText v-model="meStore.user.username" id="username" type="text" placeholder="Username" variant="filled" />
+      <InputText v-model="authStore.user.username" id="username" type="text" placeholder="Username" variant="filled" />
     </div>
-    <div class="flex flex-col gap-4 mb-2">
+    <div class="col-span-2 flex flex-col gap-2 mb-2">
       <label for="phoneNo">Phone Number</label>
-      <InputText v-model="meStore.user.phone_no" id="phoneNo" v-tooltip="'Format: +601123456789'" type="text"
+      <InputText v-model="authStore.user.phone_no" id="phoneNo" v-tooltip="'Format: +601123456789'" type="text"
         placeholder="Phone Number" variant="filled" />
-    </div>
-    <div class="flex flex-col gap-4 mb-2">
-      <label for="birthAt">Date of Birth</label>
-      <Datepicker v-model="meStore.user.birth_at" id="birthAt" type="text" placeholder="Date of Birth" showIcon
-        iconDisplay="input" dateFormat="dd/mm/yy" variant="filled" />
     </div>
     <div></div>
     <div class="col-span-1 flex justify-end gap-4">
-      <Button label="Save" @click="fetchUpdateMe" :loading="loading" :disabled="!isChanged" />
+      <Button label="Save" @click="fetchUpdateAccount" :loading="loading" :disabled="!isChanged" />
     </div>
   </div>
   <div v-else>

@@ -18,7 +18,7 @@
         </template>
       </Card>
 
-      <Card v-if="meStore.user?.sso_providers.some(provider => provider.provider === 'internal')">
+      <!-- <Card v-if="authStore.user?.sso_providers.some(provider => provider.provider === 'internal')">
         <template #title>
           Update Password
         </template>
@@ -28,7 +28,7 @@
       </Card>
 
       <div
-        v-else-if="meStore.user?.sso_providers.some(provider => provider.provider === 'internal') && meStore.user?.sso_providers.some(provider => provider.provider !== 'internal')"
+        v-else-if="authStore.user?.sso_providers.some(provider => provider.provider === 'internal') && authStore.user?.sso_providers.some(provider => provider.provider !== 'internal')"
         class="flex flex-col gap-8">
         <Card>
           <template #title>
@@ -56,7 +56,7 @@
         <template #content>
           <SocialProfile />
         </template>
-      </Card>
+      </Card> -->
 
       <!-- Divider -->
       <div class="flex items-center">
@@ -73,7 +73,7 @@
             Account Deletion
           </template>
           <template #content>
-            <AccountDeletion />
+            <!-- <AccountDeletion /> -->
           </template>
         </Card>
       </div>

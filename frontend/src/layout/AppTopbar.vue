@@ -2,7 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
 import { useAuthStore } from '@/stores/auth';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import router from '@/router';
 import { useToast } from 'primevue';
 
@@ -99,7 +99,8 @@ const toggle = (event) => {
                     <i class="pi pi-bell"></i>
                 </button>
                 <button type="button" class="layout-topbar-action" aria-haspopup="true" aria-controls="overlay_menu" @click="toggle" v-tooltip.left="`${authStore.user?.first_name}`">
-                    <Avatar :image="authStore.user?.avatar" shape="circle" />
+                    <i v-if="!authStore.user?.avatar" class="pi pi-spinner pi-spin"></i>
+                    <img v-else :src="authStore.user?.avatar" class="object-cover rounded-full" />
                 </button>
                 <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
             </div>

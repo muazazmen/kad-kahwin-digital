@@ -76,6 +76,8 @@ class AuthController extends Controller
             $avatar = url(Storage::url($avatar));
         }
 
+        $user->avatar = $avatar;
+
         return $user;
     }
 
@@ -86,7 +88,8 @@ class AuthController extends Controller
         $fields = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'username' => 'nullable|max:255',
+            'phone_no' => 'nullable|max:255',
             'avatar' => 'nullable|image',
         ]);
 
