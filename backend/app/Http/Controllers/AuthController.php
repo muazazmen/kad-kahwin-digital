@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WelcomeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -25,6 +27,9 @@ class AuthController extends Controller
         $fields['avatar'] = $profilePic;
 
         $user = User::create($fields);
+
+        // send welcome email
+        Mail::to($user->email)->send(new WelcomeMail($user));
 
         $token = $user->createToken($user->email);
 
@@ -90,13 +95,21 @@ class AuthController extends Controller
             'last_name' => 'required|max:255',
             'username' => 'nullable|max:255',
             'phone_no' => 'nullable|max:255',
-            'avatar' => 'nullable|image',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        // Check if a new avatar is being uploaded
         if ($request->hasFile('avatar')) {
+            // Delete the previous avatar if it exists
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            // Store the new avatar
             $fields['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
+        // Update the user with the new fields
         $user->update($fields);
 
         return response([

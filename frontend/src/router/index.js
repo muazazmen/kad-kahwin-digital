@@ -18,27 +18,27 @@ const router = createRouter({
                 {
                     path: '/dashboard',
                     name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue'),
+                    component: () => import('@/views/Dashboard.vue')
                 },
                 {
                     path: '/profile',
                     name: 'profile',
-                    component: () => import('@/views/pages/account/Account.vue'),
+                    component: () => import('@/views/pages/account/Account.vue')
                 },
                 {
                     path: '/payment',
                     name: 'payment',
-                    component: () => import('@/views/pages/payment/PaymentTab.vue'),
+                    component: () => import('@/views/pages/payment/PaymentTab.vue')
                 },
                 {
                     path: '/configuration/general',
                     name: 'config-general',
-                    component: () => import('@/views/pages/configuration/general/General.vue'),
+                    component: () => import('@/views/pages/configuration/general/General.vue')
                 },
                 {
                     path: '/design',
                     name: 'design',
-                    component: () => import('@/views/pages/design/Design.vue'),
+                    component: () => import('@/views/pages/design/Design.vue')
                 },
                 {
                     path: '/configuration/style',
@@ -79,8 +79,16 @@ const router = createRouter({
     ]
 });
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore();
+
+    // Check if there is an access accessToken in the query params
+    const accessToken = to.query.accessToken;
+    if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+        return next({ path: to.path, query: {} }); // Remove accessToken from URL and proceed
+    }
+
     await authStore.fetchUser();
 
     if (authStore.user) {
@@ -104,7 +112,8 @@ router.beforeEach(async (to) => {
             return { name: 'login' };
         }
     }
-});
 
+    next();
+});
 
 export default router;

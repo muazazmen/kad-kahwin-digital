@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WelcomeMail;
 use App\Models\SsoProvider;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
 
 class SsoProviderController extends Controller
@@ -24,7 +26,8 @@ class SsoProviderController extends Controller
 
             if ($ssoProvider) {
                 Auth::login($ssoProvider->user);
-                return redirect('/');
+                $token = $ssoProvider->user->createToken($ssoProvider->user->email)->plainTextToken;
+                return redirect()->away(env('FRONTEND_URL') . "/dashboard?accessToken=" . $token);
             } else {
                 $user = User::create([
                     'first_name' => $googleUser->user['given_name'] ?? null, 
@@ -40,13 +43,18 @@ class SsoProviderController extends Controller
                     'user_id' => $user->id,
                 ]);
 
+                Mail::to($user->email)->send(new WelcomeMail($user));
+
+                // Generate API Token
+                $token = $user->createToken($user->email)->plainTextToken;
+
                 Auth::login($user);
 
-                return redirect('/');
+                // Redirect to Vue.js Dashboard with token in URL
+                return redirect()->away(env('FRONTEND_URL') . "/dashboard?accessToken=" . $token);
             }
         } catch (Exception $e) {
             dd($e->getMessage());
         }
-
     }
 }

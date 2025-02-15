@@ -27,22 +27,27 @@ function smoothScroll(id) {
                     <ul class="list-none p-0 m-0 flex lg:items-center select-none flex-col lg:flex-row cursor-pointer gap-8">
                         <li>
                             <a @click="smoothScroll('#hero')" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
-                                <span>Home</span>
+                                <span>Utama</span>
                             </a>
                         </li>
                         <li>
                             <a @click="smoothScroll('#features')" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
-                                <span>Features</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a @click="smoothScroll('#highlights')" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
-                                <span>Highlights</span>
+                                <span>Kad Digital</span>
                             </a>
                         </li>
                         <li>
                             <a @click="smoothScroll('#pricing')" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
-                                <span>Pricing</span>
+                                <span>Pakej</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a @click="smoothScroll('#highlights')" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
+                                <span>Tutorial</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a @click="smoothScroll('#highlights')" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
+                                <span>Hubungi Kami</span>
                             </a>
                         </li>
                     </ul>

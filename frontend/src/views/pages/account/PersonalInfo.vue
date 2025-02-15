@@ -50,23 +50,25 @@ const fetchUpdateAccount = async () => {
     }
 
     const res = await updateAccount(formData);
+    const data = await res.json();
 
     if (res.ok) {
       toast.add({
         severity: 'success',
         summary: 'Success',
-        detail: res.data.message,
+        detail: data.message,
         life: 3000
       });
       await authStore.fetchUser();
 
       // Update the original user data to the latest data
       unchangedData.value = { ...authStore.user };
+      avatar.value = null;
     } else {
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: res.data.message,
+        detail: data.message,
         life: 3000
       });
     }

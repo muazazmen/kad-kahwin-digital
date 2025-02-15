@@ -4,7 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SsoProviderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-// TODO: postman cannot support put, patch if headers multipart/form-data, need to chnge when frontend were setup
+
 // Auth
 Route::prefix('auth')->group(function () {
   Route::post('register', [AuthController::class, 'register']);
@@ -20,7 +20,7 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
   // profile
   Route::get('/me', [AuthController::class, 'me']);
-  Route::match(['put', 'post'],'/me/update', [AuthController::class, 'update']);
+  Route::post('/me/update', [AuthController::class, 'update']);
   Route::put('/me/update-password', [AuthController::class, 'updatePassword']);
   Route::delete('/me', [AuthController::class, 'destroy']);
 });
