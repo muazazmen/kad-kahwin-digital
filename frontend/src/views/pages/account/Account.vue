@@ -3,7 +3,6 @@
     <!-- Left Spacer -->
     <div class="hidden lg:flex flex-1"></div>
 
-    <!-- TODO:testing form-data does it compatible using put/patch method, point is we dont want to use  post on update function Main Content -->
     <ConfirmDialog />
     <div class="flex flex-col w-full lg:w-2/4 gap-8">
       <h1 class="md:text-3xl font-semibold">Account Settings</h1>
