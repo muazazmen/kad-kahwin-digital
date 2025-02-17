@@ -41,7 +41,7 @@ const handleLogin = async () => {
 
         if (authStore.response.status === 200) {
             toast.add({ severity: 'success', summary: 'Success', detail: message, life: 3000 });
-            router.push({ name: 'dashboard' });
+            router.push({ name: 'landing' });
         } else {
             toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
         }

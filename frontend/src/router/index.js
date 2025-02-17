@@ -11,6 +11,11 @@ const router = createRouter({
             component: () => import('@/views/pages/Landing.vue')
         },
         {
+            path: '/profile',
+            name: 'profile',
+            component: () => import('@/views/pages/account/Account.vue')
+        },
+        {
             path: '/',
             component: AppLayout,
             meta: { auth: true, admin: true },
@@ -19,11 +24,6 @@ const router = createRouter({
                     path: '/dashboard',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')
-                },
-                {
-                    path: '/profile',
-                    name: 'profile',
-                    component: () => import('@/views/pages/account/Account.vue')
                 },
                 {
                     path: '/payment',
