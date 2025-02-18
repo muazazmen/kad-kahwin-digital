@@ -27,7 +27,7 @@ class SsoProviderController extends Controller
             if ($ssoProvider) {
                 Auth::login($ssoProvider->user);
                 $token = $ssoProvider->user->createToken($ssoProvider->user->email)->plainTextToken;
-                return redirect()->away(env('FRONTEND_URL') . "/dashboard?accessToken=" . $token);
+                return redirect()->away(env('FRONTEND_URL') . "?accessToken=" . $token);
             } else {
                 $user = User::create([
                     'first_name' => $googleUser->user['given_name'] ?? null, 
@@ -51,7 +51,7 @@ class SsoProviderController extends Controller
                 Auth::login($user);
 
                 // Redirect to Vue.js Dashboard with token in URL
-                return redirect()->away(env('FRONTEND_URL') . "/dashboard?accessToken=" . $token);
+                return redirect()->away(env('FRONTEND_URL') . "?accessToken=" . $token);
             }
         } catch (Exception $e) {
             dd($e->getMessage());

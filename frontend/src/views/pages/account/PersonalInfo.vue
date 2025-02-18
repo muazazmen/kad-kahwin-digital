@@ -40,7 +40,6 @@ const fetchUpdateAccount = async () => {
   try {
     const formData = new FormData();
 
-    // FIXME: phone no, username not working
     formData.append('first_name', authStore.user.first_name);
     formData.append('last_name', authStore.user.last_name || '');
     formData.append('username', authStore.user.username || '');

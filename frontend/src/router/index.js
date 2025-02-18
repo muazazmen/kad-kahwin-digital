@@ -26,6 +26,16 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
+                    path: '/order',
+                    name: 'order',
+                    component: () => import('@/views/pages/order/OrderTab.vue')
+                },
+                {
+                    path: '/design',
+                    name: 'design',
+                    component: () => import('@/views/pages/design/Design.vue')
+                },
+                {
                     path: '/payment',
                     name: 'payment',
                     component: () => import('@/views/pages/payment/PaymentTab.vue')
@@ -34,11 +44,6 @@ const router = createRouter({
                     path: '/configuration/general',
                     name: 'config-general',
                     component: () => import('@/views/pages/configuration/general/General.vue')
-                },
-                {
-                    path: '/design',
-                    name: 'design',
-                    component: () => import('@/views/pages/design/Design.vue')
                 },
                 {
                     path: '/configuration/style',

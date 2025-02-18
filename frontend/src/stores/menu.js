@@ -7,6 +7,9 @@ export const useMenuStore = defineStore('menu', () => {
             items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: { name: 'dashboard' } }]
         },
         {
+            items: [{ label: 'Order', icon: 'pi pi-fw pi-shopping-cart', to: { name: 'order' } }]
+        },
+        {
             items: [{ label: 'Design', icon: 'pi pi-fw pi-desktop', to: { name: 'design' } }]
         },
         {

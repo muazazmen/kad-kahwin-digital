@@ -22,6 +22,12 @@ const items = ref([
         },
     },
     {
+        label: 'Landing',
+        command: () => {
+            router.push({ name: 'landing' });
+        },
+    },
+    {
         label: 'Logout',
         command: async () => {
             try {
