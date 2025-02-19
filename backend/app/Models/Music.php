@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Music extends Model
 {
@@ -21,4 +22,15 @@ class Music extends Model
         'created_by',
         'updated_by',
     ];
+
+    public function getUrlAttribute($value)
+    {
+        if ($this->source === 'local') {
+            // Generate a public URL for locally stored files
+            return Storage::url($value);
+        }
+
+        // For YouTube or Spotify, return the URL as is
+        return $value;
+    }
 }

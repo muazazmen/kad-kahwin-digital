@@ -95,7 +95,7 @@ class AuthController extends Controller
             'last_name' => 'required|max:255',
             'username' => 'nullable|max:255',
             'phone_no' => 'nullable|max:255',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:3048',
         ]);
 
         // Check if a new avatar is being uploaded

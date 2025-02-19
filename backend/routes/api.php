@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MusicController;
 use App\Http\Controllers\SsoProviderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -31,4 +32,9 @@ Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function
   Route::apiResource('users', UserController::class);
   Route::post('users/{user}/update', [UserController::class, 'update']);
   Route::put('users/{user}/restore', [UserController::class, 'restore']);
+  
+  // musics
+  Route::apiResource('musics', MusicController::class);
+  Route::post('musics/{music}/update', [MusicController::class, 'update']);
+  Route::put('musics/{music}/restore', [MusicController::class, 'restore']);
 });

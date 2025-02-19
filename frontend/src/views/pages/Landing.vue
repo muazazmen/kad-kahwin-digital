@@ -63,7 +63,7 @@ function smoothScroll(id) {
     <div class="bg-surface-0 dark:bg-surface-900">
         <div id="home" class="landing-wrapper overflow-hidden">
             <!-- TODO: separate the header like admin page -->
-            <div class="py-6 px-6 mx-0 md:mx-32 lg:mx-52 lg:px-20 flex items-center justify-between relative lg:static">
+            <div class="py-6 px-6 mx-0 md:mx-12 lg:mx-20 lg:px-20 flex items-center justify-between relative lg:static">
                 <a class="flex items-center" href="#">
                     <img src="/demo/images/logo.png" alt="logo" class="w-30 h-30 pb-3 pr-10" />
                 </a>

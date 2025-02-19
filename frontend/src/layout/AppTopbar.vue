@@ -22,7 +22,7 @@ const items = ref([
         },
     },
     {
-        label: 'Landing',
+        label: 'Homepage',
         command: () => {
             router.push({ name: 'landing' });
         },
