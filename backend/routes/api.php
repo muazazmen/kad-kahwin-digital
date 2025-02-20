@@ -11,6 +11,10 @@ Route::prefix('auth')->group(function () {
   Route::post('register', [AuthController::class, 'register']);
   Route::post('login', [AuthController::class, 'login']);
   Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+  // reset password
+  Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+  Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
   
   // googleoAuth
   Route::get('google', [SsoProviderController::class, 'googleLogin']);
