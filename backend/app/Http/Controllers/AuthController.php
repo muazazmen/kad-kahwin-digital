@@ -116,7 +116,7 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => ['required', 'email'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            'password' => ['required', 'confirmed'],
         ]);
 
         $status = Password::reset(
@@ -132,9 +132,15 @@ class AuthController extends Controller
             }
         );
 
-        return $status === Password::PasswordReset
-            ? redirect()->away(env('FRONTEND_URL'))
-            : back()->withErrors(['email' => [__($status)]]);
+        if ($status === Password::PasswordReset) {
+            return response()->json([
+                'message' => 'Password has been successfully reset'
+            ], 200);
+        }
+
+        return response()->json([
+            'error' => __($status)
+        ], 422);
     }
 
     public function update(Request $request)
@@ -201,6 +207,4 @@ class AuthController extends Controller
             'message' => 'User deleted successfully'
         ]);
     }
-
-    // TODO: forgot, reset password
 }
