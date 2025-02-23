@@ -99,7 +99,8 @@ router.beforeEach(async (to, from, next) => {
     if (authStore.user) {
         // Prevent "user" role from accessing admin routes
         if (authStore.user.role === 'user' && to.meta.admin) {
-            return { name: 'accessDenied' }; // Redirect to access denied page
+            next({ name: 'accessDenied' }); // Redirect to access denied page
+            return
         }
 
         // Prevent logged-in users from accessing guest routes
@@ -109,12 +110,14 @@ router.beforeEach(async (to, from, next) => {
     } else {
         // If the user is not logged in and tries to access an admin route, redirect to login
         if (to.meta.admin) {
-            return { name: 'login' };
+            next({ name: 'login' });
+            return
         }
 
         // If the user is not logged in and tries to access a authenticated route, redirect to login
         if (to.meta.auth) {
-            return { name: 'login' };
+            next({ name: 'login' });
+            return;
         }
     }
 
