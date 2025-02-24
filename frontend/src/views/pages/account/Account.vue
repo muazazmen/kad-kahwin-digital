@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col p-4 items-center">
+  <div class="flex flex-col items-center">
     <!-- Left Spacer -->
     <div class="hidden lg:flex flex-1"></div>
 
@@ -58,24 +58,23 @@
       </Card> -->
 
       <!-- Divider -->
-      <div class="flex items-center">
+      <!-- <div class="flex items-center">
         <div class="border-t flex-1 border-red-400"></div>
         <span class="px-4 font-medium text-red-400 whitespace-nowrap">Danger Zone</span>
         <div class="border-t flex-1 border-red-400"></div>
-      </div>
+      </div> -->
 
       <!-- Danger Zone -->
 
-      <div class="flex flex-col">
+      <!-- <div class="flex flex-col">
         <Card>
           <template #title>
             Account Deletion
           </template>
           <template #content>
-            <!-- <AccountDeletion /> -->
           </template>
         </Card>
-      </div>
+      </div> -->
     </div>
 
 

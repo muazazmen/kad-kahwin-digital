@@ -1,4 +1,5 @@
 import AppLayout from '@/layout/AppLayout.vue';
+import Layout from '@/layout/Layout.vue';
 import { useAuthStore } from '@/stores/auth';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -11,9 +12,15 @@ const router = createRouter({
             component: () => import('@/views/pages/Landing.vue')
         },
         {
-            path: '/profile',
-            name: 'profile',
-            component: () => import('@/views/pages/account/Account.vue')
+            path: '/',
+            component: Layout,
+            children: [
+                {
+                    path: '/profile',
+                    name: 'profile',
+                    component: () => import('@/views/pages/account/Account.vue')
+                }
+            ]
         },
         {
             path: '/',
