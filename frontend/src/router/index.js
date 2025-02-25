@@ -19,7 +19,12 @@ const router = createRouter({
                     path: '/profile',
                     name: 'profile',
                     component: () => import('@/views/pages/account/Account.vue')
-                }
+                },
+                {
+                    path: '/guest',
+                    name: 'guest',
+                    component: () => import('@/views/pages/account/Account.vue')
+                },
             ]
         },
         {
