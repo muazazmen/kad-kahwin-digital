@@ -6,15 +6,20 @@ import { createRouter, createWebHistory } from 'vue-router';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {
-            path: '/',
-            name: 'landing',
-            component: () => import('@/views/pages/Landing.vue')
-        },
+        // {
+        //     path: '/',
+        //     name: 'landing',
+        //     component: () => import('@/views/pages/Landing.vue')
+        // },
         {
             path: '/',
             component: Layout,
             children: [
+                {
+                    path: '/',
+                    name: 'landing',
+                    component: () => import('@/views/pages/Landing.vue')
+                },
                 {
                     path: '/profile',
                     name: 'profile',

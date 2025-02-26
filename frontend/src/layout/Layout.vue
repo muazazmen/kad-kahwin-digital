@@ -2,9 +2,9 @@
 import { useLayout } from '@/layout/composables/layout';
 import { computed, ref, watch } from 'vue';
 import Topbar from './Topbar.vue';
-import AppFooter from './AppFooter.vue';
 import { useMenuStore } from '@/stores/menu';
 import { useRoute } from 'vue-router';
+import Footer from './Footer.vue';
 
 const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
 const menuStore = useMenuStore();
@@ -60,7 +60,7 @@ function isOutsideClicked(event) {
 <template>
     <div class="layout-wrapper" :class="containerClass">
         <Topbar />
-        <div class="layout-home-main-container">
+        <div class="layout-home-main-container"  :class="{ 'homepage-layout': route.name === 'landing' }">
             <div class="layout-home-main">
                 <!-- <Breadcrumb :home="home" :model="breadcrumbs">
                         <template #item="{ item }">
@@ -80,7 +80,7 @@ function isOutsideClicked(event) {
                     </Breadcrumb> -->
                 <router-view></router-view>
             </div>
-            <app-footer></app-footer>
+            <Footer />
         </div>
         <div class="layout-mask animate-fadein"></div>
     </div>

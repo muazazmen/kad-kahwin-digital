@@ -3,10 +3,12 @@ import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'primevue';
 import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 const authStore = useAuthStore();
 
-const toast = useToast()
+const route = useRoute();
+const toast = useToast();
 
 const message = computed(() => authStore.message);
 
@@ -17,7 +19,7 @@ const items = computed(() => {
             label: 'Profile',
             command: () => {
                 router.push({ name: 'profile' });
-            },
+            }
         },
         {
             label: 'Logout',
@@ -30,8 +32,8 @@ const items = computed(() => {
                     toast.add({ severity: 'success', summary: 'Success', detail: message.value, life: 3000 });
                     router.push({ name: 'landing' });
                 }
-            },
-        },
+            }
+        }
     ];
 
     // Add Admin menu item if the user is an admin
@@ -40,7 +42,7 @@ const items = computed(() => {
             label: 'Admin',
             command: () => {
                 router.push({ name: 'dashboard' });
-            },
+            }
         });
     }
 
@@ -78,9 +80,9 @@ function smoothScroll(id) {
                 <div class="items-center bg-surface-0 dark:bg-surface-900 grow justify-between hidden lg:flex absolute lg:static w-full left-0 top-full px-12 lg:px-0 z-20 rounded-border">
                     <ul class="list-none p-0 m-0 flex lg:items-center select-none flex-col lg:flex-row cursor-pointer gap-8 ml-auto mr-12">
                         <li>
-                            <a @click="smoothScroll('#hero')" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
+                            <router-link :to="{ name: 'landing' }" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
                                 <span>UTAMA</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li>
                             <a @click="smoothScroll('#features')" class="px-0 py-4 text-surface-900 dark:text-surface-0 font-medium text-xl">
@@ -114,12 +116,10 @@ function smoothScroll(id) {
             </div>
 
             <!-- TODO: add breadcrumb -->
-            <div
-                id="hero"
-                class="flex flex-col overflow-hidden"
-            >
+            <!-- Hero Section: Hidden if route is 'landing' -->
+            <div v-if="route.name !== 'landing'" id="hero" class="flex flex-col overflow-hidden">
                 <div class="flex justify-center md:justify-end">
-                    <img src="/demo/images/landing/bg-img-breadcrumb.jpg" alt="Hero Image" class="w-full" style="height: 250px; background-position: center; object-fit: cover;" />
+                    <img src="/demo/images/landing/bg-img-breadcrumb.jpg" alt="Hero Image" class="w-full" style="height: 250px; background-position: center; object-fit: cover" />
                 </div>
             </div>
         </div>
