@@ -29,12 +29,13 @@ const now = new Date().getFullYear();
                         </svg>
                         <h4 class="font-medium text-3xl text-surface-900 dark:text-surface-0">{{ appName }}</h4>
                     </a>
+                    <p class="mt-4">Resepsi merupakan platform inovatif untuk menghasilkan acara kad secara digital yang menarik dan elegan.</p>
                 </div>
     
                 <div class="col-span-12 md:col-span-10">
                     <div class="grid grid-cols-12 gap-8 text-center md:text-left">
                         <div class="col-span-12 md:col-span-3">
-                            <h4 class="font-medium text-2xl leading-normal mb-4 text-surface-900 dark:text-surface-0">Company</h4>
+                            <h4 class="font-medium text-2xl leading-normal mb-4 text-surface-900 dark:text-surface-0">Hubungi Kami</h4>
                             <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">About Us</a>
                             <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">News</a>
                             <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">Investor Relations</a>
