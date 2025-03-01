@@ -81,6 +81,7 @@ function isOutsideClicked(event) {
                 <router-view></router-view>
             </div>
             <Footer />
+            <!-- TODO: tambah button direct whatsapp -->
         </div>
         <div class="layout-mask animate-fadein"></div>
     </div>
