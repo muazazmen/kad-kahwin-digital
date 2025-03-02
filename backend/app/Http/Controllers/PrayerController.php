@@ -13,9 +13,11 @@ class PrayerController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $prayer = Prayer::withTrashed()->paginate();
 
+        return $prayer;
+    }
+// TODO: implement prayer module
     /**
      * Store a newly created resource in storage.
      */

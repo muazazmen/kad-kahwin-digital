@@ -62,8 +62,6 @@ function smoothScroll(id) {
 <template>
     <div class="bg-surface-0 dark:bg-surface-900">
         <div id="home" class="landing-wrapper overflow-hidden">
-            <!-- TODO: separate the header like admin page -->
-
             <div
                 id="hero"
                 class="flex flex-col pt-6 px-6 lg:px-20 overflow-hidden"

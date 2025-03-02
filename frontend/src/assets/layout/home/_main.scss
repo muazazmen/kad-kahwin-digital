@@ -9,9 +9,14 @@
 
 .layout-home-main {
     flex: 1 1 auto;
-    margin-bottom: 5rem;
+}   
+
+// untuk logged in user
+.homepage-layout-container {
+    padding: 0 !important;
 }
 
+// untuk logged in user
 .homepage-layout {
-    padding: 0 !important;
+    margin-bottom: 5rem;
 }

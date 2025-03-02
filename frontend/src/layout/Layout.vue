@@ -55,13 +55,17 @@ function isOutsideClicked(event) {
 
     return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
 }
+
+function whatsapp() {
+    window.open('https://api.whatsapp.com/send/?phone=601113132848&text=Hai, saya berminat untuk menggunakan perkhidmatan Resepsi', '_blank');
+}
 </script>
 
 <template>
     <div class="layout-wrapper" :class="containerClass">
         <Topbar />
-        <div class="layout-home-main-container"  :class="{ 'homepage-layout': route.name === 'landing' }">
-            <div class="layout-home-main">
+        <div class="layout-home-main-container"  :class="{ 'homepage-layout-container': route.name === 'landing' }">
+            <div class="layout-home-main" :class="{ 'homepage-layout': route.name !== 'landing' }">
                 <!-- <Breadcrumb :home="home" :model="breadcrumbs">
                         <template #item="{ item }">
                             <router-link 
@@ -81,8 +85,10 @@ function isOutsideClicked(event) {
                 <router-view></router-view>
             </div>
             <Footer />
-            <!-- TODO: tambah button direct whatsapp -->
         </div>
         <div class="layout-mask animate-fadein"></div>
+        <div class="fixed bottom-5 left-5 z-50">
+            <Button @click="whatsapp" label="Borak dengan kami" icon="pi pi-whatsapp" severity="success" rounded />
+        </div>
     </div>
 </template>

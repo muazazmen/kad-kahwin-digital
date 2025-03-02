@@ -40,7 +40,7 @@ const now = new Date().getFullYear();
                                 <div class="flex flex-col gap-4">
                                     <span class="text-xl"><i class="pi pi-map-marker mr-4"></i>Selangor, Malaysia</span>
                                     <span class="text-xl"><i class="pi pi-envelope mr-4"></i>resepsiofficial@gmail.com</span>
-                                    <span class="text-xl"><i class="pi pi-whatsapp mr-4"></i>+6016 6141 875</span>
+                                    <span class="text-xl"><i class="pi pi-whatsapp mr-4"></i>+6011 1313 2848</span>
                                 </div>
                             </div>
 
