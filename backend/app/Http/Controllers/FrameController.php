@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Frame;
-use App\Http\Requests\StoreFrameRequest;
-use App\Http\Requests\UpdateFrameRequest;
+use Illuminate\Http\Request;
 
 class FrameController extends Controller
 {
@@ -13,13 +12,15 @@ class FrameController extends Controller
      */
     public function index()
     {
-        //
+        $frames = Frame::withTrashed()->paginate();
+
+        return $frames;
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFrameRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -35,7 +36,7 @@ class FrameController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFrameRequest $request, Frame $frame)
+    public function update(Request $request, Frame $frame)
     {
         //
     }

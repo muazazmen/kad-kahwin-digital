@@ -6,7 +6,6 @@ use App\Models\Music;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Log;
 
 class MusicController extends Controller
 {
@@ -43,7 +42,10 @@ class MusicController extends Controller
 
         $music = Music::create($fields);
 
-        return $music;
+        return response([
+            'message' => 'Music added successfully',
+            'music' => $music,
+        ], 201);
     }
 
     /**
@@ -68,7 +70,7 @@ class MusicController extends Controller
             'url' => 'nullable|file|mimes:mp3,wav,ogg,flac,aac|max:10240',
         ]);
 
-        $fields['created_by'] = Auth::user()->id;
+        $fields['updated_by'] = Auth::user()->id;
 
         // Check if a new url is being uploaded
         if ($request->hasFile('url')) {
@@ -83,7 +85,10 @@ class MusicController extends Controller
 
         $music->update($fields);
 
-        return $music;
+        return response([
+            'message' => 'Music updated successfully',
+            'music' => $music,
+        ]);
     }
 
     /**

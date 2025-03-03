@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Prayer;
-use App\Http\Requests\StorePrayerRequest;
-use App\Http\Requests\UpdatePrayerRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PrayerController extends Controller
 {
@@ -17,13 +17,25 @@ class PrayerController extends Controller
 
         return $prayer;
     }
-// TODO: implement prayer module
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePrayerRequest $request)
+    public function store(Request $request)
     {
-        //
+        $fields = $request->validate([
+            'title' => 'required|max:255',
+            'prayer' => 'required',
+        ]);
+
+        $fields['created_by'] = Auth::user()->id;
+
+        $prayer = Prayer::create($fields);
+
+        return response([
+            'message' => 'Prayer added successfully',
+            'prayer' => $prayer,
+        ], 201);
     }
 
     /**
@@ -31,15 +43,27 @@ class PrayerController extends Controller
      */
     public function show(Prayer $prayer)
     {
-        //
+        return $prayer;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePrayerRequest $request, Prayer $prayer)
+    public function update(Request $request, Prayer $prayer)
     {
-        //
+        $fields = $request->validate([
+            'title' => 'required|max:255',
+            'prayer' => 'required',
+        ]);
+
+        $fields['updated_by'] = Auth::user()->id;
+
+        $prayer->update($fields);
+
+        return response([
+            'message' => 'Prayer updated successfully',
+            'prayer' => $prayer,
+        ]);
     }
 
     /**
@@ -47,6 +71,19 @@ class PrayerController extends Controller
      */
     public function destroy(Prayer $prayer)
     {
-        //
+        $prayer->delete();
+
+        return response([
+            'message' => 'Prayer deleted successfully',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        Prayer::withTrashed()->find($id)->restore();
+
+        return response([
+            'message' => 'Prayer restored successfully',
+        ]);
     }
 }

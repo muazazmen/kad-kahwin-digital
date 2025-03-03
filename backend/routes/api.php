@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MusicController;
+use App\Http\Controllers\PrayerController;
 use App\Http\Controllers\SsoProviderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -31,14 +32,18 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 /************************************** ADMIN **********************************/
-// users
 Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function () {
+  // users
   Route::apiResource('users', UserController::class);
-  Route::post('users/{user}/update', [UserController::class, 'update']);
+  Route::post('users/{user}/update', [UserController::class, 'update']); // method post because of file upload
   Route::put('users/{user}/restore', [UserController::class, 'restore']);
+
+  // prayers
+  Route::apiResource('prayers', PrayerController::class);
+  Route::put('prayers/{prayer}/restore', [PrayerController::class, 'restore']);
   
   // musics
   Route::apiResource('musics', MusicController::class);
-  Route::post('musics/{music}/update', [MusicController::class, 'update']);
+  Route::post('musics/{music}/update', [MusicController::class, 'update']); // method post because of file upload
   Route::put('musics/{music}/restore', [MusicController::class, 'restore']);
 });

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('total_adults')->default(0);
             $table->integer('total_kids')->default(0);
             $table->string('timeslot')->nullable();
+            $table->string('praise')->nullable();
             $table->foreignId('event_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
