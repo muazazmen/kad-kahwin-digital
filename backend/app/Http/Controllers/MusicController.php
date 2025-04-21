@@ -14,7 +14,7 @@ class MusicController extends Controller
      */
     public function index()
     {
-        $music = Music::withTrashed()->paginate();
+        $music = Music::withTrashed()->paginate(10);
 
         return $music;
     }
@@ -74,13 +74,27 @@ class MusicController extends Controller
 
         // Check if a new url is being uploaded
         if ($request->hasFile('url')) {
-            // Delete the previous url if it exists
+            // Get the original filename without extension
+            $originalFilename = pathinfo($music->url, PATHINFO_FILENAME);
+
+            // Delete the previous music if it exists
             if ($music->url && Storage::disk('public')->exists($music->url)) {
                 Storage::disk('public')->delete($music->url);
             }
 
-            // Store the new url
-            $fields['url'] = $request->file('url')->store('musics', 'public');
+            // Store the new music with the original filename
+            $newFile = $request->file('url');
+            $extension = $newFile->getClientOriginalExtension();
+            $filename = "{$originalFilename}.{$extension}";
+
+            // Store with original filename in the same directory
+            $path = $newFile->storeAs(
+                pathinfo($music->url, PATHINFO_DIRNAME),
+                $filename,
+                'public'
+            );
+
+            $fields['url'] = $path;
         }
 
         $music->update($fields);

@@ -12,7 +12,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::withTrashed()->paginate();
+        $users = User::withTrashed()->paginate(10);
 
         return $users;
     }

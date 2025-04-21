@@ -106,7 +106,7 @@ const toggle = (event) => {
                 </button>
                 <button type="button" class="layout-topbar-action" aria-haspopup="true" aria-controls="overlay_menu" @click="toggle" v-tooltip.left="`${authStore.user?.first_name}`">
                     <i v-if="!authStore.user?.avatar" class="pi pi-spinner pi-spin"></i>
-                    <img v-else :src="authStore.user?.avatar" class="object-cover rounded-full" />
+                    <img v-else :src="authStore.user?.avatar" style="width: 2rem; height: 2rem;" />
                 </button>
                 <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
             </div>

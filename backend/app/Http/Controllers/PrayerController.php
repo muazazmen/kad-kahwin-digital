@@ -13,7 +13,7 @@ class PrayerController extends Controller
      */
     public function index()
     {
-        $prayer = Prayer::withTrashed()->paginate();
+        $prayer = Prayer::withTrashed()->paginate(10);
 
         return $prayer;
     }

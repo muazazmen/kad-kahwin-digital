@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FrameController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\PrayerController;
 use App\Http\Controllers\SsoProviderController;
@@ -46,4 +47,9 @@ Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function
   Route::apiResource('musics', MusicController::class);
   Route::post('musics/{music}/update', [MusicController::class, 'update']); // method post because of file upload
   Route::put('musics/{music}/restore', [MusicController::class, 'restore']);
+
+  // frames
+  Route::apiResource('frames', FrameController::class);
+  Route::post('frames/{frame}/update', [FrameController::class, 'update']); // method post because of file upload
+  Route::put('frames/{frame}/restore', [FrameController::class, 'restore']);
 });
