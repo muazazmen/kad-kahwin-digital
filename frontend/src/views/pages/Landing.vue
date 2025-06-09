@@ -11,45 +11,6 @@ const toast = useToast()
 const message = computed(() => authStore.message);
 
 const menu = ref();
-const items = computed(() => {
-    const baseItems = [
-        {
-            label: 'Profile',
-            command: () => {
-                router.push({ name: 'profile' });
-            },
-        },
-        {
-            label: 'Logout',
-            command: async () => {
-                try {
-                    await authStore.logout();
-                } catch (error) {
-                    console.error('An unexpected error occurred:', error);
-                } finally {
-                    toast.add({ severity: 'success', summary: 'Success', detail: message.value, life: 3000 });
-                    router.push({ name: 'landing' });
-                }
-            },
-        },
-    ];
-
-    // Add Admin menu item if the user is an admin
-    if (authStore.user?.role === 'admin') {
-        baseItems.splice(1, 0, {
-            label: 'Admin',
-            command: () => {
-                router.push({ name: 'dashboard' });
-            },
-        });
-    }
-
-    return baseItems;
-});
-
-const toggle = (event) => {
-    menu.value.toggle(event);
-};
 
 function smoothScroll(id) {
     document.body.click();

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class SuperAdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,11 +15,8 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $userRole = $request->user()->role;
-
-        // Allow both 'admin' and 'super admin'
-        if ($userRole !== 'admin' && $userRole !== 'super admin') {
-            return response()->json(['message' => 'Access denied: Admin or Super Admin required'], 403);
+        if ($request->user()->role !== 'super admin') {
+            return response()->json(['message' => 'You do not have permission to access this route'], 403);
         }
 
         return $next($request);

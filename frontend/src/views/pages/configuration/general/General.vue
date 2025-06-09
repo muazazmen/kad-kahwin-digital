@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { getUsers } from "@/service/GeneralService";
+import { onMounted, ref } from "vue";
 
 const tabs = [
   { name: "User", content: "This is the content of User" },
@@ -13,6 +14,15 @@ const activeTab = ref(0);
 const selectTab = (index) => {
   activeTab.value = index;
 };
+
+const fetchUsers = async () => {
+    const res = await getUsers();
+    console.log('sini', res);
+};
+
+onMounted(() => {
+    fetchUsers();
+});
 </script>
 
 <template>

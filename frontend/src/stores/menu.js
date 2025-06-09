@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useAuthStore } from './auth';
 
 export const useMenuStore = defineStore('menu', () => {
-    const model = ref([
+    const authStore = useAuthStore();
+
+    const models = ref([
         {
             items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: { name: 'dashboard' } }]
         },
@@ -13,7 +16,7 @@ export const useMenuStore = defineStore('menu', () => {
             items: [{ label: 'Design', icon: 'pi pi-fw pi-desktop', to: { name: 'design' } }]
         },
         {
-            items: [{ label: 'Payment', icon: 'pi pi-fw pi-wallet', to: { name: 'payment' } }]
+            items: [{ label: 'Payment', icon: 'pi pi-fw pi-wallet', to: { name: 'payment' }, meta: { superAdmin: true } }]
         },
         {
             items: [
@@ -29,7 +32,8 @@ export const useMenuStore = defineStore('menu', () => {
                         {
                             label: 'Style',
                             icon: 'pi pi-fw pi-wrench',
-                            to: { name: 'config-style' }
+                            to: { name: 'config-style' },
+                            meta: { superAdmin: true }
                         }
                     ]
                 }
@@ -61,6 +65,33 @@ export const useMenuStore = defineStore('menu', () => {
         //     ]
         // },
     ]);
+
+    // Computed property that filters menu based on user role
+    const model = computed(() => {
+        if (!authStore.user) return [];
+
+        return models.value
+            .map((section) => {
+                // Filter items in each section
+                const filteredItems = section.items.filter((item) => {
+                    // If the item has sub-items, filter them first
+                    if (item.items) {
+                        item.items = item.items.filter((subItem) => {
+                            return !subItem.meta?.superAdmin || authStore.user.role === 'super admin';
+                        });
+                        // Only keep the parent item if it has sub-items remaining
+                        return item.items.length > 0;
+                    }
+
+                    // For regular items, check if they're accessible
+                    return !item.meta?.superAdmin || authStore.user.role === 'super admin';
+                });
+
+                // Only return sections that still have items
+                return { ...section, items: filteredItems };
+            })
+            .filter((section) => section.items.length > 0);
+    });
 
     return { model };
 });

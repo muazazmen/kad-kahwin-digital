@@ -55,7 +55,8 @@ const router = createRouter({
                 {
                     path: '/payment',
                     name: 'payment',
-                    component: () => import('@/views/pages/payment/PaymentTab.vue')
+                    component: () => import('@/views/pages/payment/PaymentTab.vue'),
+                    meta: { superAdmin: true }
                 },
                 {
                     path: '/configuration/general',
@@ -66,7 +67,7 @@ const router = createRouter({
                     path: '/configuration/style',
                     name: 'config-style',
                     component: () => import('@/views/pages/configuration/style/Style.vue'),
-                    meta: { auth: true, admin: true }
+                    meta: { auth: true, superAdmin: true }
                 }
             ]
         },
@@ -115,9 +116,14 @@ router.beforeEach(async (to, from, next) => {
 
     if (authStore.user) {
         // Prevent "user" role from accessing admin routes
-        if (authStore.user.role === 'user' && to.meta.admin) {
+        if (authStore.user.role === 'user' && to.meta.admin && to.meta.superAdmin) {
             next({ name: 'accessDenied' }); // Redirect to access denied page
             return
+        }
+
+        if (authStore.user.role === 'admin' && to.meta.superAdmin) {
+            next({ name: 'accessDenied' }); // Redirect to access denied page
+            return;
         }
 
         // Prevent logged-in users from accessing guest routes
@@ -126,7 +132,7 @@ router.beforeEach(async (to, from, next) => {
         // }
     } else {
         // If the user is not logged in and tries to access an admin route, redirect to login
-        if (to.meta.admin) {
+        if (to.meta.admin || to.meta.superAdmin) {
             next({ name: 'login' });
             return
         }
