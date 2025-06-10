@@ -37,7 +37,7 @@ const items = computed(() => {
     ];
 
     // Add Admin menu item if the user is an admin
-    if (authStore.user?.role === 'admin' || authStore.user?.role === 'super admin') {
+    if (authStore.user?.role === 'admin' || authStore.user?.role === 'super_admin') {
         baseItems.splice(1, 0, {
             label: 'Admin',
             command: () => {

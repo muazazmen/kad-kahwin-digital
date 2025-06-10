@@ -77,14 +77,14 @@ export const useMenuStore = defineStore('menu', () => {
                     // If the item has sub-items, filter them first
                     if (item.items) {
                         item.items = item.items.filter((subItem) => {
-                            return !subItem.meta?.superAdmin || authStore.user.role === 'super admin';
+                            return !subItem.meta?.superAdmin || authStore.user.role === 'super_admin';
                         });
                         // Only keep the parent item if it has sub-items remaining
                         return item.items.length > 0;
                     }
 
                     // For regular items, check if they're accessible
-                    return !item.meta?.superAdmin || authStore.user.role === 'super admin';
+                    return !item.meta?.superAdmin || authStore.user.role === 'super_admin';
                 });
 
                 // Only return sections that still have items

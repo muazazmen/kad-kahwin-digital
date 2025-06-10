@@ -26,8 +26,11 @@ class UserController extends Controller
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
             'email' => 'required|email|unique:users',
+            'username' => 'nullable|unique:users|max:255',
             'password' => 'required|confirmed',
-            'role' => 'nullable|in:admin,user',
+            'phone_no' => 'nullable|regex:/^(\+60|0)1[0-9]{1}-?\d{7,8}$/',
+            'role' => 'nullable|in:admin,user,super_admin',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         // Generate the avatar URL
@@ -61,7 +64,7 @@ class UserController extends Controller
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
             'password' => 'nullable',
-            'role' => 'nullable|in:admin,user',
+            'role' => 'nullable|in:admin,user,super_admin',
         ]);
 
         if ($request->hasFile('avatar')) {

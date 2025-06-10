@@ -3,7 +3,7 @@ import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 import { Form } from '@primevue/forms';
 import { useToast } from 'primevue';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 
 const authStore = useAuthStore();
 
@@ -62,6 +62,7 @@ const handleLogin = async () => {
                     </div>
                     <!-- <Toast position="top-center" /> -->
 
+                    <!-- FIXME: need to remove Form component change to normal form tag -->
                     <Form v-slot="$form" :initialValues="loginForm" :resolver @submit="handleLogin">
                         <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium">Email</label>
                         <InputText v-model="loginForm.email" name="email" id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem]" />

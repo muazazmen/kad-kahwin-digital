@@ -10,6 +10,7 @@ export const apiService = async (url, method = METHOD.GET, body = null, headers 
     const options = {
         method,
         headers: {
+            'Content-Type': 'application/json', // FIXME: check if this need to configure if multipart/form-data
             ...defaultHeaders, // Preserve default headers
             ...headers // Merge additional headers
         }
@@ -31,26 +32,6 @@ export const apiService = async (url, method = METHOD.GET, body = null, headers 
 
     try {
         const response = await fetch(url, options);
-
-        // If unauthorized and we haven't retried yet
-        // if (response.status === 401 && retryCount < 2) {
-        //     try {
-        //         // Attempt to refresh the token
-        //         const refreshResponse = await refreshToken();
-
-        //         if (refreshResponse && refreshResponse.data.resData.accessToken) {
-        //             // Update the access token
-        //             localStorage.setItem('accessToken', refreshResponse.data.resData.accessToken);
-
-        //             // Retry the original request with the new token
-        //             return await apiService(url, method, body, headers, params, retryCount + 1);
-        //         }
-        //     } catch (error) {
-        //         // If refresh fails, logout the user
-        //         // await logout();
-        //         return Promise.reject('Session expired. Please log in again.');
-        //     }
-        // }
 
         return response;
     } catch (error) {

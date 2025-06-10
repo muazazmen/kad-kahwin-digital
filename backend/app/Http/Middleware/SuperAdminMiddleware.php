@@ -15,7 +15,7 @@ class SuperAdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->role !== 'super admin') {
+        if ($request->user()->role !== 'super_admin') {
             return response()->json(['message' => 'You do not have permission to access this route'], 403);
         }
 

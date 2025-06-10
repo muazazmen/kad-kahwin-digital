@@ -29,7 +29,7 @@ const router = createRouter({
                     path: '/guest',
                     name: 'guest',
                     component: () => import('@/views/pages/account/Account.vue')
-                },
+                }
             ]
         },
         {
@@ -61,7 +61,20 @@ const router = createRouter({
                 {
                     path: '/configuration/general',
                     name: 'config-general',
-                    component: () => import('@/views/pages/configuration/general/General.vue')
+                    component: () => import('@/views/pages/configuration/general/General.vue'),
+                    redirect: { name: 'user-list' },
+                    children: [
+                        {
+                            path: 'user',
+                            name: 'user-list',
+                            component: () => import('@/views/pages/configuration/general/user/IndexUser.vue'),
+                        },
+                        {
+                            path: 'user/create',
+                            name: 'config-general-user-create',
+                            component: () => import('@/views/pages/configuration/general/user/CreateUser.vue')
+                        }
+                    ]
                 },
                 {
                     path: '/configuration/style',

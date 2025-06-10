@@ -18,7 +18,7 @@ class AdminMiddleware
         $userRole = $request->user()->role;
 
         // Allow both 'admin' and 'super admin'
-        if ($userRole !== 'admin' && $userRole !== 'super admin') {
+        if ($userRole !== 'admin' && $userRole !== 'super_admin') {
             return response()->json(['message' => 'Access denied: Admin or Super Admin required'], 403);
         }
 

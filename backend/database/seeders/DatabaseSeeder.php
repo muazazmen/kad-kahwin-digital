@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
                 'username' => 'muazazmen',
                 'phone_no' => '166141875',
                 'avatar' => 'https://avatar.iran.liara.run/username?username=Muaz+Azmen',
-                'role' => 'super admin',
+                'role' => 'super_admin',
             ]);
         }
     }
