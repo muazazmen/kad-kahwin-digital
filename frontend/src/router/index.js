@@ -40,7 +40,7 @@ const router = createRouter({
                 {
                     path: '/dashboard',
                     name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue')
+                    component: () => import('@/views/Dashboard.vue'),
                 },
                 {
                     path: '/order',
@@ -103,6 +103,11 @@ const router = createRouter({
             meta: { guest: true }
         },
         {
+            path: '/auth/google/redirect',
+            name: 'google-redirect',
+            component: () => import('@/views/pages/auth/GoogleRedirect.vue'),
+        },
+        {
             path: '/auth/access',
             name: 'accessDenied',
             component: () => import('@/views/pages/auth/Access.vue')
@@ -128,21 +133,28 @@ router.beforeEach(async (to, from, next) => {
     await authStore.fetchUser();
 
     if (authStore.user) {
-        // Prevent "user" role from accessing admin routes
-        if (authStore.user.role === 'user' && to.meta.admin && to.meta.superAdmin) {
-            next({ name: 'accessDenied' }); // Redirect to access denied page
-            return
+        // Check super admin routes first
+        if (to.meta.superAdmin) {
+            if (authStore.user.role === 'super_admin') {
+                return next();
+            } else {
+                return next({ name: 'accessDenied' });
+            }
         }
 
-        if (authStore.user.role === 'admin' && to.meta.superAdmin) {
-            next({ name: 'accessDenied' }); // Redirect to access denied page
-            return;
+        // Then check admin routes
+        if (to.meta.admin) {
+            if (authStore.user.role === 'super_admin' || authStore.user.role === 'admin') {
+                return next();
+            } else {
+                return next({ name: 'accessDenied' });
+            }
         }
 
         // Prevent logged-in users from accessing guest routes
-        // if (authStore.user && to.meta.guest) {
-        //     return { name: 'landing' }; // Redirect logged-in users to dashboard
-        // }
+        if (to.meta.guest) {
+            return next({ name: 'landing' });
+        }
     } else {
         // If the user is not logged in and tries to access an admin route, redirect to login
         if (to.meta.admin || to.meta.superAdmin) {

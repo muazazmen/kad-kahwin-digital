@@ -1,8 +1,9 @@
 <script setup>
 import router from '@/router';
+import { googleRegister } from '@/service/AuthService';
 import { useAuthStore } from '@/stores/auth';
-import { Form } from '@primevue/forms';
 import { useToast } from 'primevue';
+import { ref } from 'vue';
 import { computed } from 'vue';
 import { reactive } from 'vue';
 
@@ -11,89 +12,105 @@ const authStore = useAuthStore();
 const toast = useToast();
 
 const message = computed(() => authStore.message);
+const loading = ref(false);
 
 const registerForm = reactive({
     first_name: '',
     last_name: '',
     email: '',
     password: '',
-    password_confirmation: '',
+    password_confirmation: ''
 });
 
-const resolver = ({ values }) => {
-    const errors = {};
+function signUpWithGoogle() {
+    googleRegister();
+}
 
-    if (!values.first_name) {
-        // TODO: error message should take from backend,
-        // currently not working with Form primevue v4.2.5
-        errors.first_name = [{ message: 'First name is required' }];
-    }
-
-    return {
-        errors
-    };
-};
-
-const handleRegister = async () => {
+const submitRegisterForm = async () => {
+    // Clear previous errors
+    Object.keys(authStore.errors).forEach((key) => delete authStore.errors[key]);
+    loading.value = true;
     try {
         // Call the authenticate method in the authStore
         await authStore.authenticate('register', registerForm);
 
         if (authStore.response.status >= 200 && authStore.response.status < 300) {
             toast.add({ severity: 'success', summary: 'Success', detail: message, life: 3000 });
-            router.push({ name: 'dashboard' });
+            router.push({ name: 'landing' });
         } else {
             toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
         }
     } catch (error) {
         console.error('An unexpected error occurred:', error);
+        router.push({ name: 'error' });
+    } finally {
+        loading.value = false;
     }
 };
 </script>
 
 <template>
-    <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
-        <div class="flex flex-col items-center justify-center">
-            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
-                <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20" style="border-radius: 53px">
-                    <div class="text-center mb-8">
-                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to Resepsi!</div>
-                        <span class="text-muted-color font-medium">Register a new account</span>
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="card">
+            <div class="text-center mb-8">
+                <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to Resepsi!</div>
+                <span class="text-muted-color font-medium">Register a new account</span>
+            </div>
+
+            <div class="w-full md:w-[30rem]">
+                <!-- Social sign up -->
+                <div class="mb-4">
+                    <Button @click="signUpWithGoogle" icon="pi pi-google" label="Sign up with Google" class="w-full" severity="secondary"></Button>
+                </div>
+
+                <!-- Divider with "or" text -->
+                <div class="flex items-center my-6">
+                    <div class="flex-1 border-t border-surface-200 dark:border-surface-700"></div>
+                    <span class="px-4 text-muted-color">or</span>
+                    <div class="flex-1 border-t border-surface-200 dark:border-surface-700"></div>
+                </div>
+
+                <form @submit.prevent="submitRegisterForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                        <div>
+                            <label for="firstName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium">First Name</label>
+                            <InputText name="first_name" id="firstName" type="text" placeholder="Muaz" fluid v-model="registerForm.first_name" :invalid="authStore.errors.first_name" />
+                            <small v-if="authStore.errors.first_name" class="text-red-500">{{ authStore.errors.first_name[0] }}</small>
+                        </div>
+                        <div>
+                            <label for="lastName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium">Last Name</label>
+                            <InputText id="lastName" type="text" placeholder="Rahman" fluid v-model="registerForm.last_name" :invalid="authStore.errors.last_name" />
+                            <small v-if="authStore.errors.last_name" class="text-red-500">{{ authStore.errors.last_name[0] }}</small>
+                        </div>
+                        <div class="col-span-2">
+                            <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium">Email</label>
+                            <InputText id="email" type="text" placeholder="muaz@example.com" fluid v-model="registerForm.email" :invalid="authStore.errors.email" />
+                            <small v-if="authStore.errors.email" class="text-red-500">{{ authStore.errors.email[0] }}</small>
+                        </div>
+                        <div class="col-span-2">
+                            <label for="password" class="block text-surface-900 dark:text-surface-0 font-medium text-xl">Password</label>
+                            <Password id="password" v-model="registerForm.password" placeholder="e.g. Password123!" :toggleMask="true" fluid :feedback="false" :invalid="authStore.errors.password"></Password>
+                            <small v-if="authStore.errors.password" class="text-red-500">{{ authStore.errors.password[0] }}</small>
+                        </div>
+                        <div class="col-span-2">
+                            <label for="confirmPassword" class="block text-surface-900 dark:text-surface-0 font-medium text-xl">Confirm Password</label>
+                            <Password id="confirmPassword" v-model="registerForm.password_confirmation" placeholder="e.g. Password123!" :toggleMask="true" fluid :feedback="false" :invalid="authStore.errors.password_confirmation"></Password>
+                            <small v-if="authStore.errors.password_confirmation" class="text-red-500">{{ authStore.errors.password_confirmation[0] }}</small>
+                        </div>
                     </div>
 
-                    <Form v-slot="$form" :initialValues="registerForm" :resolver class="w-full" @submit="handleRegister">
-                        <label for="firstName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">First Name</label>
-                        <InputText name="first_name" id="firstName" type="text" placeholder="First Name" class="w-full md:w-[30rem]" v-model="registerForm.first_name" />
-                        <Message v-if="authStore.errors.first_name" severity="error" size="small" variant="simple">{{ authStore.errors.first_name[0] }}</Message>
-                        
-                        <label for="lastName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2 mt-4">Last Name</label>
-                        <InputText id="lastName" type="text" placeholder="Last Name" class="w-full md:w-[30rem] mb-6" v-model="registerForm.last_name" />
-                        
-                        <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-6" v-model="registerForm.email" />
+                    <div class="mt-8">
+                        <Button type="submit" label="Register" :loading="loading" class="w-full"></Button>
+                    </div>
+                </form>
 
-                        <label for="password" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                        <Password id="password" v-model="registerForm.password" placeholder="Password" :toggleMask="true" class="mb-8" fluid :feedback="false"></Password>
-                        
-                        <label for="confirmPassword" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Confirm Password</label>
-                        <Password id="confirmPassword" v-model="registerForm.password_confirmation" placeholder="Confirm Password" :toggleMask="true" class="mb-8" fluid :feedback="false"></Password>
-
-                        <Button type="submit" label="Register" class="w-full"></Button>
-                    </Form>
+                <div class="mt-4 text-center">
+                    <span class="text-muted-color">Already have an account?</span>
+                    <Button label="Sign In" class="p-button-link" @click="$router.push({ name: 'login' })"></Button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-<style scoped>
-.pi-eye {
-    transform: scale(1.6);
-    margin-right: 1rem;
-}
-
-.pi-eye-slash {
-    transform: scale(1.6);
-    margin-right: 1rem;
-}
-</style>
+<style scoped></style>

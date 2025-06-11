@@ -2,6 +2,7 @@
 import { addUser } from '@/service/GeneralService';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'primevue';
+import { computed } from 'vue';
 import { reactive } from 'vue';
 
 const authStore = useAuthStore();
@@ -26,6 +27,14 @@ const roles = [
     { name: 'Admin', value: 'admin' },
     { name: 'Super Admin', value: 'super_admin' } // Recommended to use snake_case for values
 ];
+
+// Computed property to filter roles based on current user's role
+const filteredRoles = computed(() => {
+    if (authStore.user?.role === 'super_admin') {
+        return roles; // Show all roles for super admin
+    }
+    return roles.filter(role => role.value !== 'super_admin'); // Filter out super_admin for others
+});
 
 function submitForm() {
     // Clear previous errors
@@ -104,8 +113,8 @@ function submitForm() {
                 <div>
                     <label for="role" class="block"><span class="text-red-500">* </span>Role</label>
                     <div class="flex flex-wrap gap-4">
-                        <div v-for="role in roles" :key="role.value" class="flex items-center">
-                            <RadioButton v-model="userForm.role" :inputId="role.value" name="role" :value="role.value" :disabled="role.value === 'super_admin' && authStore.user.role !== 'super_admin'" />
+                        <div v-for="role in filteredRoles" :key="role.value" class="flex items-center">
+                            <RadioButton v-model="userForm.role" :inputId="role.value" name="role" :value="role.value" />
                             <label :for="role.value" class="ml-2">{{ role.name }}</label>
                         </div>
                     </div>

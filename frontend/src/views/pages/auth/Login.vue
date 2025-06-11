@@ -1,40 +1,32 @@
 <script setup>
 import router from '@/router';
+import { googleLogin } from '@/service/AuthService';
 import { useAuthStore } from '@/stores/auth';
-import { Form } from '@primevue/forms';
 import { useToast } from 'primevue';
+import { ref } from 'vue';
 import { computed, reactive } from 'vue';
 
 const authStore = useAuthStore();
 
 const toast = useToast();
 
-const loginForm = reactive({
-    email: '',
-    password: '',
-});
-
 const message = computed(() => authStore.message);
 
-const resolver = ({ values }) => {
-    const errors = {};
+const loading = ref(false);
 
-    if (!values.email) {
-        // TODO: error message should take from backend,
-        // currently not working with Form primevue v4.2.5
-        errors.email = [{ message: 'email is required' }];
-    }
+const loginForm = reactive({
+    email: '',
+    password: ''
+});
 
-    if (!values.password) {
-        errors.password = [{ message: 'password is required' }];
-    }
+function signInwithGoogle() {
+    googleLogin()
+}
 
-    return {
-        errors
-    };
-};
-
-const handleLogin = async () => {
+const submitLoginForm = async () => {
+    // Clear previous errors
+    Object.keys(authStore.errors).forEach((key) => delete authStore.errors[key]);
+    loading.value = true;
     try {
         // Call the authenticate method in the authStore
         await authStore.authenticate('login', loginForm);
@@ -47,45 +39,67 @@ const handleLogin = async () => {
         }
     } catch (error) {
         console.error('An unexpected error occurred:', error);
+        router.push({ name: 'error' });
+    } finally {
+        loading.value = false;
     }
 };
 </script>
 
 <template>
-    <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
-        <div class="flex flex-col items-center justify-center">
-            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
-                <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20" style="border-radius: 53px">
-                    <div class="text-center mb-8">
-                        <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to Resepsi!</div>
-                        <span class="text-muted-color font-medium">Sign in to continue</span>
-                    </div>
-                    <!-- <Toast position="top-center" /> -->
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="card">
+            <div class="text-center mb-8">
+                <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to Resepsi!</div>
+                <span class="text-muted-color font-medium">Login to your account</span>
+            </div>
 
-                    <!-- FIXME: need to remove Form component change to normal form tag -->
-                    <Form v-slot="$form" :initialValues="loginForm" :resolver @submit="handleLogin">
-                        <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium">Email</label>
-                        <InputText v-model="loginForm.email" name="email" id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem]" />
-                        <Message v-if="authStore.errors.email" severity="error" size="small" variant="simple">{{ authStore.errors.email[0] }}</Message>
+            <div class="w-full md:w-[30rem]">
+                <!-- Social sign up -->
+                <div class="mb-4">
+                    <Button @click="signInwithGoogle" icon="pi pi-google" label="Sign in with Google" class="w-full" severity="secondary"></Button>
+                </div>
 
-                        <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mt-4">Password</label>
-                        <Password id="password1" v-model="loginForm.password" name="password" placeholder="Password" :toggleMask="true" fluid :feedback="false"></Password>
-                        <Message v-if="authStore.errors.password" severity="error" size="small" variant="simple">{{ authStore.errors.password[0] }}</Message>
+                <!-- Divider with "or" text -->
+                <div class="flex items-center my-6">
+                    <div class="flex-1 border-t border-surface-200 dark:border-surface-700"></div>
+                    <span class="px-4 text-muted-color">or</span>
+                    <div class="flex-1 border-t border-surface-200 dark:border-surface-700"></div>
+                </div>
 
-                        <div class="flex items-center justify-between mt-4 mb-8 gap-8">
-                            <div class="flex items-center">
-                                <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
-                                <label for="rememberme1">Remember me</label>
-                            </div>
-                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
+                <form @submit.prevent="submitLoginForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                        <div class="col-span-2">
+                            <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium">Email</label>
+                            <InputText v-model="loginForm.email" name="email" type="email" placeholder="Email address" fluid :invalid="authStore.errors.email" />
+                            <small v-if="authStore.errors.email" class="text-red-500">{{ authStore.errors.email[0] }}</small>
                         </div>
-                        <Button type="submit" label="Sign In" class="w-full"></Button>
-                    </Form>
+
+                        <div class="col-span-2">
+                            <label for="password" class="block text-surface-900 dark:text-surface-0 font-medium text-xl">Password</label>
+                            <Password id="password" v-model="loginForm.password" name="password" placeholder="Password" :toggleMask="true" fluid :feedback="false" :invalid="authStore.errors.password"></Password>
+                            <small v-if="authStore.errors.password" class="text-red-500">{{ authStore.errors.password[0] }}</small>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <Button type="submit" label="Sign In" :loading="loading" class="w-full"></Button>
+                    </div>
+                </form>
+
+                <div class="flex items-center justify-center mt-4">
+                    <button type="button" class="font-medium no-underline text-right cursor-pointer text-primary" @click="$router.push({ name: 'forgot-password' })">Forgot password?</button>
+                </div>
+
+                <Divider />
+
+                <div class="mt-4 text-center">
+                    <span class="text-muted-color">Don't have an account?</span>
+                    <Button label="Register" class="p-button-link" @click="$router.push({ name: 'register' })"></Button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

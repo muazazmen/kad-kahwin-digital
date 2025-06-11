@@ -12,9 +12,15 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SsoProviderController extends Controller
 {
-    public function googleLogin()
+    // FIXME: fix signin and signup methods to avoid confusion
+    public function googleSignIn()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->with(['state' => 'signin'])->redirect();
+    }
+
+    public function googleSignUp()
+    {
+        return Socialite::driver('google')->with(['state' => 'signup'])->redirect();
     }
 
     public function googleRedirect()
@@ -50,7 +56,7 @@ class SsoProviderController extends Controller
 
                 Auth::login($user);
 
-                // Redirect to Vue.js Dashboard with token in URL
+                // Redirect to Vue.js Landing with token in URL
                 return redirect()->away(env('FRONTEND_URL') . "?accessToken=" . $token);
             }
         } catch (Exception $e) {

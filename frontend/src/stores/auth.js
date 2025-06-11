@@ -58,6 +58,9 @@ export const useAuthStore = defineStore('authStore', {
           this.user = data.user;
           this.message = data.message;
         return;
+      } else {
+        this.errors = data.errors;
+        this.message = data.message;
       }
     },
     /********************* Logout API ***************************/
