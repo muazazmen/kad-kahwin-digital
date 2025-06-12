@@ -63,6 +63,26 @@ export const useAuthStore = defineStore('authStore', {
         this.message = data.message;
       }
     },
+    /******************** Forgot/Reset Password API **********************/
+    async handlePassword(apiRoute, formData) {
+      const res = await fetch(`/api/v1/auth/${apiRoute}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+
+      this.response = res
+      const data = await res.json()
+
+      if (!data.errors) {
+        this.message = data.message;
+      } else {
+        this.errors = data.errors;
+        this.message = data.message;
+      }
+    },
     /********************* Logout API ***************************/
     async logout() {
       const res = await fetch('/api/v1/auth/logout', {

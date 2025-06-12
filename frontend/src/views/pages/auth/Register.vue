@@ -1,6 +1,6 @@
 <script setup>
 import router from '@/router';
-import { googleRegister } from '@/service/AuthService';
+import { googleSignUp } from '@/service/AuthService';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'primevue';
 import { ref } from 'vue';
@@ -23,7 +23,7 @@ const registerForm = reactive({
 });
 
 function signUpWithGoogle() {
-    googleRegister();
+    googleSignUp();
 }
 
 const submitRegisterForm = async () => {
@@ -57,6 +57,7 @@ const submitRegisterForm = async () => {
                 <span class="text-muted-color font-medium">Register a new account</span>
             </div>
 
+            <!-- KIV: check if this sign up with google is needed -->
             <div class="w-full md:w-[30rem]">
                 <!-- Social sign up -->
                 <div class="mb-4">

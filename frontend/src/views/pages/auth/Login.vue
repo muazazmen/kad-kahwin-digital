@@ -1,6 +1,6 @@
 <script setup>
 import router from '@/router';
-import { googleLogin } from '@/service/AuthService';
+import { googleSignIn } from '@/service/AuthService';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'primevue';
 import { ref } from 'vue';
@@ -20,7 +20,7 @@ const loginForm = reactive({
 });
 
 function signInwithGoogle() {
-    googleLogin()
+    googleSignIn()
 }
 
 const submitLoginForm = async () => {

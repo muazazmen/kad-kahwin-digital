@@ -15,12 +15,12 @@ class SsoProviderController extends Controller
     // FIXME: fix signin and signup methods to avoid confusion
     public function googleSignIn()
     {
-        return Socialite::driver('google')->with(['state' => 'signin'])->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
     public function googleSignUp()
     {
-        return Socialite::driver('google')->with(['state' => 'signup'])->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
     public function googleRedirect()
@@ -33,7 +33,7 @@ class SsoProviderController extends Controller
             if ($ssoProvider) {
                 Auth::login($ssoProvider->user);
                 $token = $ssoProvider->user->createToken($ssoProvider->user->email)->plainTextToken;
-                return redirect()->away(env('FRONTEND_URL') . "?accessToken=" . $token);
+                return redirect()->away(env('FRONTEND_URL') . "/auth/google/redirect?accessToken=" . $token);
             } else {
                 $user = User::create([
                     'first_name' => $googleUser->user['given_name'] ?? null, 
@@ -57,7 +57,7 @@ class SsoProviderController extends Controller
                 Auth::login($user);
 
                 // Redirect to Vue.js Landing with token in URL
-                return redirect()->away(env('FRONTEND_URL') . "?accessToken=" . $token);
+                return redirect()->away(env('FRONTEND_URL') . "/auth/google/redirect?accessToken=" . $token);
             }
         } catch (Exception $e) {
             dd($e->getMessage());

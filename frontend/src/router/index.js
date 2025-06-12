@@ -103,6 +103,18 @@ const router = createRouter({
             meta: { guest: true }
         },
         {
+            path: '/auth/forgot-password',
+            name: 'forgot-password',
+            component: () => import('@/views/pages/auth/ForgotPassword.vue'),
+            meta: { guest: true }
+        },
+        {
+            path: '/auth/reset-password',
+            name: 'reset-password',
+            component: () => import('@/views/pages/auth/ResetPassword.vue'),
+            meta: { guest: true }
+        },
+        {
             path: '/auth/google/redirect',
             name: 'google-redirect',
             component: () => import('@/views/pages/auth/GoogleRedirect.vue'),
@@ -124,11 +136,11 @@ router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore();
 
     // Check if there is an access accessToken in the query params
-    const accessToken = to.query.accessToken;
-    if (accessToken) {
-        localStorage.setItem('accessToken', accessToken);
-        return next({ path: to.path, query: {} }); // Remove accessToken from URL and proceed
-    }
+    // const accessToken = to.query.accessToken;
+    // if (accessToken) {
+    //     localStorage.setItem('accessToken', accessToken);
+    //     return next({ path: to.path, query: {} }); // Remove accessToken from URL and proceed
+    // }
 
     await authStore.fetchUser();
 

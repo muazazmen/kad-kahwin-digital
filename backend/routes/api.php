@@ -16,7 +16,7 @@ Route::prefix('auth')->group(function () {
 
   // reset password
   Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
-  Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
+  Route::post('reset-password', [AuthController::class, 'resetPassword']);
   
   // googleoAuth
   Route::get('google/signup', [SsoProviderController::class, 'googleSignUp']);
