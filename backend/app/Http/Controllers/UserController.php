@@ -12,7 +12,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::withTrashed()->paginate(10);
+        $users = User::withTrashed()->latest()->paginate(10);
 
         return $users;
     }
@@ -22,6 +22,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        // Prevent non-super_admins from creating super_admin users
+        if ($request->input('role') === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            return response()->json([
+                'message' => 'Unauthorized: Only super admins can create super admin users'
+            ], 403);
+        }
+
+        // Validate the request data
         $fields = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
@@ -52,6 +60,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $user->load('ssoProviders');
         return $user;
     }
 
@@ -60,12 +69,36 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // Prevent non-super_admins from editing super_admin users
+        if ($user->role === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            return response()->json([
+                'message' => 'Unauthorized: Only super admins can edit other super admins'
+            ], 403);
+        }
+        
         $fields = $request->validate([
             'first_name' => 'required|max:255',
-            'last_name' => 'required|max:255',
+            'last_name' => 'nullable|max:255',
+            'username' => 'nullable|unique:users,username,' . $user->id . '|max:255',
             'password' => 'nullable',
             'role' => 'nullable|in:admin,user,super_admin',
+            'email' => 'nullable|email|unique:users,email,' . $user->id,
+            'phone_no' => ['nullable', 'regex:/^(\+60|0)1[0-9]-?\d{7,8}$/'],
         ]);
+
+        // Prevent non-super_admins from changing email
+        if (isset($fields['email']) && $fields['email'] !== $user->email && auth()->user()->role !== 'super_admin') {
+            return response()->json([
+                'message' => 'Unauthorized: Only super admins can change email addresses'
+            ], 403);
+        }
+
+        // Prevent role escalation (non-super_admins can't make users super_admin)
+        if (isset($fields['role']) && $fields['role'] === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            return response()->json([
+                'message' => 'Unauthorized: Only super admins can assign super admin role'
+            ], 403);
+        }
 
         if ($request->hasFile('avatar')) {
             $fields['avatar'] = $request->file('avatar')->store('avatars', 'public');
@@ -84,6 +117,13 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        // Prevent non-super_admins from deleting super_admin users
+        if ($user->role === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            return response()->json([
+                'message' => 'Unauthorized: Only super admins can delete other super admins'
+            ], 403);
+        }
+
         $user->delete();
 
         return response([
@@ -96,7 +136,16 @@ class UserController extends Controller
      */
     public function restore($id)
     {
-        User::withTrashed()->find($id)->restore();
+        $user = User::withTrashed()->find($id);
+
+        // Prevent non-super_admins from restoring super_admin users
+        if ($user->role === 'super_admin' && auth()->user()->role !== 'super_admin') {
+            return response()->json([
+                'message' => 'Unauthorized: Only super admins can restore other super admins'
+            ], 403);
+        }
+
+        $user->restore();
 
         return response([
             'message' => 'User restored successfully',

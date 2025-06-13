@@ -73,7 +73,27 @@ const router = createRouter({
                             path: 'user/create',
                             name: 'config-general-user-create',
                             component: () => import('@/views/pages/configuration/general/user/CreateUser.vue')
-                        }
+                        },
+                        {
+                            path: 'user/:id/edit',
+                            name: 'config-general-user-edit',
+                            component: () => import('@/views/pages/configuration/general/user/EditUser.vue')
+                        },
+                        {
+                            path: 'music',
+                            name: 'music-list',
+                            component: () => import('@/views/pages/configuration/general/music/IndexMusic.vue'),
+                        },
+                        {
+                            path: 'music/create',
+                            name: 'config-general-music-create',
+                            component: () => import('@/views/pages/configuration/general/music/CreateMusic.vue'),
+                        },
+                        {
+                            path: 'music/:id/edit',
+                            name: 'config-general-music-edit',
+                            component: () => import('@/views/pages/configuration/general/music/EditMusic.vue'),
+                        },
                     ]
                 },
                 {

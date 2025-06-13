@@ -14,6 +14,10 @@ export const addUser = async (data) => {
     return await apiService(ENDPOINTS.ADMIN_USERS, METHOD.POST, data);
 }
 
+export const getUserById = async (userId) => {
+    return await apiService(ENDPOINTS.ADMIN_USER(userId), METHOD.GET);
+}
+
 export const updateUser = async (userId, data) => {
     return await apiService(ENDPOINTS.ADMIN_USER(userId), METHOD.PUT, data);
 };
@@ -21,3 +25,7 @@ export const updateUser = async (userId, data) => {
 export const deleteUser = async (userId) => {
     return await apiService(ENDPOINTS.ADMIN_USER(userId), METHOD.DELETE);
 }
+
+export const restoreUser = async (userId) => {
+    return await apiService(ENDPOINTS.ADMIN_USER_RESTORE(userId), METHOD.PUT);
+};

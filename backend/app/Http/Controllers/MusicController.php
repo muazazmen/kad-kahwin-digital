@@ -14,7 +14,7 @@ class MusicController extends Controller
      */
     public function index()
     {
-        $music = Music::withTrashed()->paginate(10);
+        $music = Music::withTrashed()->latest()->paginate(10);
 
         return $music;
     }

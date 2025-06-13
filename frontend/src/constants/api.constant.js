@@ -6,7 +6,14 @@ export const ENDPOINTS = {
   GOOGLE_CONNECT: '/api/v1/auth/google/connect',
 
   /* ---------------------- ADMIN ---------------------- */
+  // USER MANAGEMENT
   UPDATE_ACCOUNT: '/api/v1/me/update',
   ADMIN_USERS: '/api/v1/admin/users',
   ADMIN_USER: (userId) => `/api/v1/admin/users/${userId}`,
+  ADMIN_USER_RESTORE: (userId) => `/api/v1/admin/users/${userId}/restore`,
+
+  // MUSIC
+  ADMIN_MUSICS: '/api/v1/admin/musics',
+  ADMIN_MUSIC: (musicId) => `/api/v1/admin/music/${musicId}`,
+  ADMIN_MUSIC_RESTORE: (musicId) => `/api/v1/admin/music/${musicId}/restore`,
 }
