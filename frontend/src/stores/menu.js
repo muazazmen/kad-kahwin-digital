@@ -38,6 +38,9 @@ export const useMenuStore = defineStore('menu', () => {
                     ]
                 }
             ]
+        },
+        {
+            items: [{ label: 'Testing', icon: 'pi pi-fw pi-wallet', to: { name: 'testing' } }]
         }
         // {
         //     label: 'Hierarchy',

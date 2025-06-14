@@ -101,7 +101,12 @@ const router = createRouter({
                     name: 'config-style',
                     component: () => import('@/views/pages/configuration/style/Style.vue'),
                     meta: { auth: true, superAdmin: true }
-                }
+                },
+                {
+                    path: '/testing',
+                    name: 'testing',
+                    component: () => import('@/views/pages/Empty.vue'),
+                },
             ]
         },
         {
