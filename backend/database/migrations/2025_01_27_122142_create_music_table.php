@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('genre')->nullable();
             $table->string('year')->nullable();
             $table->string('url')->nullable();
-            $table->uuid('created_by')->nullable();
+            $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('music');
+        Schema::dropIfExists('musics');
     }
 };

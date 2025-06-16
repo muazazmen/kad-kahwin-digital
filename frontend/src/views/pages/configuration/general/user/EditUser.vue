@@ -89,7 +89,6 @@ onMounted(() => {
             user.value = await res.json(); // Parse JSON from response
             // Populate form with user data
             Object.assign(editUserForm, user.value);
-            console.log('User data fetched:', editUserForm);
         })
         .catch((error) => {
             console.error('Error fetching user:', error);

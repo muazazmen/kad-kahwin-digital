@@ -1,4 +1,4 @@
-import { computed, reactive, readonly } from 'vue';
+import { computed, reactive, readonly, onMounted } from 'vue';
 
 const layoutConfig = reactive({
     preset: 'Aura',
@@ -18,7 +18,24 @@ const layoutState = reactive({
     activeMenuItem: null
 });
 
+// Load dark theme preference from localStorage when the module is initialized
+const storedDarkTheme = localStorage.getItem('darkTheme');
+if (storedDarkTheme !== null) {
+    layoutConfig.darkTheme = storedDarkTheme === 'true';
+    if (layoutConfig.darkTheme) {
+        document.documentElement.classList.add('app-dark');
+    }
+}
+
 export function useLayout() {
+    // Optional: You could also load the preference here in setup if preferred
+    onMounted(() => {
+        // This ensures the class is applied if the page is loaded with dark mode enabled
+        if (layoutConfig.darkTheme) {
+            document.documentElement.classList.add('app-dark');
+        }
+    });
+
     const setPrimary = (value) => {
         layoutConfig.primary = value;
     };
@@ -42,7 +59,6 @@ export function useLayout() {
     const toggleDarkMode = () => {
         if (!document.startViewTransition) {
             executeDarkModeToggle();
-
             return;
         }
 
@@ -51,6 +67,8 @@ export function useLayout() {
 
     const executeDarkModeToggle = () => {
         layoutConfig.darkTheme = !layoutConfig.darkTheme;
+        // Save to localStorage
+        localStorage.setItem('darkTheme', layoutConfig.darkTheme);
         document.documentElement.classList.toggle('app-dark');
     };
 
@@ -80,5 +98,20 @@ export function useLayout() {
 
     const getSurface = computed(() => layoutConfig.surface);
 
-    return { layoutConfig: readonly(layoutConfig), layoutState: readonly(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, getPrimary, getSurface, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset, resetMenu, setMenuMode };
+    return {
+        layoutConfig: readonly(layoutConfig),
+        layoutState: readonly(layoutState),
+        onMenuToggle,
+        isSidebarActive,
+        isDarkTheme,
+        getPrimary,
+        getSurface,
+        setActiveMenuItem,
+        toggleDarkMode,
+        setPrimary,
+        setSurface,
+        setPreset,
+        resetMenu,
+        setMenuMode
+    };
 }

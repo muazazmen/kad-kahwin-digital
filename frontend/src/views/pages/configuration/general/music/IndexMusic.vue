@@ -3,10 +3,13 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useConfirm, useToast } from 'primevue';
 import { deleteMusic, getMusics, restoreMusic } from '@/service/MusicService';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
+
+const authStore = useAuthStore();
 
 const musics = ref({
     data: [],
@@ -155,15 +158,18 @@ onMounted(() => {
         </Column>
         <Column header="Actions" style="width: 10%">
             <template #body="{ data }">
-                <div class="flex justify-around">
+                <div class="flex gap-2">
                     <!-- Show edit button only for active records -->
-                    <Button v-if="data.deleted_at === null" icon="pi pi-pencil" class="p-button-text" @click="editMusic(data.id)" v-tooltip="'Edit Music'" />
+                    <Button v-if="data.deleted_at === null" icon="pi pi-pencil" class="p-button-text" @click="editMusic(data.id)"
+                    :disabled="data.title === 'Youtube' && authStore.user.role !== 'super_admin'"
+                    v-tooltip="'Edit Music'" />
 
                     <!-- Show delete/restore based on status -->
                     <Button
                         :icon="data.deleted_at === null ? 'pi pi-trash' : 'pi pi-replay'"
                         :class="data.deleted_at === null ? 'p-button-text p-button-danger' : 'p-button-text p-button-success'"
                         @click="data.deleted_at === null ? fetchDeleteMusic(data.id) : fetchRestoreMusic(data.id)"
+                        :disabled="data.title === 'Youtube' && authStore.user.role !== 'super_admin'"
                         v-tooltip="data.deleted_at === null ? 'Delete Music' : 'Restore Music'"
                     />
                 </div>

@@ -1,51 +1,90 @@
 <script setup>
 import FileUpload from '@/components/FileUpload.vue';
 import { addMusic } from '@/service/MusicService';
-import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'primevue';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const authStore = useAuthStore();
-
+const router = useRouter();
 const toast = useToast();
 
-const errors = reactive({}); // Reactive object to hold validation errors
-
+const errors = reactive({});
 const musicForm = reactive({
-
+    title: '',
+    artist: '',
+    album: '',
+    genre: '',
+    url: null
 });
+
+// Create a ref for the FileUpload component
+const fileUploadRef = ref(null);
 
 function submitForm() {
     // Clear previous errors
     Object.keys(errors).forEach((key) => delete errors[key]);
 
-    addMusic(musicForm)
+    // Create FormData object
+    const formData = new FormData();
+    
+    // Append all fields
+    formData.append('title', musicForm.title);
+    formData.append('artist', musicForm.artist);
+    formData.append('album', musicForm.album);
+    formData.append('genre', musicForm.genre);
+    
+    // Only append file if it exists
+    if (musicForm.url instanceof File) {
+        formData.append('url', musicForm.url);
+    }
+
+    // Debug: Check FormData contents
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
+
+    addMusic(formData)
         .then(async (res) => {
-            const data = await res.json(); // parse JSON from res
+            const data = await res.json();
 
             if (res.ok) {
                 toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
-
-                // Reset form on success
-                Object.keys(musicForm).forEach((key) => (musicForm[key] = ''));
-            } else {
-                if (data.errors) {
-                    // Populate reactive errors object
-                    Object.keys(data.errors).forEach((key) => {
-                        errors[key] = data.errors[key];
-                    });
+                
+                // Reset form
+                musicForm.title = '';
+                musicForm.artist = '';
+                musicForm.album = '';
+                musicForm.genre = '';
+                musicForm.url = null;
+                
+                // Call the clearAll method from the FileUpload component
+                if (fileUploadRef.value) {
+                    fileUploadRef.value.clearAll();
                 }
 
-                console.error('Error creating music:', data.message);
+                router.push({ name: 'music-list' });
+            } else {
+                if (data.errors) {
+                    Object.assign(errors, data.errors);
+                }
                 toast.add({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
             }
         })
         .catch((error) => {
-            console.error('Error creating music:', error);
-            toast.add({ severity: 'error', summary: 'Network Error', detail: 'Could not reach the server', life: 3000 });
+            console.error('Error:', error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to submit form', life: 3000 });
         });
 }
+
+function onFileSelect(files) {
+    if (files && files.length > 0) {
+        musicForm.url = files[0];
+    } else {
+        musicForm.url = null;
+    }
+}
 </script>
+
 <template>
     <div class="flex justify-between">
         <h1 class="text-xl font-semibold">Create Music</h1>
@@ -76,8 +115,9 @@ function submitForm() {
                     <small class="text-red-500" v-if="errors.genre">{{ errors.genre[0] }}</small>
                 </div>
                 <div class="col-span-2">
-                  <label for="file" class="block">Music File</label>
-                  <FileUpload simple :supportedFiles="'mp3'" :maxFileSize="10" />
+                    <label for="url" class="block">Music File</label>
+                    <FileUpload ref="fileUploadRef" name="url" simple :supportedFiles="'MP3, WAV, OGG, AAC'" :maxFileSize="10" @files-selected="onFileSelect" />
+                    <small class="text-red-500" v-if="errors.url">{{ errors.url[0] }}</small>
                 </div>
             </div>
 

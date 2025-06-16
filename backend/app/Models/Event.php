@@ -27,6 +27,7 @@ class Event extends Model
         'organiser_id',
         'music_id',
         'frame_id',
+        'youtube_music_url',
         'created_by',
         'updated_by',
     ];

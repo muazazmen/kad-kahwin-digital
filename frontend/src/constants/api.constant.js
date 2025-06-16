@@ -14,6 +14,6 @@ export const ENDPOINTS = {
 
   // MUSIC
   ADMIN_MUSICS: '/api/v1/admin/musics',
-  ADMIN_MUSIC: (musicId) => `/api/v1/admin/music/${musicId}`,
-  ADMIN_MUSIC_RESTORE: (musicId) => `/api/v1/admin/music/${musicId}/restore`,
+  ADMIN_MUSIC: (musicId) => `/api/v1/admin/musics/${musicId}`,
+  ADMIN_MUSIC_RESTORE: (musicId) => `/api/v1/admin/musics/${musicId}/restore`,
 }

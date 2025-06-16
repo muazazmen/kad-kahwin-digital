@@ -17,7 +17,12 @@ class MusicFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->name(),
+            'artist' => fake()->name(),
+            'album' => fake()->name(),
+            'genre' => fake()->name(),
+            'year' => fake()->name(),
+            'url' => fake()->name(),
         ];
     }
 }

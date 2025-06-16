@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Music;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,7 +18,7 @@ class DatabaseSeeder extends Seeder
         User::factory(5)->create();
 
         if (!User::where('email', 'muazazmen@gmail.com')->exists()) {
-            User::factory()->create([
+            $user = User::factory()->create([
                 'first_name' => 'muaz',
                 'last_name' => 'azmen',
                 'email' => 'muazazmen@gmail.com',
@@ -27,6 +28,8 @@ class DatabaseSeeder extends Seeder
                 'avatar' => 'https://avatar.iran.liara.run/username?username=Muaz+Azmen',
                 'role' => 'super_admin',
             ]);
+
+            $this->call(MusicSeeder::class);
         }
     }
 }
