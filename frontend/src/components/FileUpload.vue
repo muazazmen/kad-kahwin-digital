@@ -54,7 +54,12 @@ const fileTypeMapping = {
     wav: 'audio/wav',
     ogg: 'audio/ogg',
     flac: 'audio/flac',
-    aac: 'audio/aac'
+    aac: 'audio/aac',
+    // Font MIME types
+    ttf: 'font/ttf',
+    otf: 'font/otf',
+    woff: 'font/woff',
+    woff2: 'font/woff2',
 };
 
 // Handle file selection

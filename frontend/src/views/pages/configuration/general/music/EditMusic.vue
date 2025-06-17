@@ -29,25 +29,16 @@ function submitForm() {
     // Clear previous errors
     Object.keys(errors).forEach((key) => delete errors[key]);
 
-    // Debug: Check form values before submission
-    console.log('Form values:', {
-        title: musicForm.title,
-        artist: musicForm.artist,
-        album: musicForm.album,
-        genre: musicForm.genre,
-        url: musicForm.url
-    });
-
     // Create FormData object
     const formData = new FormData();
-    
-  // Append all fields
+
+    // Append all fields
     formData.append('_method', METHOD.PUT); // need to declare put if form-data
     formData.append('title', musicForm.title);
     formData.append('artist', musicForm.artist);
-    formData.append('album', musicForm.album);
-    formData.append('genre', musicForm.genre);
-    
+    formData.append('album', musicForm.album || '');
+    formData.append('genre', musicForm.genre || '');
+
     // Only append file if it exists
     if (musicForm.url instanceof File) {
         formData.append('url', musicForm.url);
@@ -61,10 +52,10 @@ function submitForm() {
     updateMusic(route.params.id, formData)
         .then(async (res) => {
             const data = await res.json();
-
+            
             if (res.ok) {
                 toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
-                
+
                 router.push({ name: 'music-list' });
             } else {
                 if (data.errors) {
@@ -96,13 +87,13 @@ onMounted(() => {
             music.value = await res.json(); // Parse JSON from response
             // Populate form with music data
             Object.assign(musicForm, music.value);
-          console.log('music data fetched:', musicForm);
+            console.log('music data fetched:', musicForm);
 
-          if (music.value.url) {
+            if (music.value.url) {
                 currentFileName.value = `${backendUrl}/storage/${music.value.url}`;
-          }
+            }
 
-          console.log('currentFileName:', currentFileName.value);
+            console.log('currentFileName:', currentFileName.value);
         })
         .catch((error) => {
             console.error('Error fetching music:', error);
@@ -143,14 +134,11 @@ onMounted(() => {
                 <div class="col-span-2">
                     <label for="url" class="block">Music File</label>
                     <!-- Show current file info -->
-                    <div v-if="currentFileName" class="mb-2 p-2 rounded">
-                        <span class="text-sm">Current file: </span>
-                        <span class="font-medium">{{ currentFileName }}</span>
-                        <Button 
-                            icon="pi pi-times" 
-                            class="p-button-text p-button-sm ml-2" 
-                            type="button"
-                        />
+                    <!-- KIV: make custom audio player component -->
+                    <div v-if="currentFileName" class="my-2">
+                        <audio controls>
+                            <source :src="currentFileName" type="audio/mpeg" />
+                        </audio>
                     </div>
                     <FileUpload ref="fileUploadRef" name="url" simple :supportedFiles="'MP3, WAV, OGG, AAC'" :maxFileSize="10" @files-selected="onFileSelect" />
                     <small class="text-red-500" v-if="errors.url">{{ errors.url[0] }}</small>

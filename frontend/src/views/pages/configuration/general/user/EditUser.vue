@@ -54,9 +54,6 @@ function submitForm() {
             if (res.ok) {
                 toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
 
-                // Reset form on success
-                Object.keys(editUserForm).forEach((key) => (editUserForm[key] = ''));
-
                 // Optionally, redirect to user list or another page
                 router.push({ name: 'user-list' });
             } else {

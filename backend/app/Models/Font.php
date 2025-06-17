@@ -13,8 +13,9 @@ class Font extends Model
 
     protected $fillable = [
         'name',
-        'url',
-        'path',
+        'font_family',
+        'font_path',
+        'font_type',
         'created_by',
         'updated_by',
     ];

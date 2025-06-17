@@ -19,9 +19,7 @@ export const addMusic = async (data) => {
 }
 
 export const updateMusic = async (musicId, data) => {
-    return await apiService(ENDPOINTS.ADMIN_MUSIC(musicId), METHOD.PUT, data, {
-        'Content-Type': 'multipart/form-data',
-    });
+    return await apiService(ENDPOINTS.ADMIN_MUSIC(musicId), METHOD.POST, data, { 'Content-Type': 'multipart/form-data' });
 }
 
 export const deleteMusic = async (musicId) => {

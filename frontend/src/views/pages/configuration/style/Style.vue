@@ -1,26 +1,49 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
 
 const tabs = [
-    { name: 'Fonts', content: 'This is the content of Fonts' },
-    { name: 'Animations', content: 'This is the content of Animations' },
-    { name: 'Effects', content: 'This is the content of Effects' },
+  { name: "Font", path: 'font' },
+  { name: "Animation", path: 'animation' },
+  { name: "Effect", path: 'effect' },
 ];
 
+// Initialize active tab
 const activeTab = ref(0);
 
+// Handle route changes and initial load
+watch(() => route.path, (path) => {
+  const tabPath = path.split('/').pop();
+  const tabIndex = tabs.findIndex(tab => tab.path === tabPath);
+  activeTab.value = tabIndex >= 0 ? tabIndex : 0;
+  
+  // Redirect to default tab if needed
+  if (path.endsWith('/configuration/style')) {
+    router.replace(`/configuration/style/${tabs[0].path}`);
+  }
+}, { immediate: true });
+
+// Simplified tab selection
 const selectTab = (index) => {
-    activeTab.value = index;
+  router.push(`/configuration/style/${tabs[index].path}`);
 };
 </script>
+
 <template>
     <div class="flex space-x-4">
         <!-- Tab Content -->
-        <div class="w-10/12 transition-all duration-300">
-            <p class="card">{{ tabs[activeTab].content }}</p>
+        <!-- Main Content Area with Router View -->
+        <div class="w-11/12 transition-all duration-300">
+            <div class="card">
+                <router-view></router-view>
+                <!-- This will render child routes -->
+            </div>
         </div>
         <!-- Sidebar for Tabs -->
-        <div class="w-2/12 border-l">
+        <div class="w-1/12 border-l">
             <ul>
                 <li
                     v-for="(tab, index) in tabs"
@@ -36,4 +59,6 @@ const selectTab = (index) => {
     </div>
 </template>
 
-<style scoped></style>
+<style lang="scss">
+/* Your styles here */
+</style>

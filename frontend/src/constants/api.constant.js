@@ -1,19 +1,24 @@
 export const ENDPOINTS = {
-  /* ---------------------- AUTH ---------------------- */
-  GOOGLE_SIGNUP: '/api/v1/auth/google/signup',
-  GOOGLE_SIGNIN: '/api/v1/auth/google/signin',
-  GOOGLE_REDIRECT: '/api/v1/auth/google/redirect',
-  GOOGLE_CONNECT: '/api/v1/auth/google/connect',
+    /* ---------------------- AUTH ---------------------- */
+    GOOGLE_SIGNUP: '/api/v1/auth/google/signup',
+    GOOGLE_SIGNIN: '/api/v1/auth/google/signin',
+    GOOGLE_REDIRECT: '/api/v1/auth/google/redirect',
+    GOOGLE_CONNECT: '/api/v1/auth/google/connect',
 
-  /* ---------------------- ADMIN ---------------------- */
-  // USER MANAGEMENT
-  UPDATE_ACCOUNT: '/api/v1/me/update',
-  ADMIN_USERS: '/api/v1/admin/users',
-  ADMIN_USER: (userId) => `/api/v1/admin/users/${userId}`,
-  ADMIN_USER_RESTORE: (userId) => `/api/v1/admin/users/${userId}/restore`,
+    /* ---------------------- ADMIN ---------------------- */
+    // USER MANAGEMENT
+    UPDATE_ACCOUNT: '/api/v1/me/update',
+    ADMIN_USERS: '/api/v1/admin/users',
+    ADMIN_USER: (userId) => `/api/v1/admin/users/${userId}`,
+    ADMIN_USER_RESTORE: (userId) => `/api/v1/admin/users/${userId}/restore`,
 
-  // MUSIC
-  ADMIN_MUSICS: '/api/v1/admin/musics',
-  ADMIN_MUSIC: (musicId) => `/api/v1/admin/musics/${musicId}`,
-  ADMIN_MUSIC_RESTORE: (musicId) => `/api/v1/admin/musics/${musicId}/restore`,
-}
+    // MUSIC
+    ADMIN_MUSICS: '/api/v1/admin/musics',
+    ADMIN_MUSIC: (musicId) => `/api/v1/admin/musics/${musicId}`,
+    ADMIN_MUSIC_RESTORE: (musicId) => `/api/v1/admin/musics/${musicId}/restore`,
+
+  /* ---------------------- SUPER ADMIN ---------------------- */
+    SUPER_ADMIN_FONTS: '/api/v1/super-admin/fonts',
+    SUPER_ADMIN_FONT: (fontId) => `/api/v1/super-admin/fonts/${fontId}`,
+    SUPER_ADMIN_FONT_RESTORE: (fontId) => `/api/v1/super-admin/fonts/${fontId}/restore`
+};

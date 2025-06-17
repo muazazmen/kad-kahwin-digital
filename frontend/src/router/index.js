@@ -100,7 +100,25 @@ const router = createRouter({
                     path: '/configuration/style',
                     name: 'config-style',
                     component: () => import('@/views/pages/configuration/style/Style.vue'),
-                    meta: { auth: true, superAdmin: true }
+                    meta: { auth: true, superAdmin: true },
+                    redirect: { name: 'font-list' },
+                    children: [
+                        {
+                            path: 'font',
+                            name: 'font-list',
+                            component: () => import('@/views/pages/configuration/style/font/IndexFont.vue'),
+                        },
+                        {
+                            path: 'font/create',
+                            name: 'config-style-font-create',
+                            component: () => import('@/views/pages/configuration/style/font/CreateFont.vue'),
+                        },
+                        {
+                            path: 'font/:id/edit',
+                            name: 'config-style-font-edit',
+                            component: () => import('@/views/pages/configuration/style/font/EditFont.vue'),
+                        },
+                    ]
                 },
                 {
                     path: '/testing',

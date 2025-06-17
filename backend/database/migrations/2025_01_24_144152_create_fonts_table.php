@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('fonts', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
-            $table->string('url')->nullable();
-            $table->string('path')->nullable();
+            $table->string('font_family');
+            $table->string('font_path');
+            $table->string('font_type');
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();

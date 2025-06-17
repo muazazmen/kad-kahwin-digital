@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FontController;
 use App\Http\Controllers\FrameController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\PrayerController;
@@ -38,7 +39,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function () {
   // users
   Route::apiResource('users', UserController::class);
-  Route::post('users/{user}/update', [UserController::class, 'update']); // method post because of file upload
   Route::put('users/{user}/restore', [UserController::class, 'restore']);
 
   // prayers
@@ -48,11 +48,17 @@ Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function
   // musics
   // KIV: check if music update really need to be a POST request or can be a PUT request
   Route::apiResource('musics', MusicController::class);
-  Route::post('musics/{music}/update', [MusicController::class, 'update']); // method post because of file upload
   Route::put('musics/{music}/restore', [MusicController::class, 'restore']);
 
   // frames
   Route::apiResource('frames', FrameController::class);
-  Route::post('frames/{frame}/update', [FrameController::class, 'update']); // method post because of file upload
   Route::put('frames/{frame}/restore', [FrameController::class, 'restore']);
+
+});
+
+/************************************** SUPER ADMIN **********************************/
+Route::middleware(['auth:sanctum', 'is_super_admin'])->prefix('super-admin')->group(function () {
+  // fonts
+  Route::apiResource('fonts', FontController::class);
+  Route::put('fonts/{font}/restore', [FontController::class, 'restore']);
 });
