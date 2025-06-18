@@ -25,7 +25,7 @@ class PrayerController extends Controller
     {
         $fields = $request->validate([
             'title' => 'required|max:255',
-            'prayer' => 'required',
+            'prayer' => 'required|max:350',
         ]);
 
         $fields['created_by'] = Auth::user()->id;
@@ -53,7 +53,7 @@ class PrayerController extends Controller
     {
         $fields = $request->validate([
             'title' => 'required|max:255',
-            'prayer' => 'required',
+            'prayer' => 'required|max:350',
         ]);
 
         $fields['updated_by'] = Auth::user()->id;

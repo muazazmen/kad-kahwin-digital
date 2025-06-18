@@ -18,18 +18,30 @@ class DatabaseSeeder extends Seeder
         User::factory(5)->create();
 
         if (!User::where('email', 'muazazmen@gmail.com')->exists()) {
-            $user = User::factory()->create([
+            User::factory()->create([
                 'first_name' => 'muaz',
                 'last_name' => 'azmen',
                 'email' => 'muazazmen@gmail.com',
                 'password' => Hash::make('123'),
                 'username' => 'muazazmen',
-                'phone_no' => '166141875',
+                'phone_no' => '+60166141875',
                 'avatar' => 'https://avatar.iran.liara.run/username?username=Muaz+Azmen',
                 'role' => 'super_admin',
             ]);
 
+            User::factory()->create([
+                'first_name' => 'resepsi',
+                'last_name' => '',
+                'email' => 'resepsiofficial@gmail.com',
+                'password' => Hash::make('123'),
+                'username' => 'resepsi',
+                'phone_no' => '+60166141875',
+                'avatar' => 'https://avatar.iran.liara.run/username?username=Resepsi',
+                'role' => 'admin',
+            ]);
+
             $this->call(MusicSeeder::class);
+            $this->call(FrameSeeder::class);
         }
     }
 }

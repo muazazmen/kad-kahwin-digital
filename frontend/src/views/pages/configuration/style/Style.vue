@@ -16,8 +16,12 @@ const activeTab = ref(0);
 
 // Handle route changes and initial load
 watch(() => route.path, (path) => {
-  const tabPath = path.split('/').pop();
-  const tabIndex = tabs.findIndex(tab => tab.path === tabPath);
+  // Find which tab path exists in the current route
+  const tabIndex = tabs.findIndex(tab => 
+    path.includes(`/configuration/style/${tab.path}`) ||
+    path.includes(`/configuration/style/${tab.path}/`)
+  );
+  
   activeTab.value = tabIndex >= 0 ? tabIndex : 0;
   
   // Redirect to default tab if needed

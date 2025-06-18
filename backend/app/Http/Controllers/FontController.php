@@ -69,7 +69,7 @@ class FontController extends Controller
         $fields = $request->validate([
             'name' => 'required|max:50',
             'font_family' => 'required|max:50',
-            'font_path' => 'nullable|file|mimes:ttf,otf,woff,woff2|max:10240',
+            'font_path' => 'nullable|file|extensions:ttf,otf,woff,woff2|max:10240',
             'font_type' => 'required|max:50',
         ]);
 

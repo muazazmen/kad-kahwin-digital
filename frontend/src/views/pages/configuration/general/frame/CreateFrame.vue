@@ -1,6 +1,6 @@
 <script setup>
 import FileUpload from '@/components/FileUpload.vue';
-import { addMusic } from '@/service/MusicService';
+import { addFrame } from '@/service/FrameService';
 import { useToast } from 'primevue';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -11,12 +11,9 @@ const toast = useToast();
 const loading = ref(false);
 const errors = reactive({});
 
-const musicForm = reactive({
+const frameForm = reactive({
     title: '',
-    artist: '',
-    album: '',
-    genre: '',
-    music_path: null
+    frame_path: null
 });
 
 // Create a ref for the FileUpload component
@@ -30,14 +27,11 @@ function submitForm() {
     const formData = new FormData();
     
     // Append all fields
-    formData.append('title', musicForm.title);
-    formData.append('artist', musicForm.artist);
-    formData.append('album', musicForm.album);
-    formData.append('genre', musicForm.genre);
+    formData.append('title', frameForm.title);
     
     // Only append file if it exists
-    if (musicForm.music_path instanceof File) {
-        formData.append('music_path', musicForm.music_path);
+    if (frameForm.frame_path instanceof File) {
+        formData.append('frame_path', frameForm.frame_path);
     }
     
     // Debug: Check FormData contents
@@ -47,7 +41,7 @@ function submitForm() {
 
     loading.value = true;
 
-    addMusic(formData)
+    addFrame(formData)
         .then(async (res) => {
             const data = await res.json();
 
@@ -55,18 +49,15 @@ function submitForm() {
                 toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
                 
                 // Reset form
-                musicForm.title = '';
-                musicForm.artist = '';
-                musicForm.album = '';
-                musicForm.genre = '';
-                musicForm.music_path = null;
+                frameForm.title = '';
+                frameForm.frame_path = null;
                 
                 // Call the clearAll method from the FileUpload component
                 if (fileUploadRef.value) {
                     fileUploadRef.value.clearAll();
                 }
 
-                router.push({ name: 'music-list' });
+                router.push({ name: 'frame-list' });
             } else {
                 if (data.errors) {
                     Object.assign(errors, data.errors);
@@ -85,52 +76,38 @@ function submitForm() {
 
 function onFileSelect(files) {
     if (files && files.length > 0) {
-        musicForm.music_path = files[0];
+        frameForm.frame_path = files[0];
     } else {
-        musicForm.music_path = null;
+        frameForm.frame_path = null;
     }
 }
 </script>
 
 <template>
     <div class="flex justify-between">
-        <h1 class="text-xl font-semibold">Create Music</h1>
-        <Button label="Back" icon="pi pi-arrow-left" @click="$router.push({ name: 'music-list' })" class="p-button-link"></Button>
+        <h1 class="text-xl font-semibold">Create Frame</h1>
+        <Button label="Back" icon="pi pi-arrow-left" @click="$router.push({ name: 'frame-list' })" class="p-button-link"></Button>
     </div>
 
     <!-- Form -->
     <div class="flex flex-col items-center justify-center gap-4 mt-4">
         <form @submit.prevent="submitForm">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                <div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:w-[400px] sm:w-full">
+                <div class="col-span-2">
                     <label for="title" class="block"><span class="text-red-500">* </span>Title</label>
-                    <InputText id="title" v-model="musicForm.title" placeholder="Title" :invalid="errors.title" fluid />
+                    <InputText id="title" v-model="frameForm.title" placeholder="e.g. Frame 1" :invalid="errors.title" fluid />
                     <small class="text-red-500" v-if="errors.title">{{ errors.title[0] }}</small>
                 </div>
-                <div>
-                    <label for="artist" class="block"><span class="text-red-500">* </span>Artist</label>
-                    <InputText id="artist" v-model="musicForm.artist" placeholder="Artist" :invalid="errors.artist" fluid />
-                    <small class="text-red-500" v-if="errors.artist">{{ errors.artist[0] }}</small>
-                </div>
                 <div class="col-span-2">
-                    <label for="album" class="block">Album</label>
-                    <InputText id="album" v-model="musicForm.album" placeholder="Album" fluid />
-                </div>
-                <div class="col-span-2">
-                    <label for="genre" class="block">Genre</label>
-                    <InputText id="genre" v-model="musicForm.genre" placeholder="Genre" fluid />
-                    <small class="text-red-500" v-if="errors.genre">{{ errors.genre[0] }}</small>
-                </div>
-                <div class="col-span-2">
-                    <label for="music_path" class="block">Music File</label>
-                    <FileUpload ref="fileUploadRef" name="music_path" simple :supportedFiles="'MP3, WAV, OGG, AAC'" :maxFileSize="10" @files-selected="onFileSelect" />
-                    <small class="text-red-500" v-if="errors.music_path">{{ errors.music_path[0] }}</small>
+                    <label for="frame_path" class="block"><span class="text-red-500">* </span>Frame File <i class="pi pi-info-circle text-xs" v-tooltip="'Only PNG files. Max file size: 10MB. Image size: 645px * 500px'"></i></label>
+                    <FileUpload ref="fileUploadRef" name="frame_path" simple :supportedFiles="'PNG'" :maxFileSize="10" @files-selected="onFileSelect" />
+                    <small class="text-red-500" v-if="errors.frame_path">{{ errors.frame_path[0] }}</small>
                 </div>
             </div>
 
             <!-- Submit Button -->
             <div class="flex justify-end mt-4 gap-4">
-                <Button label="Cancel" @click="$router.push({ name: 'music-list' })" class="p-button-outlined"></Button>
+                <Button label="Cancel" @click="$router.push({ name: 'frame-list' })" class="p-button-outlined"></Button>
                 <Button label="Create" type="submit" :loading="loading"></Button>
             </div>
         </form>

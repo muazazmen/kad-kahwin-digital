@@ -8,7 +8,9 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const toast = useToast();
 
+const loading = ref(false);
 const errors = reactive({});
+
 const fontForm = reactive({
     name: '',
     font_family: '',
@@ -41,6 +43,8 @@ function submitForm() {
         console.log(key, value);
     }
 
+    loading.value = true;
+
     addFont(formData)
         .then(async (res) => {
             const data = await res.json();
@@ -70,7 +74,10 @@ function submitForm() {
         .catch((error) => {
             console.error('Error:', error);
             toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to submit form', life: 3000 });
-        });
+        })
+        .finally(() => {
+            loading.value = false;
+        })
 }
 
 function onFileSelect(files) {
@@ -94,17 +101,17 @@ function onFileSelect(files) {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                 <div>
                     <label for="name" class="block"><span class="text-red-500">* </span>Name</label>
-                    <InputText id="name" v-model="fontForm.name" placeholder="e.g. Roboto" fluid />
+                    <InputText id="name" v-model="fontForm.name" placeholder="e.g. Roboto" :invalid="errors.name" fluid />
                     <small class="text-red-500" v-if="errors.name">{{ errors.name[0] }}</small>
                 </div>
                 <div>
                     <label for="font_family" class="block"><span class="text-red-500">* </span>Font Family</label>
-                    <InputText id="font_family" v-model="fontForm.font_family" placeholder="e.g. Roboto" fluid />
+                    <InputText id="font_family" v-model="fontForm.font_family" placeholder="e.g. Roboto" :invalid="errors.font_family" fluid />
                     <small class="text-red-500" v-if="errors.font_family">{{ errors.font_family[0] }}</small>
                 </div>
                 <div class="col-span-2">
                     <label for="font_type" class="block"><span class="text-red-500">* </span>Font Type</label>
-                    <InputText id="font_type" v-model="fontForm.font_type" placeholder="e.g. Regular" fluid />
+                    <InputText id="font_type" v-model="fontForm.font_type" placeholder="e.g. Regular" :invalid="errors.font_type" fluid />
                 </div>
                 <div class="col-span-2">
                     <label for="font_path" class="block"><span class="text-red-500">* </span>Font File</label>
@@ -116,7 +123,7 @@ function onFileSelect(files) {
             <!-- Submit Button -->
             <div class="flex justify-end mt-4 gap-4">
                 <Button label="Cancel" @click="$router.push({ name: 'font-list' })" class="p-button-outlined"></Button>
-                <Button label="Create" type="submit"></Button>
+                <Button label="Create" type="submit" :loading="loading"></Button>
             </div>
         </form>
     </div>

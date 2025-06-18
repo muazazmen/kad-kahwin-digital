@@ -79,12 +79,12 @@ function submitForm() {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                 <div>
                     <label for="first_name" class="block"><span class="text-red-500">* </span>First Name</label>
-                    <InputText id="first_name" v-model="userForm.first_name" placeholder="First Name" fluid />
+                    <InputText id="first_name" v-model="userForm.first_name" placeholder="First Name" :invalid="errors.first_name" fluid />
                     <small class="text-red-500" v-if="errors.first_name">{{ errors.first_name[0] }}</small>
                 </div>
                 <div>
                     <label for="last_name" class="block"><span class="text-red-500">* </span>Last Name</label>
-                    <InputText id="last_name" v-model="userForm.last_name" placeholder="Last Name" fluid />
+                    <InputText id="last_name" v-model="userForm.last_name" placeholder="Last Name" :invalid="errors.last_name" fluid />
                     <small class="text-red-500" v-if="errors.last_name">{{ errors.last_name[0] }}</small>
                 </div>
                 <div class="col-span-2">
@@ -93,17 +93,17 @@ function submitForm() {
                 </div>
                 <div class="col-span-2">
                     <label for="email" class="block"><span class="text-red-500">* </span>Email</label>
-                    <InputText id="email" v-model="userForm.email" type="email" placeholder="Email" fluid />
+                    <InputText id="email" v-model="userForm.email" type="email" placeholder="Email" :invalid="errors.email" fluid />
                     <small class="text-red-500" v-if="errors.email">{{ errors.email[0] }}</small>
                 </div>
                 <div>
                     <label for="password" class="block"><span class="text-red-500">* </span>Password</label>
-                    <InputText id="password" v-model="userForm.password" type="password" placeholder="Password" fluid />
+                    <InputText id="password" v-model="userForm.password" type="password" placeholder="Password" :invalid="errors.password" fluid />
                     <small class="text-red-500" v-if="errors.password">{{ errors.password[0] }}</small>
                 </div>
                 <div>
                     <label for="password_confirmation" class="block"><span class="text-red-500">* </span>Confirm Password</label>
-                    <InputText id="password_confirmation" v-model="userForm.password_confirmation" type="password" placeholder="Confirm Password" fluid />
+                    <InputText id="password_confirmation" v-model="userForm.password_confirmation" type="password" placeholder="Confirm Password" :invalid="errors.password_confirmation" fluid />
                     <small class="text-red-500" v-if="errors.password_confirmation">{{ errors.password_confirmation[0] }}</small>
                 </div>
                 <div class="col-span-2">

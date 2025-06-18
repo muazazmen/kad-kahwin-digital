@@ -22,7 +22,7 @@ class MusicFactory extends Factory
             'album' => fake()->name(),
             'genre' => fake()->name(),
             'year' => fake()->name(),
-            'url' => fake()->name(),
+            'music_path' => fake()->url(),
         ];
     }
 }

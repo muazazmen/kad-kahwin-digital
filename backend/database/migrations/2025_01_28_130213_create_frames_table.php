@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('frames', function (Blueprint $table) {
             $table->id()->primary();
-            $table->string('name');
-            $table->text('frame');
+            $table->string('title');
+            $table->text('frame_path')->nullable();
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();

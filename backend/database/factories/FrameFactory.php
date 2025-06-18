@@ -17,7 +17,8 @@ class FrameFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->name(),
+            'frame_path' => fake()->url(),
         ];
     }
 }

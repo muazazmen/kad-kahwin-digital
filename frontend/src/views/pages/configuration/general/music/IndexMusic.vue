@@ -150,7 +150,7 @@ onMounted(() => {
 
         <Column field="title" header="Title" style="width: 20%"></Column>
         <Column field="artist" header="Artist" style="width: 20%"></Column>
-        <Column field="url" header="URL" style="width: 20%"></Column>
+        <Column field="music_path" header="URL" style="width: 20%"></Column>
         <Column field="deleted_at" header="Status" style="width: 15%">
             <template #body="{ data }">
                 <Tag :value="data.deleted_at === null ? 'Active' : 'Inactive'" :severity="data.deleted_at === null ? 'success' : 'danger'" />

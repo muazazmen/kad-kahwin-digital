@@ -30,14 +30,14 @@ class MusicController extends Controller
             'album' => 'nullable|max:255',
             'genre' => 'nullable|max:255',
             'year' => 'nullable|max:255',
-            'url' => 'required|file|mimes:mp3,wav,ogg,flac,aac|max:10240',
+            'music_path' => 'required|file|mimes:mp3,wav,ogg,flac,aac|max:10240',
         ]);
 
         $fields['created_by'] = Auth::user()->id;
 
         // Check if a new avatar is being uploaded
-        if ($request->hasFile('url')) {
-            $fields['url'] = $request->file('url')->store('musics', 'public');
+        if ($request->hasFile('music_path')) {
+            $fields['music_path'] = $request->file('music_path')->store('musics', 'public');
         }
 
         $music = Music::create($fields);
@@ -67,34 +67,34 @@ class MusicController extends Controller
             'album' => 'nullable|max:255',
             'genre' => 'nullable|max:255',
             'year' => 'nullable|max:255',
-            'url' => 'nullable|file|mimes:mp3,wav,ogg,flac,aac|max:10240',
+            'music_path' => 'nullable|file|mimes:mp3,wav,ogg,flac,aac|max:10240',
         ]);
 
         $fields['updated_by'] = Auth::user()->id;
 
         // Check if a new url is being uploaded
-        if ($request->hasFile('url')) {
+        if ($request->hasFile('music_path')) {
             // Get the original filename without extension
-            $originalFilename = pathinfo($music->url, PATHINFO_FILENAME);
+            $originalFilename = pathinfo($music->music_path, PATHINFO_FILENAME);
 
             // Delete the previous music if it exists
-            if ($music->url && Storage::disk('public')->exists($music->url)) {
-                Storage::disk('public')->delete($music->url);
+            if ($music->music_path && Storage::disk('public')->exists($music->music_path)) {
+                Storage::disk('public')->delete($music->music_path);
             }
 
             // Store the new music with the original filename
-            $newFile = $request->file('url');
+            $newFile = $request->file('music_path');
             $extension = $newFile->getClientOriginalExtension();
             $filename = "{$originalFilename}.{$extension}";
 
             // Store with original filename in the same directory
             $path = $newFile->storeAs(
-                pathinfo($music->url, PATHINFO_DIRNAME),
+                pathinfo($music->music_path, PATHINFO_DIRNAME),
                 $filename,
                 'public'
             );
 
-            $fields['url'] = $path;
+            $fields['music_path'] = $path;
         }
 
         $music->update($fields);

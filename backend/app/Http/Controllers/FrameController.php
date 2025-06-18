@@ -14,7 +14,7 @@ class FrameController extends Controller
      */
     public function index()
     {
-        $frames = Frame::withTrashed()->paginate();
+        $frames = Frame::withTrashed()->latest()->paginate();
 
         return $frames;
     }
@@ -25,15 +25,15 @@ class FrameController extends Controller
     public function store(Request $request)
     {
         $fields = $request->validate([
-            'name' => 'required|max:255',
-            'frame' => 'required|file|mimes:png|max:10240'
+            'title' => 'required|max:255',
+            'frame_path' => 'required|file|mimes:png|max:10240'
         ]);
 
         $fields['created_by'] = Auth::user()->id;
 
         // Check if a new avatar is being uploaded
-        if ($request->hasFile('frame')) {
-            $fields['frame'] = $request->file('frame')->store('frames', 'public');
+        if ($request->hasFile('frame_path')) {
+            $fields['frame_path'] = $request->file('frame_path')->store('frames', 'public');
         }
 
         $frame = Frame::create($fields);
@@ -58,35 +58,35 @@ class FrameController extends Controller
     public function update(Request $request, Frame $frame)
     {
         $fields = $request->validate([
-            'name' => 'required|max:255',
-            'frame' => 'required|file|mimes:png|max:10240'
+            'title' => 'required|max:255',
+            'frame_path' => 'required|file|mimes:png|max:10240'
         ]);
 
         $fields['updated_by'] = Auth::user()->id;
 
         // Check if a new frame is being uploaded
-        if ($request->hasFile('frame')) {
+        if ($request->hasFile('frame_path')) {
             // Get the original filename without extension
-            $originalFilename = pathinfo($frame->frame, PATHINFO_FILENAME);
+            $originalFilename = pathinfo($frame->frame_path, PATHINFO_FILENAME);
 
             // Delete the previous frame if it exists
-            if ($frame->frame && Storage::disk('public')->exists($frame->frame)) {
-                Storage::disk('public')->delete($frame->frame);
+            if ($frame->frame_path && Storage::disk('public')->exists($frame->frame_path)) {
+                Storage::disk('public')->delete($frame->frame_path);
             }
 
             // Store the new frame with the original filename
-            $newFile = $request->file('frame');
+            $newFile = $request->file('frame_path');
             $extension = $newFile->getClientOriginalExtension();
             $filename = "{$originalFilename}.{$extension}";
 
             // Store with original filename in the same directory
             $path = $newFile->storeAs(
-                pathinfo($frame->frame, PATHINFO_DIRNAME),
+                pathinfo($frame->frame_path, PATHINFO_DIRNAME),
                 $filename,
                 'public'
             );
 
-            $fields['frame'] = $path;
+            $fields['frame_path'] = $path;
         }
 
         $frame->update($fields);

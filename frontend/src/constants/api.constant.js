@@ -17,7 +17,17 @@ export const ENDPOINTS = {
     ADMIN_MUSIC: (musicId) => `/api/v1/admin/musics/${musicId}`,
     ADMIN_MUSIC_RESTORE: (musicId) => `/api/v1/admin/musics/${musicId}/restore`,
 
-  /* ---------------------- SUPER ADMIN ---------------------- */
+    // PRAYERS
+    ADMIN_PRAYERS: '/api/v1/admin/prayers',
+    ADMIN_PRAYER: (prayerId) => `/api/v1/admin/prayers/${prayerId}`,
+    ADMIN_PRAYER_RESTORE: (prayerId) => `/api/v1/admin/prayers/${prayerId}/restore`,
+
+    // FRAMES
+    ADMIN_FRAMES: '/api/v1/admin/frames',
+    ADMIN_FRAME: (frameId) => `/api/v1/admin/frames/${frameId}`,
+    ADMIN_FRAME_RESTORE: (frameId) => `/api/v1/admin/frames/${frameId}/restore`,
+
+    /* ---------------------- SUPER ADMIN ---------------------- */
     SUPER_ADMIN_FONTS: '/api/v1/super-admin/fonts',
     SUPER_ADMIN_FONT: (fontId) => `/api/v1/super-admin/fonts/${fontId}`,
     SUPER_ADMIN_FONT_RESTORE: (fontId) => `/api/v1/super-admin/fonts/${fontId}/restore`

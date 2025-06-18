@@ -46,7 +46,6 @@ Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function
   Route::put('prayers/{prayer}/restore', [PrayerController::class, 'restore']);
   
   // musics
-  // KIV: check if music update really need to be a POST request or can be a PUT request
   Route::apiResource('musics', MusicController::class);
   Route::put('musics/{music}/restore', [MusicController::class, 'restore']);
 

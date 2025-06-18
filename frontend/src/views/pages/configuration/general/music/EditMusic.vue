@@ -17,7 +17,7 @@ const musicForm = reactive({
     artist: '',
     album: '',
     genre: '',
-    url: null
+    music_path: null
 });
 
 // Edit a ref for the FileUpload component
@@ -40,8 +40,8 @@ function submitForm() {
     formData.append('genre', musicForm.genre || '');
 
     // Only append file if it exists
-    if (musicForm.url instanceof File) {
-        formData.append('url', musicForm.url);
+    if (musicForm.music_path instanceof File) {
+        formData.append('music_path', musicForm.music_path);
     }
 
     // Debug: Check FormData contents
@@ -72,9 +72,9 @@ function submitForm() {
 
 function onFileSelect(files) {
     if (files && files.length > 0) {
-        musicForm.url = files[0];
+        musicForm.music_path = files[0];
     } else {
-        musicForm.url = null;
+        musicForm.music_path = null;
     }
 }
 
@@ -87,13 +87,10 @@ onMounted(() => {
             music.value = await res.json(); // Parse JSON from response
             // Populate form with music data
             Object.assign(musicForm, music.value);
-            console.log('music data fetched:', musicForm);
 
-            if (music.value.url) {
-                currentFileName.value = `${backendUrl}/storage/${music.value.url}`;
+            if (music.value.music_path) {
+                currentFileName.value = `${backendUrl}/storage/${music.value.music_path}`;
             }
-
-            console.log('currentFileName:', currentFileName.value);
         })
         .catch((error) => {
             console.error('Error fetching music:', error);
@@ -132,7 +129,7 @@ onMounted(() => {
                     <small class="text-red-500" v-if="errors.genre">{{ errors.genre[0] }}</small>
                 </div>
                 <div class="col-span-2">
-                    <label for="url" class="block">Music File</label>
+                    <label for="music_path" class="block">Music File</label>
                     <!-- Show current file info -->
                     <!-- KIV: make custom audio player component -->
                     <div v-if="currentFileName" class="my-2">
@@ -140,8 +137,8 @@ onMounted(() => {
                             <source :src="currentFileName" type="audio/mpeg" />
                         </audio>
                     </div>
-                    <FileUpload ref="fileUploadRef" name="url" simple :supportedFiles="'MP3, WAV, OGG, AAC'" :maxFileSize="10" @files-selected="onFileSelect" />
-                    <small class="text-red-500" v-if="errors.url">{{ errors.url[0] }}</small>
+                    <FileUpload ref="fileUploadRef" name="music_path" simple :supportedFiles="'MP3, WAV, OGG, AAC'" :maxFileSize="10" @files-selected="onFileSelect" />
+                    <small class="text-red-500" v-if="errors.music_path">{{ errors.music_path[0] }}</small>
                 </div>
             </div>
 

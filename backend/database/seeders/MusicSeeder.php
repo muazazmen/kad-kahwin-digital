@@ -22,7 +22,7 @@ class MusicSeeder extends Seeder
             'album' => '',
             'genre' => '',
             'year' => '',
-            'url' => '',
+            'music_path' => '',
             'created_by' => $user->id,
         ]);
     }

@@ -18,7 +18,7 @@ class Music extends Model
         'album',
         'genre',
         'year',
-        'url',
+        'music_path',
         'created_by',
         'updated_by',
     ];

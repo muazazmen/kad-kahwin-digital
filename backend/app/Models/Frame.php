@@ -12,8 +12,8 @@ class Frame extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'frame',
+        'title',
+        'frame_path',
         'created_by',
         'updated_by',
     ];

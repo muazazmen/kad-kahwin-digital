@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('album')->nullable();
             $table->string('genre')->nullable();
             $table->string('year')->nullable();
-            $table->string('url')->nullable();
+            $table->string('music_path')->nullable();
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();

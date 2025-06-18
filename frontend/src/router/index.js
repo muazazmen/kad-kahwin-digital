@@ -94,6 +94,36 @@ const router = createRouter({
                             name: 'config-general-music-edit',
                             component: () => import('@/views/pages/configuration/general/music/EditMusic.vue'),
                         },
+                        {
+                            path: 'prayer',
+                            name: 'prayer-list',
+                            component: () => import('@/views/pages/configuration/general/prayer/IndexPrayer.vue'),
+                        },
+                        {
+                            path: 'prayer/create',
+                            name: 'config-general-prayer-create',
+                            component: () => import('@/views/pages/configuration/general/prayer/CreatePrayer.vue'),
+                        },
+                        {
+                            path: 'prayer/:id/edit',
+                            name: 'config-general-prayer-edit',
+                            component: () => import('@/views/pages/configuration/general/prayer/EditPrayer.vue'),
+                        },
+                        {
+                            path: 'frame',
+                            name: 'frame-list',
+                            component: () => import('@/views/pages/configuration/general/frame/IndexFrame.vue'),
+                        },
+                        {
+                            path: 'frame/create',
+                            name: 'config-general-frame-create',
+                            component: () => import('@/views/pages/configuration/general/frame/CreateFrame.vue'),
+                        },
+                        {
+                            path: 'frame/:id/edit',
+                            name: 'config-general-frame-edit',
+                            component: () => import('@/views/pages/configuration/general/frame/EditFrame.vue'),
+                        },
                     ]
                 },
                 {
