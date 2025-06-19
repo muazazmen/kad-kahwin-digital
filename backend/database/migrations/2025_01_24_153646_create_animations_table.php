@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('animation_effects', function (Blueprint $table) {
+        Schema::create('animations', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
             $table->string('url');
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('animation_effects');
+        Schema::dropIfExists('animations');
     }
 };

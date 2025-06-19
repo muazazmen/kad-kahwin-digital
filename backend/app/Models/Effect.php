@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Transition extends Model
+class Effect extends Model
 {
-    /** @use HasFactory<\Database\Factories\TransitionFactory> */
+    /** @use HasFactory<\Database\Factories\EffectFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [

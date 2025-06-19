@@ -14,7 +14,7 @@ class FrameController extends Controller
      */
     public function index()
     {
-        $frames = Frame::withTrashed()->latest()->paginate();
+        $frames = Frame::withTrashed()->latest()->paginate(10);
 
         return $frames;
     }

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transition;
-use App\Http\Requests\StoreTransitionRequest;
-use App\Http\Requests\UpdateTransitionRequest;
+use App\Models\Effect;
+use Illuminate\Http\Request;
 
-class TransitionController extends Controller
+class EffectController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +18,7 @@ class TransitionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTransitionRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -27,7 +26,7 @@ class TransitionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transition $transition)
+    public function show(Effect $effect)
     {
         //
     }
@@ -35,7 +34,7 @@ class TransitionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTransitionRequest $request, Transition $transition)
+    public function update(Request $request, Effect $effect)
     {
         //
     }
@@ -43,7 +42,7 @@ class TransitionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transition $transition)
+    public function destroy(Effect $effect)
     {
         //
     }

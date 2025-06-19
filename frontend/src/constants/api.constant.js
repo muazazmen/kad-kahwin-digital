@@ -28,7 +28,13 @@ export const ENDPOINTS = {
     ADMIN_FRAME_RESTORE: (frameId) => `/api/v1/admin/frames/${frameId}/restore`,
 
     /* ---------------------- SUPER ADMIN ---------------------- */
+    // FONTS
     SUPER_ADMIN_FONTS: '/api/v1/super-admin/fonts',
     SUPER_ADMIN_FONT: (fontId) => `/api/v1/super-admin/fonts/${fontId}`,
-    SUPER_ADMIN_FONT_RESTORE: (fontId) => `/api/v1/super-admin/fonts/${fontId}/restore`
+    SUPER_ADMIN_FONT_RESTORE: (fontId) => `/api/v1/super-admin/fonts/${fontId}/restore`,
+
+    // ANIMATIONS
+    SUPER_ADMIN_ANIMATIONS: '/api/v1/super-admin/animations',
+    SUPER_ADMIN_ANIMATION: (animationId) => `/api/v1/super-admin/animations/${animationId}`,
+    SUPER_ADMIN_ANIMATION_RESTORE: (animationId) => `/api/v1/super-admin/animations/${animationId}/restore`,
 };

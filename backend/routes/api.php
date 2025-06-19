@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnimationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FontController;
 use App\Http\Controllers\FrameController;
@@ -60,4 +61,8 @@ Route::middleware(['auth:sanctum', 'is_super_admin'])->prefix('super-admin')->gr
   // fonts
   Route::apiResource('fonts', FontController::class);
   Route::put('fonts/{font}/restore', [FontController::class, 'restore']);
+
+  // animations
+  Route::apiResource('animations', AnimationController::class);
+  Route::put('animations/{animation}/restore', [AnimationController::class, 'restore']);
 });

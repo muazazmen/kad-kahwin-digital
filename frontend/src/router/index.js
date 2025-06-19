@@ -148,6 +148,21 @@ const router = createRouter({
                             name: 'config-style-font-edit',
                             component: () => import('@/views/pages/configuration/style/font/EditFont.vue'),
                         },
+                        {
+                            path: 'animation',
+                            name: 'animation-list',
+                            component: () => import('@/views/pages/configuration/style/animation/IndexAnimation.vue'),
+                        },
+                        {
+                            path: 'animation/create',
+                            name: 'config-style-animation-create',
+                            component: () => import('@/views/pages/configuration/style/animation/CreateAnimation.vue'),
+                        },
+                        {
+                            path: 'animation/:id/edit',
+                            name: 'config-style-animation-edit',
+                            component: () => import('@/views/pages/configuration/style/animation/EditAnimation.vue'),
+                        },
                     ]
                 },
                 {

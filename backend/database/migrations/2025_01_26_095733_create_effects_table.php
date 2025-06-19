@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transitions', function (Blueprint $table) {
+        Schema::create('effects', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
             $table->string('transition');
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transitions');
+        Schema::dropIfExists('effects');
     }
 };
