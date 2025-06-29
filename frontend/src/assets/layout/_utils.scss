@@ -23,3 +23,23 @@
         top: 100px;
     }
 }
+
+.pulse-animation {
+    animation: 2s pulse infinite;
+}
+
+.transform-3d-preserve {
+    transform-style: preserve-3d;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

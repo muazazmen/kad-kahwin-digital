@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('animations', function (Blueprint $table) {
+        Schema::create('opening_animations', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
             $table->string('url');
