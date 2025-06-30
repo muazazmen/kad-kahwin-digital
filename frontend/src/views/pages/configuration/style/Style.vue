@@ -7,7 +7,7 @@ const router = useRouter();
 
 const tabs = [
   { name: "Font", path: 'font' },
-  { name: "Animation", path: 'animation' },
+  { name: "Opening", path: 'opening' },
   { name: "Effect", path: 'effect' },
 ];
 

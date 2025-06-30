@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\AnimationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FontController;
 use App\Http\Controllers\FrameController;
 use App\Http\Controllers\MusicController;
+use App\Http\Controllers\OpeningAnimationController;
 use App\Http\Controllers\PrayerController;
 use App\Http\Controllers\SsoProviderController;
 use App\Http\Controllers\UserController;
@@ -25,6 +25,7 @@ Route::prefix('auth')->group(function () {
   Route::get('google/signin', [SsoProviderController::class, 'googleSignIn']);
   Route::get('google/redirect', [SsoProviderController::class, 'googleRedirect']);
   Route::get('google/connect', [SsoProviderController::class, 'connectGoogleAccount']);
+
 });
 
 /************************************** AUTHENTICATE USER **********************************/
@@ -34,6 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/me/update', [AuthController::class, 'update']);
   Route::put('/me/update-password', [AuthController::class, 'updatePassword']);
   Route::delete('/me', [AuthController::class, 'destroy']);
+  
+  // Openings
+  Route::get('openings', [OpeningAnimationController::class, 'indexWithoutTrashed']);
 });
 
 /************************************** ADMIN **********************************/
@@ -62,7 +66,7 @@ Route::middleware(['auth:sanctum', 'is_super_admin'])->prefix('super-admin')->gr
   Route::apiResource('fonts', FontController::class);
   Route::put('fonts/{font}/restore', [FontController::class, 'restore']);
 
-  // animations
-  Route::apiResource('animations', AnimationController::class);
-  Route::put('animations/{animation}/restore', [AnimationController::class, 'restore']);
+  // openings
+  Route::apiResource('openings', OpeningAnimationController::class);
+  Route::put('openings/{opening}/restore', [OpeningAnimationController::class, 'restore']);
 });

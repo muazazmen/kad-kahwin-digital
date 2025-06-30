@@ -1,10 +1,11 @@
 <script setup>
-import { addAnimation } from '@/service/AnimationService';
+import { getOpeningById, updateOpening } from '@/service/OpeningAnimationService';
 import { useToast } from 'primevue';
 import { reactive, ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
+const route = useRoute()
 const toast = useToast();
 
 const loading = ref(false);
@@ -12,12 +13,14 @@ const errors = reactive({});
 
 const animationForm = reactive({
     name: '',
+    shadow: '',
     left_door: '',
     right_door: '',
     left_door_open: '',
     right_door_open: '',
     sealer_position: '',
-    sealer_text: ''
+    sealer_style: '',
+    is_sealer_custom: false,
 });
 
 const doorsOpen = ref(false);
@@ -28,23 +31,14 @@ function submitForm() {
 
     loading.value = true;
 
-    addAnimation(animationForm)
+    updateOpening(route.params.id, animationForm)
         .then(async (res) => {
             const data = await res.json();
 
             if (res.ok) {
                 toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
 
-                // Reset form
-                animationForm.name = '';
-                animationForm.left_door = '';
-                animationForm.right_door = '';
-                animationForm.left_door_open = '';
-                animationForm.right_door_open = '';
-                animationForm.sealer_position = '';
-                animationForm.sealer_text = '';
-
-                router.push({ name: 'animation-list' });
+                router.push({ name: 'opening-list' });
             } else {
                 if (data.errors) {
                     Object.assign(errors, data.errors);
@@ -60,12 +54,23 @@ function submitForm() {
             loading.value = false;
         });
 }
+
+onMounted(() => {
+    getOpeningById(route.params.id).then(async (res) => {
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+        animationForm.value = await res.json();
+        // Populate form with music data
+        Object.assign(animationForm, animationForm.value);
+    });
+});
 </script>
 
 <template>
     <div class="flex justify-between">
-        <h1 class="text-xl animation-semibold">Create Opening Animation</h1>
-        <Button label="Back" icon="pi pi-arrow-left" @click="$router.push({ name: 'animation-list' })" class="p-button-link"></Button>
+        <h1 class="text-xl animation-semibold">Edit Opening Animation</h1>
+        <Button label="Back" icon="pi pi-arrow-left" @click="$router.push({ name: 'opening-list' })" class="p-button-link"></Button>
     </div>
 
     <!-- Form -->
@@ -73,52 +78,57 @@ function submitForm() {
         <div class="md:col-span-5">
             <form @submit.prevent="submitForm">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                    <!-- TODO: Name, check boleh tak retrieve data sekaligus dlm <div></div>, left and right door, name badge, colorpicker right door = left door -->
                     <div class="col-span-2">
                         <label for="name" class="block"><span class="text-red-500">* </span>Name</label>
-                        <InputText id="name" v-model="animationForm.name" placeholder="e.g. Door 1" :invalid="errors.name" fluid />
+                        <InputText id="name" v-model="animationForm.name" placeholder="e.g. Door 1" :variant="animationForm.name ? 'filled' : 'outlined'" :invalid="errors.name" fluid />
                         <small class="text-red-500" v-if="errors.name">{{ errors.name[0] }}</small>
                     </div>
                     <div class="col-span-2">
+                        <label for="shadow" class="block"><span class="text-red-500">* </span>Shadow</label>
+                        <Textarea id="shadow" v-model="animationForm.shadow" :variant="animationForm.shadow ? 'filled' : 'outlined'" placeholder="absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full" :rows="5" :invalid="errors.shadow" fluid />
+                        <small class="text-red-500" v-if="errors.shadow">{{ errors.shadow[0] }}</small>
+                    </div>
+                    <div class="col-span-2">
                         <label for="left_door" class="block"><span class="text-red-500">* </span>Left Door Animation</label>
-                        <Textarea id="left_door" v-model="animationForm.left_door" placeholder="e.g. Roboto" :rows="5" :invalid="errors.left_door" fluid />
+                        <Textarea id="left_door" v-model="animationForm.left_door" :variant="animationForm.left_door ? 'filled' : 'outlined'" placeholder="relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11]" :rows="5" :invalid="errors.left_door" fluid />
                         <small class="text-red-500" v-if="errors.left_door">{{ errors.left_door[0] }}</small>
                     </div>
-                    <!-- TODO: tak perlu open class sbb boleh merge dgn style lain ikut cara sealer_position -->
                     <div class="col-span-2">
                         <label for="left_door_open" class="block"><span class="text-red-500">* </span>Left Door Animation (Open)</label>
-                        <Textarea id="left_door_open" v-model="animationForm.left_door_open" placeholder="e.g. Roboto" :rows="2" :invalid="errors.left_door_open" fluid />
+                        <Textarea id="left_door_open" v-model="animationForm.left_door_open" :variant="animationForm.left_door_open ? 'filled' : 'outlined'" placeholder="[transform:rotateY(150deg)]" :rows="2" :invalid="errors.left_door_open" fluid />
                         <small class="text-red-500" v-if="errors.left_door_open">{{ errors.left_door_open[0] }}</small>
                     </div>
                     <div class="col-span-2">
                         <label for="right_door" class="block"><span class="text-red-500">* </span>Right Door Animation</label>
-                        <Textarea id="right_door" v-model="animationForm.right_door" placeholder="e.g. Roboto" :rows="5" :invalid="errors.right_door" fluid />
+                        <Textarea id="right_door" v-model="animationForm.right_door" :variant="animationForm.right_door ? 'filled' : 'outlined'" placeholder="w-1/2 h-full origin-right transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-10" :rows="5" :invalid="errors.right_door" fluid />
                         <small class="text-red-500" v-if="errors.right_door">{{ errors.right_door[0] }}</small>
                     </div>
                     <div class="col-span-2">
                         <label for="right_door_open" class="block"><span class="text-red-500">* </span>Right Door Animation (Open)</label>
-                        <Textarea id="right_door_open" v-model="animationForm.right_door_open" placeholder="e.g. Roboto" :rows="2" :invalid="errors.right_door_open" fluid />
+                        <Textarea id="right_door_open" v-model="animationForm.right_door_open" :variant="animationForm.right_door_open ? 'filled' : 'outlined'" placeholder="[transform:rotateY(150deg)]" :rows="2" :invalid="errors.right_door_open" fluid />
                         <small class="text-red-500" v-if="errors.right_door_open">{{ errors.right_door_open[0] }}</small>
                     </div>
                     <div class="col-span-2">
-                        <label for="sealer_position" class="block"><span class="text-red-500">* </span>Sealer Style</label>
-                        <Textarea id="sealer_position" v-model="animationForm.sealer_position" placeholder="e.g. Regular" :rows="2" :invalid="errors.sealer_position" fluid />
+                        <label for="sealer_position" class="block"><span class="text-red-500">* </span>Sealer Position</label>
+                        <Textarea id="sealer_position" v-model="animationForm.sealer_position" :variant="animationForm.sealer_position ? 'filled' : 'outlined'" placeholder="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75" :rows="2" :invalid="errors.sealer_position" fluid />
+                        <small class="text-red-500" v-if="errors.sealer_position">{{ errors.sealer_position[0] }}</small>
                     </div>
                     <div class="col-span-2">
-                        <label for="sealer_text" class="block"><span class="text-red-500">* </span>Sealer Button Text</label>
-                        <Textarea id="sealer_text" v-model="animationForm.sealer_text" placeholder="e.g. Regular" :rows="3" :invalid="errors.sealer_text" fluid />
+                        <label for="sealer_style" class="block"><span class="text-red-500">* </span>Sealer Button Style</label>
+                        <Textarea id="sealer_style" v-model="animationForm.sealer_style" :variant="animationForm.sealer_style ? 'filled' : 'outlined'" placeholder="rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-[0px_0px_15px_rgba(0,0,0,0.7)] pulse-animation" :rows="3" :invalid="errors.sealer_style" fluid />
+                        <small class="text-red-500" v-if="errors.sealer_style">{{ errors.sealer_style[0] }}</small>
                     </div>
                     <div class="col-span-2">
-                        <label for="custom_sealer" class="block"><span class="text-red-500">* </span>Custom Sealer</label>
-                        <Textarea id="custom_sealer" v-model="animationForm.custom_sealer" placeholder="e.g. Regular" :rows="3" :invalid="errors.custom_sealer" fluid />
+                        <label for="is_sealer_custom" class="block">Custom Sealer</label>
+                        <ToggleButton v-model="animationForm.is_sealer_custom" :invalid="errors.is_sealer_custom" onLabel="True" offLabel="False" />
+                        <small class="text-red-500" v-if="errors.is_sealer_custom">{{ errors.is_sealer_custom[0] }}</small>
                     </div>
-                    <!-- KIV: make custom component InputEditor -->
                 </div>
 
                 <!-- Submit Button -->
                 <div class="flex justify-end mt-4 gap-4">
-                    <Button label="Cancel" @click="$router.push({ name: 'animation-list' })" class="p-button-outlined"></Button>
-                    <Button label="Create" type="submit" :loading="loading"></Button>
+                    <Button label="Cancel" @click="$router.push({ name: 'opening-list' })" class="p-button-outlined"></Button>
+                    <Button label="Update" type="submit" :loading="loading"></Button>
                 </div>
             </form>
         </div>
@@ -133,17 +143,20 @@ function submitForm() {
                 style="background-image: url('/demo/images/design/intro-inside-bg-sample.png'); background-size: cover; background-position: center"
             >
                 <!-- Doors container -->
-                <div class="perspective-1000 absolute inset-0 flex z-10 transform-3d-preserve">
+                <div class="perspective-1000 absolute inset-0 flex z-10 transform-3d-preserve isolate">
                     <!-- Shadow -->
-                    <div class="absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full shadow-[8px_10px_30px_20px_rgba(0,0,0,0.2)]" :class="{ 'transform -translate-x-full shadow-none': doorsOpen }"></div>
+                    <!-- NOTE: absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full shadow-[8px_10px_30px_20px_rgba(0,0,0,0.2)] -->
+                    <div :class="doorsOpen ? `${animationForm.shadow} shadow-none` : `${animationForm.shadow}`"></div>
 
                     <!-- Left door -->
-                    <div class="relative w-1/2 h-full bg-[#6466f1] origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11]" :class="{ '[transform:rotateY(-150deg)]': doorsOpen }">
+                    <!-- NOTE: relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11] bg-[#6466f1] [transform:rotateY(150deg)] -->
+                    <div :class="doorsOpen ? `${animationForm.left_door} ${animationForm.left_door_open}` : `${animationForm.left_door}`">
                         <!-- Sealer -->
-                         <!-- div ni utk sealer_position -->
-                        <div :class="doorsOpen ? `${animationForm.sealer_position} pointer-events-none z-[12]` : 'absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75'">
-                            <div v-if="animationForm.custom_sealer" :class="animationForm.custom_sealer"></div>
-                            <!-- buat if cutom_sealer == true, akan ada div sendiri letak nama groom, bride else default kluar dkat button sealer text -->
+                        <!-- div ni utk sealer_position -->
+                        <!-- NOTE: absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75 -->
+                        <div :class="doorsOpen ? `${animationForm.sealer_position} pointer-events-none` : `${animationForm.sealer_position} pointer-events-auto`">
+                            <div v-if="animationForm.is_sealer_custom" :class="animationForm.is_sealer_custom"></div>
+                            <!-- buat if is_sealer_custom == true, akan ada div sendiri letak nama groom, bride else default kluar dkat button sealer text -->
                             <button type="button" @click="doorsOpen = true">
                                 <!-- NOTE: sealer style = rounded-full bg-white w-32 h-32 flex flex-col items-center justify-center shadow-[0px_0px_15px_rgba(0,0,0,0.7)] pulse-animation -->
                                 <div :class="animationForm.sealer_style">
@@ -154,7 +167,8 @@ function submitForm() {
                     </div>
 
                     <!-- Right door -->
-                    <div class="w-1/2 h-full bg-[#6466f1] origin-right transition-all ease-in-out duration-[2000ms] delay-500 z-10" :class="{ '[transform:rotateY(150deg)]': doorsOpen }"></div>
+                    <!-- NOTE: w-1/2 h-full bg-[#6466f1] origin-right transition-all ease-in-out duration-[2000ms] delay-500 -->
+                    <div :class="doorsOpen ? `${animationForm.right_door} ${animationForm.right_door_open} z-10` : `${animationForm.right_door} z-10`"></div>
                 </div>
 
                 <!-- Content that will be revealed -->
@@ -182,6 +196,4 @@ function submitForm() {
     </div>
 </template>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

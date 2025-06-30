@@ -2,13 +2,13 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useConfirm, useToast } from 'primevue';
-import { deleteAnimation, getAnimations, restoreAnimation } from '@/service/AnimationService';
+import { deleteOpening, getOpeningsWithTrashed, restoreOpening } from '@/service/OpeningAnimationService';
 
 const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 
-const animations = ref({
+const openings = ref({
     data: [],
     current_page: 1,
     per_page: 10,
@@ -16,8 +16,8 @@ const animations = ref({
     last_page: 1
 });
 
-function fetchAnimations(page = 1) {
-    getAnimations(page, animations.value.per_page)
+function fetchOpenings(page = 1) {
+    getOpeningsWithTrashed(page, openings.value.per_page)
         .then((response) => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -25,7 +25,7 @@ function fetchAnimations(page = 1) {
             return response.json();
         })
         .then((data) => {
-            animations.value = {
+            openings.value = {
                 data: data.data,
                 current_page: data.current_page,
                 per_page: data.per_page,
@@ -38,14 +38,14 @@ function fetchAnimations(page = 1) {
         });
 }
 
-function editAnimation(id) {
-    router.push({ name: 'config-style-animation-edit', params: { id } });
+function editOpening(id) {
+    router.push({ name: 'config-style-opening-edit', params: { id } });
 }
 
-function fetchDeleteAnimation(event) {
+function fetchDeleteOpening(event) {
     confirm.require({
         target: event.currentTarget,
-        message: 'Are you sure you want to delete this animation?',
+        message: 'Are you sure you want to delete this opening?',
         icon: 'pi pi-exclamation-triangle',
         rejectProps: {
             label: 'Cancel',
@@ -57,7 +57,7 @@ function fetchDeleteAnimation(event) {
             severity: 'danger'
         },
         accept: () => {
-            deleteAnimation(event)
+            deleteOpening(event)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -65,7 +65,7 @@ function fetchDeleteAnimation(event) {
                     return response.json();
                 })
                 .then((data) => {
-                    fetchAnimations();
+                    fetchOpenings();
                     toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
                 })
                 .catch((error) => {
@@ -75,9 +75,9 @@ function fetchDeleteAnimation(event) {
     });
 }
 
-function fetchRestoreAnimation(event) {
+function fetchRestoreOpening(event) {
     confirm.require({
-        message: 'Are you sure you want to restore this animation?',
+        message: 'Are you sure you want to restore this opening?',
         target: event.currentTarget,
         icon: 'pi pi-exclamation-triangle',
         rejectProps: {
@@ -90,7 +90,7 @@ function fetchRestoreAnimation(event) {
             severity: 'success'
         },
         accept: () => {
-            restoreAnimation(event)
+            restoreOpening(event)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -98,7 +98,7 @@ function fetchRestoreAnimation(event) {
                     return response.json();
                 })
                 .then((data) => {
-                    fetchAnimations();
+                    fetchOpenings();
                     toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
                 })
                 .catch((error) => {
@@ -109,23 +109,23 @@ function fetchRestoreAnimation(event) {
 }
 
 function onPageChange(event) {
-    fetchAnimations(event.page + 1);
+    fetchOpenings(event.page + 1);
 }
 
 onMounted(() => {
-    fetchAnimations();
+    fetchOpenings();
 });
 </script>
 
 <template>
     <ConfirmPopup />
     <DataTable
-        :value="animations.data"
+        :value="openings.data"
         paginator
         lazy
-        :rows="animations.per_page"
-        :totalRecords="animations.total"
-        :first="(animations.current_page - 1) * animations.per_page"
+        :rows="openings.per_page"
+        :totalRecords="openings.total"
+        :first="(openings.current_page - 1) * openings.per_page"
         @page="onPageChange"
         tableStyle="min-width: 50rem"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -133,20 +133,24 @@ onMounted(() => {
     >
         <template #header>
             <div class="flex justify-between items-center">
-                <h3 class="text-lg animation-semibold">Animation Management</h3>
-                <Button label="Add Animation" icon="pi pi-plus" @click="$router.push({ name: 'config-style-animation-create' })" />
+                <h3 class="text-lg opening-semibold">Opening Animation Management</h3>
+                <Button label="Add Opening" icon="pi pi-plus" @click="$router.push({ name: 'config-style-opening-create' })" />
             </div>
         </template>
-        <template #empty><div class="text-center">No animations found.</div></template>
+        <template #empty><div class="text-center">No openings found.</div></template>
         <!-- Running Number Column -->
         <Column header="No." style="width: 5%">
             <template #body="{ index }">
-                {{ (animations.current_page - 1) * animations.per_page + index + 1 }}
+                {{ (openings.current_page - 1) * openings.per_page + index + 1 }}
             </template>
         </Column>
 
         <Column field="name" header="Name" style="width: 20%"></Column>
-        <Column field="font_path" header="URL" style="width: 10%"></Column>
+        <Column field="is_sealer_custom" header="Custom Sealer" style="width: 10%">
+            <template #body="{ data }">
+                <Badge :value="data.is_sealer_custom ? 'Yes' : 'No'" :severity="data.is_sealer_custom ? 'info' : 'warn'" />
+            </template>
+        </Column>
         <Column field="deleted_at" header="Status" style="width: 15%">
             <template #body="{ data }">
                 <Tag :value="data.deleted_at === null ? 'Active' : 'Inactive'" :severity="data.deleted_at === null ? 'success' : 'danger'" />
@@ -154,16 +158,16 @@ onMounted(() => {
         </Column>
         <Column header="Actions" style="width: 10%">
             <template #body="{ data }">
-                <div class="flex justify-around">
+                <div>
                     <!-- Show edit button only for active records -->
-                    <Button v-if="data.deleted_at === null" icon="pi pi-pencil" class="p-button-text" @click="editAnimation(data.id)" v-tooltip="'Edit Animation'" />
+                    <Button v-if="data.deleted_at === null" icon="pi pi-pencil" class="p-button-text" @click="editOpening(data.id)" v-tooltip="'Edit Opening'" />
 
                     <!-- Show delete/restore based on status -->
                     <Button
                         :icon="data.deleted_at === null ? 'pi pi-trash' : 'pi pi-replay'"
                         :class="data.deleted_at === null ? 'p-button-text p-button-danger' : 'p-button-text p-button-success'"
-                        @click="data.deleted_at === null ? fetchDeleteAnimation(data.id) : fetchRestoreAnimation(data.id)"
-                        v-tooltip="data.deleted_at === null ? 'Delete Animation' : 'Restore Animation'"
+                        @click="data.deleted_at === null ? fetchDeleteOpening(data.id) : fetchRestoreOpening(data.id)"
+                        v-tooltip="data.deleted_at === null ? 'Delete Opening' : 'Restore Opening'"
                     />
                 </div>
             </template>

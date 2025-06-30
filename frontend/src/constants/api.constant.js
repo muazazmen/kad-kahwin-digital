@@ -5,6 +5,9 @@ export const ENDPOINTS = {
     GOOGLE_REDIRECT: '/api/v1/auth/google/redirect',
     GOOGLE_CONNECT: '/api/v1/auth/google/connect',
 
+    /* ---------------------- USER ---------------------- */
+    OPENING_ANIMATIONS: '/api/v1/openings',
+
     /* ---------------------- ADMIN ---------------------- */
     // USER MANAGEMENT
     UPDATE_ACCOUNT: '/api/v1/me/update',
@@ -34,7 +37,7 @@ export const ENDPOINTS = {
     SUPER_ADMIN_FONT_RESTORE: (fontId) => `/api/v1/super-admin/fonts/${fontId}/restore`,
 
     // ANIMATIONS
-    SUPER_ADMIN_ANIMATIONS: '/api/v1/super-admin/animations',
-    SUPER_ADMIN_ANIMATION: (animationId) => `/api/v1/super-admin/animations/${animationId}`,
-    SUPER_ADMIN_ANIMATION_RESTORE: (animationId) => `/api/v1/super-admin/animations/${animationId}/restore`,
+    SUPER_ADMIN_OPENING_ANIMATIONS: '/api/v1/super-admin/openings',
+    SUPER_ADMIN_OPENING_ANIMATION: (openingId) => `/api/v1/super-admin/openings/${openingId}`,
+    SUPER_ADMIN_OPENING_ANIMATION_RESTORE: (openingId) => `/api/v1/super-admin/openings/${openingId}/restore`
 };

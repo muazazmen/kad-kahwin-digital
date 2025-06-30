@@ -21,5 +21,8 @@ module.exports = {
                 'x-270': 'rotateX(270deg)'
             },
         },
-    }
+    },
+    experimental: {
+        matchArbitraryValues: true
+    },
 };

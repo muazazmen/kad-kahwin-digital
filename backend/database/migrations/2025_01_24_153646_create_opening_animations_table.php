@@ -14,8 +14,14 @@ return new class extends Migration
         Schema::create('opening_animations', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
-            $table->string('url');
-            $table->string('path')->nullable();
+            $table->text('shadow')->nullable();
+            $table->text('left_door');
+            $table->text('left_door_open');
+            $table->text('right_door');
+            $table->text('right_door_open');
+            $table->text('sealer_position')->nullable();
+            $table->text('sealer_style')->nullable();
+            $table->boolean('is_sealer_custom')->default(false);
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();

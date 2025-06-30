@@ -40,8 +40,11 @@ class DatabaseSeeder extends Seeder
                 'role' => 'admin',
             ]);
 
-            $this->call(MusicSeeder::class);
-            $this->call(FrameSeeder::class);
+            $this->call([
+                MusicSeeder::class,
+                FrameSeeder::class,
+                OpeningAnimationSeeder::class,
+            ]);
         }
     }
 }
