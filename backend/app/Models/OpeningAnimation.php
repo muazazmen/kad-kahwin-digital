@@ -14,6 +14,7 @@ class OpeningAnimation extends Model
     protected $fillable = [
         'name',
         'shadow',
+        'doors_color',
         'left_door',
         'left_door_open',
         'right_door',

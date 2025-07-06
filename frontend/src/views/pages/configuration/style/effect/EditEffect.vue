@@ -14,7 +14,6 @@ const errors = reactive({});
 const animationForm = reactive({
     name: '',
     shadow: '',
-    doors_color: '',
     left_door: '',
     right_door: '',
     left_door_open: '',
@@ -56,21 +55,6 @@ function submitForm() {
         });
 }
 
-function validateHex(event) {
-    const value = event.target.value;
-    if (!/^#[0-9A-Fa-f]{6}$/.test(value)) {
-        errors.doors_color = ['Invalid hex color code'];
-        event.target.value = animationForm.doors_color; // Reset to default if invalid
-    } else {
-        delete errors.doors_color; // Clear error if valid
-    }
-}
-
-function removeColor() {
-    animationForm.doors_color = '';
-    delete errors.doors_color; // Clear error if any
-}
-
 onMounted(() => {
     getOpeningById(route.params.id).then(async (res) => {
         if (!res.ok) {
@@ -103,12 +87,6 @@ onMounted(() => {
                         <label for="shadow" class="block"><span class="text-red-500">* </span>Shadow</label>
                         <Textarea id="shadow" v-model="animationForm.shadow" :variant="animationForm.shadow ? 'filled' : 'outlined'" placeholder="absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full" :rows="5" :invalid="errors.shadow" fluid />
                         <small class="text-red-500" v-if="errors.shadow">{{ errors.shadow[0] }}</small>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="doors_color" class="block"><span class="text-red-500">* </span>Doors Color</label>
-                        <input type="color" v-model="animationForm.doors_color" @input="validateHex" :invalid="errors.doors_color" fluid />
-                        <button type="button" class="ml-4" @click="removeColor"><i class="pi pi-times text-2xl hover:text-red-500"></i></button>
-                        <small class="text-red-500" v-if="errors.doors_color">{{ errors.doors_color[0] }}</small>
                     </div>
                     <div class="col-span-2">
                         <label for="left_door" class="block"><span class="text-red-500">* </span>Left Door Animation</label>
@@ -172,7 +150,7 @@ onMounted(() => {
 
                     <!-- Left door -->
                     <!-- NOTE: relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11] bg-[#6466f1] [transform:rotateY(150deg)] -->
-                    <div :class="doorsOpen ? `${animationForm.left_door} ${animationForm.left_door_open}` : `${animationForm.left_door}`" :style="animationForm.doors_color != '#f2f2f2' ? { 'background-color': animationForm.doors_color } : { 'background-color': '#f2f2f2' }">
+                    <div :class="doorsOpen ? `${animationForm.left_door} ${animationForm.left_door_open}` : `${animationForm.left_door}`">
                         <!-- Sealer -->
                         <!-- div ni utk sealer_position -->
                         <!-- NOTE: absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75 -->
@@ -190,7 +168,7 @@ onMounted(() => {
 
                     <!-- Right door -->
                     <!-- NOTE: w-1/2 h-full bg-[#6466f1] origin-right transition-all ease-in-out duration-[2000ms] delay-500 -->
-                    <div :class="doorsOpen ? `${animationForm.right_door} ${animationForm.right_door_open}` : `${animationForm.right_door}`" :style="animationForm.doors_color != '#f2f2f2' ? { 'background-color': animationForm.doors_color } : { 'background-color': '#f2f2f2' }"></div>
+                    <div :class="doorsOpen ? `${animationForm.right_door} ${animationForm.right_door_open}` : `${animationForm.right_door}`"></div>
                 </div>
 
                 <!-- Content that will be revealed -->

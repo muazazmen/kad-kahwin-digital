@@ -32,6 +32,7 @@ class OpeningAnimationController extends Controller
         $fields = $request->validate([
             'name' => 'required|string|max:255',
             'shadow' => 'nullable|string',
+            'doors_color' => 'nullable|string',
             'left_door' => 'required|string',
             'left_door_open' => 'required|string',
             'right_door' => 'required|string',
@@ -67,6 +68,7 @@ class OpeningAnimationController extends Controller
         $fields = $request->validate([
             'name' => 'required|string|max:255',
             'shadow' => 'nullable|string',
+            'doors_color' => 'nullable|string',
             'left_door' => 'required|string',
             'left_door_open' => 'required|string',
             'right_door' => 'required|string',

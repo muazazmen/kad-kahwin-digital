@@ -163,6 +163,21 @@ const router = createRouter({
                             name: 'config-style-opening-edit',
                             component: () => import('@/views/pages/configuration/style/opening/EditOpening.vue'),
                         },
+                        {
+                            path: 'effect',
+                            name: 'effect-list',
+                            component: () => import('@/views/pages/configuration/style/effect/IndexEffect.vue'),
+                        },
+                        {
+                            path: 'effect/create',
+                            name: 'config-style-effect-create',
+                            component: () => import('@/views/pages/configuration/style/effect/CreateEffect.vue'),
+                        },
+                        {
+                            path: 'effect/:id/edit',
+                            name: 'config-style-effect-edit',
+                            component: () => import('@/views/pages/configuration/style/effect/EditEffect.vue'),
+                        },
                     ]
                 },
                 {

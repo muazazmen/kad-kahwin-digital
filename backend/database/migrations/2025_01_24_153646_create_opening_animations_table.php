@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id()->primary();
             $table->string('name');
             $table->text('shadow')->nullable();
+            $table->string('doors_color')->nullable();
             $table->text('left_door');
             $table->text('left_door_open');
             $table->text('right_door');
