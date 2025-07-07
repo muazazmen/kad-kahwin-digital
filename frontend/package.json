@@ -10,11 +10,13 @@
     "dependencies": {
         "@primevue/forms": "^4.3.5",
         "@primevue/themes": "^4.2.5",
+        "@tsparticles/slim": "^3.8.1",
+        "@tsparticles/vue3": "^3.0.1",
         "chart.js": "3.3.2",
-        "particle.js": "^1.0.7",
         "pinia": "^2.3.1",
         "primeicons": "^6.0.1",
         "primevue": "^4.2.5",
+        "tsparticles": "^3.8.1",
         "vue": "^3.4.34",
         "vue-router": "^4.4.0"
     },

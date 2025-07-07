@@ -1,8 +1,9 @@
 <script setup>
 import { addOpening } from '@/service/OpeningAnimationService';
 import { useToast } from 'primevue';
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { ParticlesComponent } from 'vue3-particles';
 
 const router = useRouter();
 const toast = useToast();
@@ -10,19 +11,17 @@ const toast = useToast();
 const loading = ref(false);
 const errors = reactive({});
 
-const animationForm = reactive({
+const effectForm = reactive({
     name: '',
-    shadow: '',
-    left_door: '',
-    right_door: '',
-    left_door_open: '',
-    right_door_open: '',
-    sealer_position: '',
-    sealer_style: '',
-    is_sealer_custom: false,
+    particle_config: {
+        particles: {
+            number: { value: 50 },
+            size: { value: 3 }
+        }
+    }
 });
 
-const doorsOpen = ref(false);
+const doorsOpen = ref(true);
 
 function submitForm() {
     // Clear previous errors
@@ -30,7 +29,7 @@ function submitForm() {
 
     loading.value = true;
 
-    addOpening(animationForm)
+    addOpening(effectForm)
         .then(async (res) => {
             const data = await res.json();
 
@@ -38,17 +37,10 @@ function submitForm() {
                 toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
 
                 // Reset form
-                animationForm.name = '';
-                animationForm.shadow = '';
-                animationForm.left_door = '';
-                animationForm.right_door = '';
-                animationForm.left_door_open = '';
-                animationForm.right_door_open = '';
-                animationForm.sealer_position = '';
-                animationForm.sealer_style = '';
-                animationForm.is_sealer_custom = false;
+                effectForm.name = '';
+                effectForm.particle_config = '';
 
-                router.push({ name: 'opening-list' });
+                router.push({ name: 'effect-list' });
             } else {
                 if (data.errors) {
                     Object.assign(errors, data.errors);
@@ -64,69 +56,44 @@ function submitForm() {
             loading.value = false;
         });
 }
+
+const particlesInit = async (engine) => {
+    // If you need advanced features, you can load them here
+    // Example: await loadFull(engine); // Requires importing from 'tsparticles'
+    console.log('Particles engine initialized', engine);
+};
+
+const particlesLoaded = (container) => {
+    console.log('Particles loaded', container);
+};
 </script>
 
 <template>
     <div class="flex justify-between">
-        <h1 class="text-xl animation-semibold">Create Opening Animation</h1>
-        <Button label="Back" icon="pi pi-arrow-left" @click="$router.push({ name: 'opening-list' })" class="p-button-link"></Button>
+        <h1 class="text-xl animation-semibold">Create Effect</h1>
+        <Button label="Back" icon="pi pi-arrow-left" @click="$router.push({ name: 'effect-list' })" class="p-button-link"></Button>
     </div>
 
-    <!-- Form -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-4">
         <div class="md:col-span-5">
+            <!-- Form -->
             <form @submit.prevent="submitForm">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                     <div class="col-span-2">
                         <label for="name" class="block"><span class="text-red-500">* </span>Name</label>
-                        <InputText id="name" v-model="animationForm.name" placeholder="e.g. Door 1" :invalid="errors.name" fluid />
+                        <InputText id="name" v-model="effectForm.name" placeholder="e.g. Particle Name" :invalid="errors.name" fluid />
                         <small class="text-red-500" v-if="errors.name">{{ errors.name[0] }}</small>
                     </div>
                     <div class="col-span-2">
-                        <label for="shadow" class="block"><span class="text-red-500">* </span>Shadow</label>
-                        <Textarea id="shadow" v-model="animationForm.shadow" placeholder="absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full" :rows="5" :invalid="errors.shadow" fluid />
-                        <small class="text-red-500" v-if="errors.shadow">{{ errors.shadow[0] }}</small>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="left_door" class="block"><span class="text-red-500">* </span>Left Door Animation</label>
-                        <Textarea id="left_door" v-model="animationForm.left_door" placeholder="relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11]" :rows="5" :invalid="errors.left_door" fluid />
-                        <small class="text-red-500" v-if="errors.left_door">{{ errors.left_door[0] }}</small>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="left_door_open" class="block"><span class="text-red-500">* </span>Left Door Animation (Open)</label>
-                        <Textarea id="left_door_open" v-model="animationForm.left_door_open" placeholder="[transform:rotateY(150deg)]" :rows="3" :invalid="errors.left_door_open" fluid />
-                        <small class="text-red-500" v-if="errors.left_door_open">{{ errors.left_door_open[0] }}</small>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="right_door" class="block"><span class="text-red-500">* </span>Right Door Animation</label>
-                        <Textarea id="right_door" v-model="animationForm.right_door" placeholder="w-1/2 h-full origin-right transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-10" :rows="5" :invalid="errors.right_door" fluid />
-                        <small class="text-red-500" v-if="errors.right_door">{{ errors.right_door[0] }}</small>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="right_door_open" class="block"><span class="text-red-500">* </span>Right Door Animation (Open)</label>
-                        <Textarea id="right_door_open" v-model="animationForm.right_door_open" placeholder="[transform:rotateY(150deg)]" :rows="3" :invalid="errors.right_door_open" fluid />
-                        <small class="text-red-500" v-if="errors.right_door_open">{{ errors.right_door_open[0] }}</small>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="sealer_position" class="block"><span class="text-red-500">* </span>Sealer Position</label>
-                        <Textarea id="sealer_position" v-model="animationForm.sealer_position" placeholder="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75" :rows="2" :invalid="errors.sealer_position" fluid />
-                        <small class="text-red-500" v-if="errors.sealer_position">{{ errors.sealer_position[0] }}</small>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="sealer_style" class="block"><span class="text-red-500">* </span>Sealer Button Style</label>
-                        <Textarea id="sealer_style" v-model="animationForm.sealer_style" placeholder="rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-[0px_0px_15px_rgba(0,0,0,0.7)] pulse-animation" :rows="3" :invalid="errors.sealer_style" fluid />
-                        <small class="text-red-500" v-if="errors.sealer_style">{{ errors.sealer_style[0] }}</small>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="is_sealer_custom" class="block">Custom Sealer</label>
-                        <ToggleButton v-model="animationForm.is_sealer_custom" onLabel="True" offLabel="False" />
-                        <small class="text-red-500" v-if="errors.is_sealer_custom">{{ errors.is_sealer_custom[0] }}</small>
+                        <label for="particle_config" class="block"><span class="text-red-500">* </span>Particle Config</label>
+                        <Textarea id="particle_config" v-model="effectForm.particle_config" placeholder="particle configuration" :rows="5" :invalid="errors.particle_config" fluid />
+                        <small class="text-red-500" v-if="errors.particle_config">{{ errors.particle_config[0] }}</small>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="flex justify-end mt-4 gap-4">
-                    <Button label="Cancel" @click="$router.push({ name: 'opening-list' })" class="p-button-outlined"></Button>
+                    <Button label="Cancel" @click="$router.push({ name: 'effect-list' })" class="p-button-outlined"></Button>
                     <Button label="Create" type="submit" :loading="loading"></Button>
                 </div>
             </form>
@@ -145,20 +112,36 @@ function submitForm() {
                 <div class="perspective-1000 absolute inset-0 flex z-10 transform-3d-preserve isolate">
                     <!-- Shadow -->
                     <!-- NOTE: absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full shadow-[8px_10px_30px_20px_rgba(0,0,0,0.2)] z-[11] -->
-                    <div :class="doorsOpen ? `${animationForm.shadow} shadow-none` : `${animationForm.shadow}`"></div>
+                    <div
+                        :class="
+                            doorsOpen
+                                ? `absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full z-[11] shadow-none`
+                                : `absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full shadow-[8px_10px_30px_20px_rgba(0,0,0,0.2)] z-[11]`
+                        "
+                    ></div>
 
                     <!-- Left door -->
                     <!-- NOTE: relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11] bg-[#6466f1] [transform:rotateY(150deg)] -->
-                    <div :class="doorsOpen ? `${animationForm.left_door} ${animationForm.left_door_open}` : `${animationForm.left_door}`">
+                    <div
+                        :class="
+                            doorsOpen
+                                ? `relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11] bg-[#f2f2f2] [transform:rotateY(150deg)]`
+                                : `relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11] bg-[#f2f2f2]`
+                        "
+                    >
                         <!-- Sealer -->
                         <!-- div ni utk sealer_position -->
                         <!-- NOTE: absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75 -->
-                        <div :class="doorsOpen ? `${animationForm.sealer_position} pointer-events-none` : `${animationForm.sealer_position} pointer-events-auto`">
-                            <div v-if="!animationForm.is_sealer_custom"></div>
-                            <!-- buat if is_sealer_custom == true, akan ada div sendiri letak nama groom, bride else default kluar dkat button sealer text -->
+                        <div
+                            :class="
+                                doorsOpen
+                                    ? `absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75 pointer-events-none`
+                                    : `absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75 pointer-events-auto`
+                            "
+                        >
                             <button type="button" @click="doorsOpen = true">
                                 <!-- NOTE: sealer style = rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-[0px_0px_15px_rgba(0,0,0,0.7)] pulse-animation -->
-                                <div :class="`${animationForm.sealer_style} bg-[#f2f2f2]`">
+                                <div :class="`rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-[0px_0px_15px_rgba(0,0,0,0.7)] pulse-animation bg-[#f2f2f2]`">
                                     <h2 class="text-black">Buka</h2>
                                 </div>
                             </button>
@@ -167,13 +150,22 @@ function submitForm() {
 
                     <!-- Right door -->
                     <!-- NOTE: w-1/2 h-full bg-[#6466f1] origin-right transition-all ease-in-out duration-[2000ms] delay-500 -->
-                    <div :class="doorsOpen ? `${animationForm.right_door} ${animationForm.right_door_open}` : `${animationForm.right_door}`"></div>
+                    <div
+                        :class="
+                            doorsOpen
+                                ? `w-1/2 h-full bg-[#f2f2f2] origin-right transition-all ease-in-out duration-[2000ms] delay-500 [transform:rotateY(-150deg)]`
+                                : `w-1/2 h-full bg-[#f2f2f2] origin-right transition-all ease-in-out duration-[2000ms] delay-500`
+                        "
+                    ></div>
                 </div>
 
                 <!-- Content that will be revealed -->
                 <div class="flex flex-col justify-center items-center gap-4 w-full h-full relative">
                     <!-- Main content (initially hidden) -->
                     <div class="transition-opacity duration-1000 delay-700" :class="{ 'opacity-0': !doorsOpen }">
+                        <div>
+                            <ParticlesComponent id="particles" :options="effectForm.particle_config" :particlesInit="particlesInit" :particlesLoaded="particlesLoaded"  style="position: absolute; width: 100%; height: 100%;" />
+                        </div>
                         <h1 class="text-black">WALIMATUL URUS</h1>
                         <div class="flex flex-col items-center justify-center gap-2 mt-8">
                             <h1 class="text-7xl text-black" style="font-family: 'Billabong', serif">Groom</h1>

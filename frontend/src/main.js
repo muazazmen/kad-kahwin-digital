@@ -10,6 +10,8 @@ import ToastService from 'primevue/toastservice';
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
 import { createPinia } from 'pinia';
+import VueParticles from '@tsparticles/vue3';
+import { loadFull } from 'tsparticles';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -47,6 +49,12 @@ app.use(PrimeVue, {
     }
 });
 
+app.use(VueParticles, {
+    init: async (engine) => {
+        console.log('Particles engine initialized');
+        await loadFull(engine);
+    }
+})
 app.use(ToastService);
 app.use(ConfirmationService);
 app.use(pinia);

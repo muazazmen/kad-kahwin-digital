@@ -1,29 +1,23 @@
 <template>
-  <input 
-    type="color" 
-    v-model="colorValue"
-    @input="validateHex"
-  >
-
-  <span>{{ colorValue }}</span>
+    <div class="card relative z-10">
+      <!-- FIXME: particles were overlapping to other elements it should be in this container only -->
+      <div class="absolute z-[-5]">
+        <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" :options="particlesConfig" />
+      </div>
+    </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      colorValue: '#ffffff'
-    }
-  },
-  methods: {
-    validateHex(event) {
-      if (event.target.value.startsWith('rgb(')) {
-        // Revert to previous valid hex value
-        event.target.value = this.colorValue;
-      } else {
-        this.colorValue = event.target.value;
-      }
-    }
-  }
-}
+<script setup>
+import { ref } from 'vue';
+
+const particlesConfig = ref({
+  particles: { number: { value: 10 }, move: { enable: true } }
+});
+
+const particlesLoaded = async container => {
+    console.log("Particles container loaded", container);
+};
 </script>
+<style scoped>
+
+</style>

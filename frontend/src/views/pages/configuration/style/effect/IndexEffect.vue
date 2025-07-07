@@ -134,7 +134,7 @@ onMounted(() => {
         <template #header>
             <div class="flex justify-between items-center">
                 <h3 class="text-lg effect-semibold">Particle Effect Management</h3>
-                <Button label="Add Opening" icon="pi pi-plus" @click="$router.push({ name: 'config-style-effect-create' })" />
+                <Button label="Add Effect" icon="pi pi-plus" @click="$router.push({ name: 'config-style-effect-create' })" />
             </div>
         </template>
         <template #empty><div class="text-center">No effects found.</div></template>
@@ -146,11 +146,7 @@ onMounted(() => {
         </Column>
 
         <Column field="name" header="Name" style="width: 20%"></Column>
-        <Column field="is_sealer_custom" header="Custom Sealer" style="width: 10%">
-            <template #body="{ data }">
-                <Badge :value="data.is_sealer_custom ? 'Yes' : 'No'" :severity="data.is_sealer_custom ? 'info' : 'warn'" />
-            </template>
-        </Column>
+        <Column field="particle_config" header="Particle Config" style="width: 10%"></Column>
         <Column field="deleted_at" header="Status" style="width: 15%">
             <template #body="{ data }">
                 <Tag :value="data.deleted_at === null ? 'Active' : 'Inactive'" :severity="data.deleted_at === null ? 'success' : 'danger'" />
@@ -160,14 +156,14 @@ onMounted(() => {
             <template #body="{ data }">
                 <div>
                     <!-- Show edit button only for active records -->
-                    <Button v-if="data.deleted_at === null" icon="pi pi-pencil" class="p-button-text" @click="editEffect(data.id)" v-tooltip="'Edit Opening'" />
+                    <Button v-if="data.deleted_at === null" icon="pi pi-pencil" class="p-button-text" @click="editEffect(data.id)" v-tooltip="'Edit Effect'" />
 
                     <!-- Show delete/restore based on status -->
                     <Button
                         :icon="data.deleted_at === null ? 'pi pi-trash' : 'pi pi-replay'"
                         :class="data.deleted_at === null ? 'p-button-text p-button-danger' : 'p-button-text p-button-success'"
                         @click="data.deleted_at === null ? fetchDeleteEffect(data.id) : fetchRestoreEffect(data.id)"
-                        v-tooltip="data.deleted_at === null ? 'Delete Opening' : 'Restore Opening'"
+                        v-tooltip="data.deleted_at === null ? 'Delete Effect' : 'Restore Effect'"
                     />
                 </div>
             </template>
