@@ -13,9 +13,7 @@ class Effect extends Model
 
     protected $fillable = [
         'name',
-        'transition',
-        'text_color',
-        'bg_color',
+        'particle_config',
         'created_by',
         'updated_by'
     ];

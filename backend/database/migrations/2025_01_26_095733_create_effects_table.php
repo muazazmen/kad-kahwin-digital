@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('effects', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
-            $table->string('transition');
-            $table->string('text_color');
-            $table->string('bg_color');
+            $table->json('particle_config');
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();

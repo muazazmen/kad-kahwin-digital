@@ -28,6 +28,7 @@ class OpeningAnimationSeeder extends Seeder
                 'sealer_style' => 'rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-[0px_0px_15px_rgba(0,0,0,0.7)] pulse-animation',
                 'is_sealer_custom' => true,
                 'created_by' => $user->id,
+                'created_at' => now(),
             ],
             // [
             //     'name' => 'Fancy Animation',

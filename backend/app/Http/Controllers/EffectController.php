@@ -12,7 +12,19 @@ class EffectController extends Controller
      */
     public function index()
     {
-        //
+        $effects = Effect::withTrashed()->paginate(10);
+
+        return $effects;
+    }
+
+    /**
+     * Display a listing of the resource without trashed items.
+     */
+    public function indexWithoutTrashed()
+    {
+        $effects = Effect::latest()->get();
+
+        return $effects;
     }
 
     /**
@@ -20,7 +32,19 @@ class EffectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $fields = $request->validate([
+            'name' => 'required|max:255',
+            'particle_config' => 'required|json',
+        ]);
+
+        $fields['created_by'] = auth()->user()->id;
+
+        $effect = Effect::create($fields);
+
+        return response([
+            'message' => 'Effect created successfully',
+            'effect' => $effect,
+        ], 201);
     }
 
     /**
@@ -28,7 +52,7 @@ class EffectController extends Controller
      */
     public function show(Effect $effect)
     {
-        //
+        return $effect;
     }
 
     /**
@@ -36,7 +60,19 @@ class EffectController extends Controller
      */
     public function update(Request $request, Effect $effect)
     {
-        //
+        $fields = $request->validate([
+            'name' => 'required|max:255',
+            'particle_config' => 'required|json',
+        ]);
+
+        $fields['updated_by'] = auth()->user()->id;
+
+        $effect->update($fields);
+
+        return response([
+            'message' => 'Effect updated successfully',
+            'effect' => $effect,
+        ], 200);
     }
 
     /**
@@ -44,6 +80,22 @@ class EffectController extends Controller
      */
     public function destroy(Effect $effect)
     {
-        //
+        $effect->delete();
+
+        return response([
+            'message' => 'Effect deleted successfully',
+        ], 200);
+    }
+
+    /**
+     * Restore a soft-deleted effect.
+     */
+    public function restore($id)
+    {
+        Effect::withTrashed()->findOrFail($id)->restore();
+
+        return response([
+            'message' => 'Effect restored successfully',
+        ], 200);
     }
 }

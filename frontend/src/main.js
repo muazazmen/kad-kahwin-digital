@@ -6,12 +6,13 @@ import Aura from '@primevue/themes/aura';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
+import Editor from 'primevue/editor';
+import VueParticles from '@tsparticles/vue3';
+import { loadFull } from 'tsparticles';
 
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
 import { createPinia } from 'pinia';
-import VueParticles from '@tsparticles/vue3';
-import { loadFull } from 'tsparticles';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -58,5 +59,7 @@ app.use(VueParticles, {
 app.use(ToastService);
 app.use(ConfirmationService);
 app.use(pinia);
+
+app.component('Editor', Editor)
 
 app.mount('#app');

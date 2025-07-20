@@ -20,6 +20,16 @@ class FrameController extends Controller
     }
 
     /**
+     * Display a listing of the resource without trashed items.
+     */
+    public function indexWithoutTrashed()
+    {        
+        $frames = Frame::latest()->get();
+
+        return $frames;
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)

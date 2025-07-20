@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useConfirm, useToast } from 'primevue';
-import { deleteOpening, getOpeningsWithTrashed, restoreOpening } from '@/service/OpeningAnimationService';
+import { deleteEffect, getEffectsWithTrashed, restoreEffect } from '@/service/EffectService';
 
 const router = useRouter();
 const toast = useToast();
@@ -16,8 +16,24 @@ const effects = ref({
     last_page: 1
 });
 
+const truncateJson = (json, maxLength = 100) => {
+    if (!json) return '';
+    
+    try {
+        const jsonString = typeof json === 'object' 
+            ? JSON.stringify(json) 
+            : json;
+            
+        return jsonString.length > maxLength 
+            ? jsonString.substring(0, maxLength) + '...' 
+            : jsonString;
+    } catch (e) {
+        return json;
+    }
+};
+
 function fetchEffects(page = 1) {
-    getOpeningsWithTrashed(page, effects.value.per_page)
+    getEffectsWithTrashed(page, effects.value.per_page)
         .then((response) => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -57,7 +73,7 @@ function fetchDeleteEffect(event) {
             severity: 'danger'
         },
         accept: () => {
-            deleteOpening(event)
+            deleteEffect(event)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -90,7 +106,7 @@ function fetchRestoreEffect(event) {
             severity: 'success'
         },
         accept: () => {
-            restoreOpening(event)
+            restoreEffect(event)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -145,8 +161,12 @@ onMounted(() => {
             </template>
         </Column>
 
-        <Column field="name" header="Name" style="width: 20%"></Column>
-        <Column field="particle_config" header="Particle Config" style="width: 10%"></Column>
+        <Column field="name" header="Name" style="width: 10%"></Column>
+        <Column field="particle_config" header="Particle Config" style="width: 20%">
+            <template #body="{ data }">
+                <div v-tooltip="'Particle Config JSON'">{{ truncateJson(data.particle_config, 150) }}</div>
+            </template>
+        </Column>
         <Column field="deleted_at" header="Status" style="width: 15%">
             <template #body="{ data }">
                 <Tag :value="data.deleted_at === null ? 'Active' : 'Inactive'" :severity="data.deleted_at === null ? 'success' : 'danger'" />

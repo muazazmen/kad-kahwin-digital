@@ -6,7 +6,12 @@ export const ENDPOINTS = {
     GOOGLE_CONNECT: '/api/v1/auth/google/connect',
 
     /* ---------------------- USER ---------------------- */
+    MUSICS: '/api/v1/musics',
+    PRAYERS: '/api/v1/prayers',
+    FRAMES: '/api/v1/frames',
+    FONTS: '/api/v1/fonts',
     OPENING_ANIMATIONS: '/api/v1/openings',
+    EFFECTS: '/api/v1/effects',
 
     /* ---------------------- ADMIN ---------------------- */
     // USER MANAGEMENT
@@ -36,8 +41,13 @@ export const ENDPOINTS = {
     SUPER_ADMIN_FONT: (fontId) => `/api/v1/super-admin/fonts/${fontId}`,
     SUPER_ADMIN_FONT_RESTORE: (fontId) => `/api/v1/super-admin/fonts/${fontId}/restore`,
 
-    // ANIMATIONS
+    // OPENINGS
     SUPER_ADMIN_OPENING_ANIMATIONS: '/api/v1/super-admin/openings',
     SUPER_ADMIN_OPENING_ANIMATION: (openingId) => `/api/v1/super-admin/openings/${openingId}`,
-    SUPER_ADMIN_OPENING_ANIMATION_RESTORE: (openingId) => `/api/v1/super-admin/openings/${openingId}/restore`
+    SUPER_ADMIN_OPENING_ANIMATION_RESTORE: (openingId) => `/api/v1/super-admin/openings/${openingId}/restore`,
+
+    // EFFECTS
+    SUPER_ADMIN_EFFECTS: '/api/v1/super-admin/effects',
+    SUPER_ADMIN_EFFECT: (effectId) => `/api/v1/super-admin/effects/${effectId}`,
+    SUPER_ADMIN_EFFECT_RESTORE: (effectId) => `/api/v1/super-admin/effects/${effectId}/restore`,
 };

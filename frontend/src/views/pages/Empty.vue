@@ -1,8 +1,8 @@
 <template>
     <div class="card relative z-10">
-      <!-- FIXME: particles were overlapping to other elements it should be in this container only -->
-      <div class="absolute z-[-5]">
-        <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" :options="particlesConfig" />
+      <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" :options="particlesConfig" />
+      <div>
+        <Editor v-model="code" editor-style="height: 320px" />
       </div>
     </div>
 </template>
@@ -11,8 +11,11 @@
 import { ref } from 'vue';
 
 const particlesConfig = ref({
-  particles: { number: { value: 10 }, move: { enable: true } }
+  particles: { number: { value: 10 }, move: { enable: true } },
+  fullScreen: { enable: false },
 });
+
+const code = ref('')
 
 const particlesLoaded = async container => {
     console.log("Particles container loaded", container);

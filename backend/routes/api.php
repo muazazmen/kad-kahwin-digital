@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EffectController;
 use App\Http\Controllers\FontController;
 use App\Http\Controllers\FrameController;
 use App\Http\Controllers\MusicController;
@@ -36,8 +37,23 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::put('/me/update-password', [AuthController::class, 'updatePassword']);
   Route::delete('/me', [AuthController::class, 'destroy']);
   
+  // musics
+  Route::get('musics', [MusicController::class, 'indexWithoutTrashed']);
+
+  // prayers
+  Route::get('prayers', [PrayerController::class, 'indexWithoutTrashed']);
+
+  // frames
+  Route::get('frames', [FrameController::class, 'indexWithoutTrashed']);
+
+  // fonts
+  Route::get('fonts', [FontController::class, 'indexWithoutTrashed']);
+
   // Openings
   Route::get('openings', [OpeningAnimationController::class, 'indexWithoutTrashed']);
+
+  // Effects
+  Route::get('effects', [EffectController::class, 'indexWithoutTrashed']);
 });
 
 /************************************** ADMIN **********************************/
@@ -69,4 +85,8 @@ Route::middleware(['auth:sanctum', 'is_super_admin'])->prefix('super-admin')->gr
   // openings
   Route::apiResource('openings', OpeningAnimationController::class);
   Route::put('openings/{opening}/restore', [OpeningAnimationController::class, 'restore']);
+
+  // effects
+  Route::apiResource('effects', EffectController::class);
+  Route::put('effects/{effect}/restore', [EffectController::class, 'restore']);
 });

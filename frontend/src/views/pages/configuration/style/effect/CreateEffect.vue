@@ -1,9 +1,8 @@
 <script setup>
-import { addOpening } from '@/service/OpeningAnimationService';
+import { addEffect } from '@/service/EffectService';
 import { useToast } from 'primevue';
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { ParticlesComponent } from 'vue3-particles';
 
 const router = useRouter();
 const toast = useToast();
@@ -13,15 +12,11 @@ const errors = reactive({});
 
 const effectForm = reactive({
     name: '',
-    particle_config: {
-        particles: {
-            number: { value: 50 },
-            size: { value: 3 }
-        }
-    }
+    particle_config: ''
 });
 
 const doorsOpen = ref(true);
+const particleOptions = ref(null);
 
 function submitForm() {
     // Clear previous errors
@@ -29,7 +24,7 @@ function submitForm() {
 
     loading.value = true;
 
-    addOpening(effectForm)
+    addEffect(effectForm)
         .then(async (res) => {
             const data = await res.json();
 
@@ -39,6 +34,7 @@ function submitForm() {
                 // Reset form
                 effectForm.name = '';
                 effectForm.particle_config = '';
+                particleOptions.value = null;
 
                 router.push({ name: 'effect-list' });
             } else {
@@ -57,14 +53,22 @@ function submitForm() {
         });
 }
 
-const particlesInit = async (engine) => {
-    // If you need advanced features, you can load them here
-    // Example: await loadFull(engine); // Requires importing from 'tsparticles'
-    console.log('Particles engine initialized', engine);
-};
+// Watch for changes in particle_config input
+watch(() => effectForm.particle_config, (newValue) => {
+    if (newValue && newValue.trim() !== '') {
+        try {
+            particleOptions.value = JSON.parse(newValue);
+        } catch (error) {
+            console.error('Invalid particle configuration:', error);
+            particleOptions.value = null;
+        }
+    } else {
+        particleOptions.value = null;
+    }
+});
 
-const particlesLoaded = (container) => {
-    console.log('Particles loaded', container);
+const particlesLoaded = async (container) => {
+    console.log('Particles container loaded', container);
 };
 </script>
 
@@ -86,8 +90,16 @@ const particlesLoaded = (container) => {
                     </div>
                     <div class="col-span-2">
                         <label for="particle_config" class="block"><span class="text-red-500">* </span>Particle Config</label>
-                        <Textarea id="particle_config" v-model="effectForm.particle_config" placeholder="particle configuration" :rows="5" :invalid="errors.particle_config" fluid />
+                        <Textarea 
+                            id="particle_config" 
+                            v-model="effectForm.particle_config" 
+                            :rows="30" 
+                            :invalid="errors.particle_config" 
+                            placeholder="Enter JSON configuration for particles"
+                            fluid 
+                        />
                         <small class="text-red-500" v-if="errors.particle_config">{{ errors.particle_config[0] }}</small>
+                        <small class="text-gray-500" v-else>Enter valid JSON configuration for particles</small>
                     </div>
                 </div>
 
@@ -105,13 +117,12 @@ const particlesLoaded = (container) => {
         <div class="md:col-span-6 flex flex-col items-center gap-2 mb-8">
             <h1 class="text-center text-xl">Preview</h1>
             <div
-                class="bg-surface-50 dark:bg-surface-800 border border-gray-300 rounded-2xl p-4 w-[420px] h-[747px] relative overflow-hidden"
+                class="relative bg-surface-50 dark:bg-surface-800 border border-gray-300 rounded-2xl w-[420px] h-[747px] overflow-hidden"
                 style="background-image: url('/demo/images/design/intro-inside-bg-sample.png'); background-size: cover; background-position: center"
             >
                 <!-- Doors container -->
                 <div class="perspective-1000 absolute inset-0 flex z-10 transform-3d-preserve isolate">
                     <!-- Shadow -->
-                    <!-- NOTE: absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full shadow-[8px_10px_30px_20px_rgba(0,0,0,0.2)] z-[11] -->
                     <div
                         :class="
                             doorsOpen
@@ -121,7 +132,6 @@ const particlesLoaded = (container) => {
                     ></div>
 
                     <!-- Left door -->
-                    <!-- NOTE: relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11] bg-[#6466f1] [transform:rotateY(150deg)] -->
                     <div
                         :class="
                             doorsOpen
@@ -130,8 +140,6 @@ const particlesLoaded = (container) => {
                         "
                     >
                         <!-- Sealer -->
-                        <!-- div ni utk sealer_position -->
-                        <!-- NOTE: absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 transition-opacity duration-75 -->
                         <div
                             :class="
                                 doorsOpen
@@ -140,7 +148,6 @@ const particlesLoaded = (container) => {
                             "
                         >
                             <button type="button" @click="doorsOpen = true">
-                                <!-- NOTE: sealer style = rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-[0px_0px_15px_rgba(0,0,0,0.7)] pulse-animation -->
                                 <div :class="`rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-[0px_0px_15px_rgba(0,0,0,0.7)] pulse-animation bg-[#f2f2f2]`">
                                     <h2 class="text-black">Buka</h2>
                                 </div>
@@ -149,7 +156,6 @@ const particlesLoaded = (container) => {
                     </div>
 
                     <!-- Right door -->
-                    <!-- NOTE: w-1/2 h-full bg-[#6466f1] origin-right transition-all ease-in-out duration-[2000ms] delay-500 -->
                     <div
                         :class="
                             doorsOpen
@@ -160,11 +166,12 @@ const particlesLoaded = (container) => {
                 </div>
 
                 <!-- Content that will be revealed -->
-                <div class="flex flex-col justify-center items-center gap-4 w-full h-full relative">
+                <div class="relative flex flex-col justify-center items-center gap-4 w-full h-full">
                     <!-- Main content (initially hidden) -->
                     <div class="transition-opacity duration-1000 delay-700" :class="{ 'opacity-0': !doorsOpen }">
-                        <div>
-                            <ParticlesComponent id="particles" :options="effectForm.particle_config" :particlesInit="particlesInit" :particlesLoaded="particlesLoaded"  style="position: absolute; width: 100%; height: 100%;" />
+                        <!-- Only show particles if options are available -->
+                        <div v-if="particleOptions">
+                            <vue-particles class="absolute inset-0 flex items-center justify-center w-full h-full" id="tsparticles" @particles-loaded="particlesLoaded" :options="particleOptions" />
                         </div>
                         <h1 class="text-black">WALIMATUL URUS</h1>
                         <div class="flex flex-col items-center justify-center gap-2 mt-8">

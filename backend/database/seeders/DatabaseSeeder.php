@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
                 MusicSeeder::class,
                 FrameSeeder::class,
                 OpeningAnimationSeeder::class,
+                EffectSeeder::class,
             ]);
         }
     }

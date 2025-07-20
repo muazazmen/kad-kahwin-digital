@@ -2,6 +2,10 @@ import { ENDPOINTS } from '@/constants/api.constant';
 import { METHOD } from '@/constants/method.constant';
 import { apiService } from '@/utils/api.util';
 
+export const getOpenings = () => {
+  return apiService(ENDPOINTS.OPENING_ANIMATIONS, METHOD.GET);
+}
+
 export const getOpeningsWithTrashed = (page = 1, perPage = 10) => {
   const params = {
     page: page,

@@ -19,6 +19,16 @@ class PrayerController extends Controller
     }
 
     /**
+     * Display a listing of the resource without trashed items.
+     */
+    public function indexWithoutTrashed()
+    {
+        $prayer = Prayer::latest()->get();
+
+        return $prayer;
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)

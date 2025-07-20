@@ -20,6 +20,16 @@ class FontController extends Controller
     }
 
     /**
+     * Display a listing of the resource without trashed items.
+     */
+    public function indexWithoutTrashed()
+    {
+        $fonts = Font::latest()->get();
+
+        return $fonts;
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
