@@ -13,10 +13,10 @@ export const useMenuStore = defineStore('menu', () => {
             items: [{ label: 'Order', icon: 'pi pi-fw pi-shopping-cart', to: { name: 'order' } }]
         },
         {
-            items: [{ label: 'Design', icon: 'pi pi-fw pi-desktop', to: { name: 'design' } }]
+            items: [{ label: 'Payment', icon: 'pi pi-fw pi-wallet', to: { name: 'payment' }, meta: { superAdmin: true } }]
         },
         {
-            items: [{ label: 'Payment', icon: 'pi pi-fw pi-wallet', to: { name: 'payment' }, meta: { superAdmin: true } }]
+            items: [{ label: 'Card Setting', icon: 'pi pi-fw pi-desktop', to: { name: 'card-setting' } }]
         },
         {
             items: [

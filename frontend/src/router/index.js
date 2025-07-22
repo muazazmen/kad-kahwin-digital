@@ -48,9 +48,42 @@ const router = createRouter({
                     component: () => import('@/views/pages/order/OrderTab.vue')
                 },
                 {
-                    path: '/design',
-                    name: 'design',
-                    component: () => import('@/views/pages/design/Design.vue')
+                    path: '/card-setting',
+                    name: 'card-setting',
+                    component: () => import('@/views/pages/card_setting/CardSetting.vue'),
+                    redirect: { name: 'design-list' },
+                    children: [
+                        {
+                            path: 'design',
+                            name: 'design-list',
+                            component: () => import('@/views/pages/card_setting/design/IndexDesign.vue'),
+                        },
+                        {
+                            path: 'design/create',
+                            name: 'card-setting-design-create',
+                            component: () => import('@/views/pages/card_setting/design/CreateDesign.vue')
+                        },
+                        {
+                            path: 'design/:id/edit',
+                            name: 'card-setting-design-edit',
+                            component: () => import('@/views/pages/card_setting/design/EditDesign.vue')
+                        },
+                        {
+                            path: 'theme',
+                            name: 'theme-list',
+                            component: () => import('@/views/pages/card_setting/theme/IndexTheme.vue'),
+                        },
+                        {
+                            path: 'theme/create',
+                            name: 'card-setting-theme-create',
+                            component: () => import('@/views/pages/card_setting/theme/CreateTheme.vue')
+                        },
+                        {
+                            path: 'theme/:id/edit',
+                            name: 'card-setting-theme-edit',
+                            component: () => import('@/views/pages/card_setting/theme/EditTheme.vue')
+                        },
+                    ]
                 },
                 {
                     path: '/payment',
