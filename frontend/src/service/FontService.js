@@ -2,7 +2,11 @@ import { ENDPOINTS } from '@/constants/api.constant';
 import { METHOD } from '@/constants/method.constant';
 import { apiService } from '@/utils/api.util';
 
-export const getFonts = async (page = 1, perPage = 10) => {
+export const getFonts = async () => {
+    return await apiService(ENDPOINTS.FONTS);
+}
+
+export const getFontsWithTrashed = async (page = 1, perPage = 10) => {
     const params = {
         page: page,
         per_page: perPage

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getFonts, deleteFont, restoreFont } from '@/service/FontService';
+import { getFontsWithTrashed, deleteFont, restoreFont } from '@/service/FontService';
 import { useRouter } from 'vue-router';
 import { useConfirm, useToast } from 'primevue';
 
@@ -17,7 +17,7 @@ const fonts = ref({
 });
 
 function fetchFonts(page = 1) {
-    getFonts(page, fonts.value.per_page)
+    getFontsWithTrashed(page, fonts.value.per_page)
         .then((response) => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');

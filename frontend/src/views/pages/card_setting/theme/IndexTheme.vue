@@ -2,9 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useConfirm, useToast } from 'primevue';
-import { deleteFrame, getFrames, restoreFrame } from '@/service/FrameService';
 import { useAuthStore } from '@/stores/auth';
 import { backendUrl } from '@/constants/env.constant';
+import { deleteTheme, getThemesWithTrashed, restoreTheme } from '@/service/ThemeService';
 
 const authStore = useAuthStore();
 
@@ -12,7 +12,7 @@ const router = useRouter();
 const toast = useToast();
 const confirm = useConfirm();
 
-const frames = ref({
+const themes = ref({
     data: [],
     current_page: 1,
     per_page: 10,
@@ -20,8 +20,8 @@ const frames = ref({
     last_page: 1
 });
 
-function fetchFrames(page = 1) {
-    getFrames(page, frames.value.per_page)
+function fetchThemes(page = 1) {
+    getThemesWithTrashed(page, themes.value.per_page)
         .then((response) => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -29,7 +29,7 @@ function fetchFrames(page = 1) {
             return response.json();
         })
         .then((data) => {
-            frames.value = {
+            themes.value = {
                 data: data.data,
                 current_page: data.current_page,
                 per_page: data.per_page,
@@ -42,14 +42,14 @@ function fetchFrames(page = 1) {
         });
 }
 
-function editFrame(id) {
-    router.push({ name: 'config-general-frame-edit', params: { id } });
+function editTheme(id) {
+    router.push({ name: 'card-setting-theme-edit', params: { id } });
 }
 
-function fetchDeleteFrame(event) {
+function fetchDeleteTheme(event) {
     confirm.require({
         target: event.currentTarget,
-        message: 'Are you sure you want to delete this frame?',
+        message: 'Are you sure you want to delete this theme?',
         icon: 'pi pi-exclamation-triangle',
         rejectProps: {
             label: 'Cancel',
@@ -61,7 +61,7 @@ function fetchDeleteFrame(event) {
             severity: 'danger'
         },
         accept: () => {
-            deleteFrame(event)
+            deleteTheme(event)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -69,7 +69,7 @@ function fetchDeleteFrame(event) {
                     return response.json();
                 })
                 .then((data) => {
-                    fetchFrames();
+                    fetchThemes();
                     toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
                 })
                 .catch((error) => {
@@ -79,9 +79,9 @@ function fetchDeleteFrame(event) {
     });
 }
 
-function fetchRestoreFrame(event) {
+function fetchRestoreTheme(event) {
     confirm.require({
-        message: 'Are you sure you want to restore this frame?',
+        message: 'Are you sure you want to restore this theme?',
         target: event.currentTarget,
         icon: 'pi pi-exclamation-triangle',
         rejectProps: {
@@ -94,7 +94,7 @@ function fetchRestoreFrame(event) {
             severity: 'success'
         },
         accept: () => {
-            restoreFrame(event)
+            restoreTheme(event)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -102,7 +102,7 @@ function fetchRestoreFrame(event) {
                     return response.json();
                 })
                 .then((data) => {
-                    fetchFrames();
+                    fetchThemes();
                     toast.add({ severity: 'success', summary: 'Success', detail: data.message, life: 3000 });
                 })
                 .catch((error) => {
@@ -113,23 +113,23 @@ function fetchRestoreFrame(event) {
 }
 
 function onPageChange(event) {
-    fetchFrames(event.page + 1);
+    fetchThemes(event.page + 1);
 }
 
 onMounted(() => {
-    fetchFrames();
+    fetchThemes();
 });
 </script>
 
 <template>
     <ConfirmPopup />
     <DataTable
-        :value="frames.data"
+        :value="themes.data"
         paginator
         lazy
-        :rows="frames.per_page"
-        :totalRecords="frames.total"
-        :first="(frames.current_page - 1) * frames.per_page"
+        :rows="themes.per_page"
+        :totalRecords="themes.total"
+        :first="(themes.current_page - 1) * themes.per_page"
         @page="onPageChange"
         tableStyle="min-width: 50rem"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -138,25 +138,18 @@ onMounted(() => {
         <template #header>
             <div class="flex justify-between items-center">
                 <h3 class="text-lg font-semibold">Theme Management</h3>
-                <Button label="Add Theme" icon="pi pi-plus" @click="$router.push({ name: 'config-general-frame-create' })" />
+                <Button label="Add Theme" icon="pi pi-plus" @click="$router.push({ name: 'card-setting-theme-create' })" />
             </div>
         </template>
-        <template #empty><div class="text-center">No frames found.</div></template>
+        <template #empty><div class="text-center">No themes found.</div></template>
         <!-- Running Number Column -->
         <Column header="No." style="width: 5%">
             <template #body="{ index }">
-                {{ (frames.current_page - 1) * frames.per_page + index + 1 }}
+                {{ (themes.current_page - 1) * themes.per_page + index + 1 }}
             </template>
         </Column>
 
-        <Column field="title" header="Title" style="width: 20%"></Column>
-        <Column field="frame_path" header="Path" style="width: 20%">
-            <template #body="{ data }">
-                <div class="flex items-center gap-2">
-                    <img :src="`${backendUrl}/storage/${data.frame_path}`" :alt="data.title" class="w-32 h-1w-32 object-cover" />
-                </div>
-            </template>
-        </Column>
+        <Column field="name" header="Name" style="width: 20%"></Column>
         <Column field="deleted_at" header="Status" style="width: 15%">
             <template #body="{ data }">
                 <Tag :value="data.deleted_at === null ? 'Active' : 'Inactive'" :severity="data.deleted_at === null ? 'success' : 'danger'" />
@@ -166,14 +159,13 @@ onMounted(() => {
             <template #body="{ data }">
                 <div class="flex gap-2">
                     <!-- Show edit button only for active records -->
-                    <Button v-if="data.deleted_at === null" icon="pi pi-pencil" class="p-button-text" @click="editFrame(data.id)" :disabled="data.title === 'No Theme' && authStore.user.role !== 'super_admin'" v-tooltip="'Edit Theme'" />
+                    <Button v-if="data.deleted_at === null" icon="pi pi-pencil" class="p-button-text" @click="editTheme(data.id)" :disabled="data.title === 'No Theme' && authStore.user.role !== 'super_admin'" v-tooltip="'Edit Theme'" />
 
                     <!-- Show delete/restore based on status -->
                     <Button
                         :icon="data.deleted_at === null ? 'pi pi-trash' : 'pi pi-replay'"
                         :class="data.deleted_at === null ? 'p-button-text p-button-danger' : 'p-button-text p-button-success'"
-                        @click="data.deleted_at === null ? fetchDeleteFrame(data.id) : fetchRestoreFrame(data.id)"
-                        :disabled="data.title === 'No Theme' && authStore.user.role !== 'super_admin'"
+                        @click="data.deleted_at === null ? fetchDeleteTheme(data.id) : fetchRestoreTheme(data.id)"
                         v-tooltip="data.deleted_at === null ? 'Delete Theme' : 'Restore Theme'"
                     />
                 </div>

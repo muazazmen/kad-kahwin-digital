@@ -16,6 +16,8 @@ class DesignController extends Controller
         //
     }
 
+    // TODO: filter themes, color
+
     /**
      * Store a newly created resource in storage.
      */

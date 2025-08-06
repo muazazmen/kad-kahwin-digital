@@ -8,6 +8,7 @@ use App\Http\Controllers\MusicController;
 use App\Http\Controllers\OpeningAnimationController;
 use App\Http\Controllers\PrayerController;
 use App\Http\Controllers\SsoProviderController;
+use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,29 @@ Route::prefix('auth')->group(function () {
 
 });
 
+/************************************** PUBLIC **********************************/
+// themes
+Route::get('themes', [ThemeController::class, 'indexWithoutTrashed']);
+
+// musics
+Route::get('musics', [MusicController::class, 'indexWithoutTrashed']);
+
+// prayers
+Route::get('prayers', [PrayerController::class, 'indexWithoutTrashed']);
+
+// frames
+Route::get('frames', [FrameController::class, 'indexWithoutTrashed']);
+
+// fonts
+Route::get('fonts', [FontController::class, 'indexWithoutTrashed']);
+
+// Openings
+Route::get('openings', [OpeningAnimationController::class, 'indexWithoutTrashed']);
+
+// Effects
+Route::get('effects', [EffectController::class, 'indexWithoutTrashed']);
+
+
 /************************************** AUTHENTICATE USER **********************************/
 Route::middleware('auth:sanctum')->group(function () {
   // profile
@@ -36,24 +60,6 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/me/update', [AuthController::class, 'update']);
   Route::put('/me/update-password', [AuthController::class, 'updatePassword']);
   Route::delete('/me', [AuthController::class, 'destroy']);
-  
-  // musics
-  Route::get('musics', [MusicController::class, 'indexWithoutTrashed']);
-
-  // prayers
-  Route::get('prayers', [PrayerController::class, 'indexWithoutTrashed']);
-
-  // frames
-  Route::get('frames', [FrameController::class, 'indexWithoutTrashed']);
-
-  // fonts
-  Route::get('fonts', [FontController::class, 'indexWithoutTrashed']);
-
-  // Openings
-  Route::get('openings', [OpeningAnimationController::class, 'indexWithoutTrashed']);
-
-  // Effects
-  Route::get('effects', [EffectController::class, 'indexWithoutTrashed']);
 });
 
 /************************************** ADMIN **********************************/
@@ -73,6 +79,10 @@ Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function
   // frames
   Route::apiResource('frames', FrameController::class);
   Route::put('frames/{frame}/restore', [FrameController::class, 'restore']);
+
+  // themes
+  Route::apiResource('themes', ThemeController::class);
+  Route::put('themes/{theme}/restore', [ThemeController::class, 'restore']);
 
 });
 
