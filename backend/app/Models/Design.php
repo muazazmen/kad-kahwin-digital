@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder|Design where(string $column, mixed $operator = null, mixed $value = null, string $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder|Design orderBy(string $column, string $direction = 'asc')
+ * @method static \Illuminate\Database\Eloquent\Builder|Design first()
+ */
 class Design extends Model
 {
     /** @use HasFactory<\Database\Factories\DesignFactory> */

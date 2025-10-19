@@ -19,7 +19,7 @@ class OpeningAnimationSeeder extends Seeder
             [
                 'name' => 'Pintu 1',
                 'shadow' => 'absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full shadow-[8px_10px_30px_20px_rgba(0,0,0,0.2)] z-[11]',
-                'doors_color' => '',
+                'doors_color' => '#c2acf8',
                 'left_door' => 'relative w-1/2 h-full origin-left transition-all ease-in-out duration-[2000ms] delay-500 border-r border-surface-400 z-[11]',
                 'left_door_open' => '[transform:rotateY(150deg)]',
                 'right_door' => 'w-1/2 h-full origin-right transition-all ease-in-out duration-[2000ms] delay-500 z-10',

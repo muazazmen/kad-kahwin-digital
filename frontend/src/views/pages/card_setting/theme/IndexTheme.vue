@@ -143,7 +143,7 @@ onMounted(() => {
         </template>
         <template #empty><div class="text-center">No themes found.</div></template>
         <!-- Running Number Column -->
-        <Column header="No." style="width: 5%">
+        <Column header="#" style="width: 5%">
             <template #body="{ index }">
                 {{ (themes.current_page - 1) * themes.per_page + index + 1 }}
             </template>

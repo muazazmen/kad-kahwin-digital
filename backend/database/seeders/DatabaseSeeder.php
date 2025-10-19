@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
                 'username' => 'resepsi',
                 'phone_no' => '+60166141875',
                 'avatar' => 'https://avatar.iran.liara.run/username?username=Resepsi',
-                'role' => 'admin',
+                'role' => 'super_admin',
             ]);
 
             $this->call([
@@ -45,6 +45,7 @@ class DatabaseSeeder extends Seeder
                 FrameSeeder::class,
                 OpeningAnimationSeeder::class,
                 EffectSeeder::class,
+                ThemeSeeder::class,
             ]);
         }
     }

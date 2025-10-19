@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DesignController;
 use App\Http\Controllers\EffectController;
 use App\Http\Controllers\FontController;
 use App\Http\Controllers\FrameController;
@@ -33,6 +34,9 @@ Route::prefix('auth')->group(function () {
 /************************************** PUBLIC **********************************/
 // themes
 Route::get('themes', [ThemeController::class, 'indexWithoutTrashed']);
+
+// designs
+Route::get('designs', [DesignController::class, 'indexWithoutTrashed']);
 
 // musics
 Route::get('musics', [MusicController::class, 'indexWithoutTrashed']);
@@ -84,6 +88,9 @@ Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->group(function
   Route::apiResource('themes', ThemeController::class);
   Route::put('themes/{theme}/restore', [ThemeController::class, 'restore']);
 
+  // designs
+  Route::apiResource('designs', DesignController::class);
+  Route::put('designs/{design}/restore', [DesignController::class, 'restore']);
 });
 
 /************************************** SUPER ADMIN **********************************/

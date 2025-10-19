@@ -7,6 +7,7 @@ export const ENDPOINTS = {
 
     /* ---------------------- USER ---------------------- */
     THEMES: '/api/v1/themes',
+    DESIGNS: '/api/v1/designs',
     MUSICS: '/api/v1/musics',
     PRAYERS: '/api/v1/prayers',
     FRAMES: '/api/v1/frames',
@@ -19,6 +20,11 @@ export const ENDPOINTS = {
     ADMIN_THEMES: '/api/v1/admin/themes',
     ADMIN_THEME: (themeId) => `/api/v1/admin/themes/${themeId}`,
     ADMIN_THEME_RESTORE: (themeId) => `/api/v1/admin/themes/${themeId}/restore`,
+
+    // DESIGN
+    ADMIN_DESIGNS: '/api/v1/admin/designs',
+    ADMIN_DESIGN: (designId) => `/api/v1/admin/designs/${designId}`,
+    ADMIN_DESIGN_RESTORE: (designId) => `/api/v1/admin/designs/${designId}/restore`,
     
     // USER MANAGEMENT
     UPDATE_ACCOUNT: '/api/v1/me/update',

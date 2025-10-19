@@ -19,15 +19,17 @@ return new class extends Migration
             $table->string('secondary_color')->nullable();
             $table->string('tertiary_color')->nullable();
             $table->string('bg_image')->nullable();
-            $table->foreignId('theme_id')->constrained()->cascadeOnDelete();
+
+            
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
+            
             // Define foreign key constraints explicitly
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('updated_by')->references('id')->on('users');
+            $table->foreignId('theme_id')->references('id')->on('themes')->cascadeOnDelete();
         });
     }
 

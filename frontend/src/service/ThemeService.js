@@ -2,8 +2,12 @@ import { ENDPOINTS } from "@/constants/api.constant";
 import { METHOD } from "@/constants/method.constant";
 import { apiService } from "@/utils/api.util";
 
-export const getThemes = async () => { 
-  return await apiService(ENDPOINTS.THEMES);
+export const getThemes = async (page = 1, perPage = 10) => { 
+  const params = {
+    page: page,
+    per_page: perPage
+  }
+  return await apiService(ENDPOINTS.THEMES, METHOD.GET, null, {}, params);
 }
 
 export const getThemesWithTrashed = async (page = 1, perPage = 10) => {

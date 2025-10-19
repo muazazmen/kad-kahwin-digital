@@ -41,7 +41,7 @@ class FrameController extends Controller
 
         $fields['created_by'] = Auth::user()->id;
 
-        // Check if a new avatar is being uploaded
+        // Check if a new frame is being uploaded
         if ($request->hasFile('frame_path')) {
             $fields['frame_path'] = $request->file('frame_path')->store('frames', 'public');
         }
