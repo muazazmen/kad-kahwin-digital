@@ -16,7 +16,7 @@ export const getEffectsWithTrashed = (page = 1, perPage = 10) => {
 }
 
 export const getEffectById = (effectId) => {
-  return apiService(ENDPOINTS.SUPER_ADMIN_EFFECT(effectId), METHOD.GET);
+  return apiService(ENDPOINTS.EFFECT(effectId), METHOD.GET);
 }
 
 export const addEffect = (data) => {

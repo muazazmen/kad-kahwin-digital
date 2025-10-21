@@ -1,13 +1,10 @@
+<script setup>
+import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue';
+import { ref } from 'vue'
+
+const markdown = ref('# Hello World\n\nWrite your **markdown** here!')
+</script>
+
 <template>
-    <div class="card">
-        <div class="flex flex-col">
-            <span>have tabs/action bar/menu for theme and design</span>
-            <span>has grid/list, grid have 3 or 4 columns</span>
-        </div>
-        <li>orders</li>
-    </div>
+    <MarkdownEditor v-model="markdown" placeholder="Start writing..." :show-preview="true" min-height="400px" />
 </template>
-
-<script></script>
-
-<style scoped></style>

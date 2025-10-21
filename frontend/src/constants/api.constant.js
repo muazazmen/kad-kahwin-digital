@@ -13,7 +13,9 @@ export const ENDPOINTS = {
     FRAMES: '/api/v1/frames',
     FONTS: '/api/v1/fonts',
     OPENING_ANIMATIONS: '/api/v1/openings',
+    OPENING_ANIMATION: (openingId) => `/api/v1/openings/${openingId}`,
     EFFECTS: '/api/v1/effects',
+    EFFECT: (effectId) => `/api/v1/effects/${effectId}`,
 
     /* ---------------------- ADMIN ---------------------- */
     // THEMES

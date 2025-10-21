@@ -52,10 +52,11 @@ Route::get('fonts', [FontController::class, 'indexWithoutTrashed']);
 
 // Openings
 Route::get('openings', [OpeningAnimationController::class, 'indexWithoutTrashed']);
+Route::get('openings/{opening}', [OpeningAnimationController::class, 'show']);
 
 // Effects
 Route::get('effects', [EffectController::class, 'indexWithoutTrashed']);
-
+Route::get('effects/{effect}', [EffectController::class, 'show']);
 
 /************************************** AUTHENTICATE USER **********************************/
 Route::middleware('auth:sanctum')->group(function () {

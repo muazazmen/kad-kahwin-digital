@@ -1,4 +1,5 @@
 <script setup>
+import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue';
 import { addEffect } from '@/service/EffectService';
 import { useToast } from 'primevue';
 import { reactive, ref, watch } from 'vue';
@@ -12,7 +13,7 @@ const errors = reactive({});
 
 const effectForm = reactive({
     name: '',
-    particle_config: ''
+    particle_config: '```json\n Particles here \n```'
 });
 
 const doorsOpen = ref(true);
@@ -90,14 +91,7 @@ const particlesLoaded = async (container) => {
                     </div>
                     <div class="col-span-2">
                         <label for="particle_config" class="block"><span class="text-red-500">* </span>Particle Config</label>
-                        <Textarea 
-                            id="particle_config" 
-                            v-model="effectForm.particle_config" 
-                            :rows="30" 
-                            :invalid="errors.particle_config" 
-                            placeholder="Enter JSON configuration for particles"
-                            fluid 
-                        />
+                        <MarkdownEditor id="particle_config" v-model="effectForm.particle_config" placeholder="Enter JSON configuration for particles" :show-preview="true" min-height="600px" />
                         <small class="text-red-500" v-if="errors.particle_config">{{ errors.particle_config[0] }}</small>
                         <small class="text-gray-500" v-else>Enter valid JSON configuration for particles</small>
                     </div>

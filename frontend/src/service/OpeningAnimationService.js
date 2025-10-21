@@ -16,7 +16,7 @@ export const getOpeningsWithTrashed = (page = 1, perPage = 10) => {
 };
 
 export const getOpeningById = (openingId) => {
-  return apiService(ENDPOINTS.SUPER_ADMIN_OPENING_ANIMATION(openingId), METHOD.GET)
+  return apiService(ENDPOINTS.OPENING_ANIMATION(openingId), METHOD.GET)
 };
 
 export const addOpening = (data) => {

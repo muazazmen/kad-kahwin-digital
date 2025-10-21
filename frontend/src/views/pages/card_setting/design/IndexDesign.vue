@@ -116,6 +116,22 @@ function onPageChange(event) {
   fetchDesigns(event.page + 1);
 }
 
+function getTextColor(hexColor) {
+  if (!hexColor) return '#000';
+
+  // Convert HEX → RGB
+  const hex = hexColor.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  // Compute brightness (YIQ formula)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  // Return dark or light text based on brightness
+  return brightness > 150 ? '#1a1a1a' : '#f5f5f5';
+}
+
 onMounted(() => {
   fetchDesigns();
 });
@@ -144,9 +160,38 @@ onMounted(() => {
     </Column>
     <Column field="code" header="Code" style="width: 10%"></Column>
     <Column field="name" header="Name" style="width: 10%"></Column>
-    <Column field="primary_color" header="Primary Color" style="width: 10%"></Column>
-    <Column field="secondary_color" header="Secondary Color" style="width: 10%"></Column>
-    <Column field="tertiary_color" header="Tertiary Color" style="width: 10%"></Column>
+    <Column field="primary_color" header="Primary Color" style="width: 10%">
+      <template #body="{ data }">
+        <div class="flex items-center justify-center h-10 rounded-md" :style="{
+          backgroundColor: data.primary_color,
+          color: getTextColor(data.primary_color)
+        }">
+          {{ data.primary_color }}
+        </div>
+      </template>
+    </Column>
+
+    <Column field="secondary_color" header="Secondary Color" style="width: 10%">
+      <template #body="{ data }">
+        <div class="flex items-center justify-center h-10 rounded-md" :style="{
+          backgroundColor: data.secondary_color,
+          color: getTextColor(data.secondary_color)
+        }">
+          {{ data.secondary_color }}
+        </div>
+      </template>
+    </Column>
+
+    <Column field="tertiary_color" header="Tertiary Color" style="width: 10%">
+      <template #body="{ data }">
+        <div class="flex items-center justify-center h-10 rounded-md" :style="{
+          backgroundColor: data.tertiary_color || '#ffffff',
+          color: getTextColor(data.tertiary_color || '#ffffff')
+        }">
+          {{ data.tertiary_color || '-' }}
+        </div>
+      </template>
+    </Column>
     <Column field="bg_image" header="Path" style="width: 15%">
       <template #body="{ data }">
         <div class="flex items-center gap-2">

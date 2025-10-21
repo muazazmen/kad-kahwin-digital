@@ -1,5 +1,6 @@
 <script setup>
 import { addDesign } from '@/service/DesignService';
+import { getEffectById } from '@/service/EffectService';
 import { getOpeningById } from '@/service/OpeningAnimationService';
 import { getThemes } from '@/service/ThemeService';
 import { useToast } from 'primevue';
@@ -10,7 +11,7 @@ const router = useRouter();
 const toast = useToast();
 
 const loading = ref(false);
-const previewLoading = ref(false);
+const previewLoading = ref(true);
 const errors = reactive({});
 
 const doorsOpen = ref(false);
@@ -40,6 +41,49 @@ const designForm = reactive({
 const themes = ref([]);
 
 const fileUploadRef = ref(null);
+const particleOptions = ref(null);
+
+// particleOptions.value = {
+//   fullScreen: { enable: false, zIndex: 9 }, // IMPORTANT
+//   detectRetina: true,
+//   particles: {
+//     number: { value: 40 },
+//     size: { value: 3 },
+//     move: { enable: true, speed: 1 },
+//     color: { value: "#ffffff" },
+//     opacity: { value: 0.9 }
+//   },
+//   interactivity: {
+//     events: { onHover: { enable: false }, onClick: { enable: false } }
+//   }
+// };
+
+async function fetchOpeningAnimation(id) {
+  try {
+    const response = await getOpeningById(id);
+    const result = await response.json();
+    
+    if (response.ok) {
+      Object.assign(animationForm, result);
+      previewLoading.value = false;
+    } else {
+      toast.add({ severity: 'error', summary: 'Error', detail: result.message, life: 3000 });
+    }
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+  }
+}
+
+async function fetchEffect(id) {
+  try {
+    const response = await getEffectById(id);
+    const result = await response.json();
+
+    particleOptions.value = result.particle_config;
+  } catch (error) {
+    toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+  }
+}
 
 async function fetchThemes() {
   try {
@@ -139,20 +183,14 @@ function onFileSelect(files) {
   }
 }
 
+const particlesLoaded = async (container) => {
+  console.log('Particles container loaded', container);
+};
+
 onMounted(async () => {
   await fetchThemes();
-
-  await getOpeningById(1)
-    .then(async (res) => {
-      if (!res.ok) throw new Error('Network response was not ok');
-      const data = await res.json();
-      Object.assign(animationForm, data);
-      previewLoading.value = true;
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load data', life: 3000 });
-    });
+  await fetchOpeningAnimation(1);
+  await fetchEffect(1);
 });
 </script>
 
@@ -175,8 +213,8 @@ onMounted(async () => {
           </div>
           <div class="col-span-2">
             <label for="theme_id" class="block"><span class="text-red-500">* </span>Theme</label>
-            <Select v-model="designForm.theme_id" :options="themes" optionLabel="name" optionValue="id" placeholder="Select Theme"
-              class="w-full" />
+            <Select v-model="designForm.theme_id" :options="themes" optionLabel="name" optionValue="id"
+              placeholder="Select Theme" class="w-full" />
             <small class="text-red-500" v-if="errors.theme_id">{{ errors.theme_id[0] }}</small>
           </div>
           <div class="col-span-2">
@@ -226,19 +264,13 @@ onMounted(async () => {
     </div>
 
     <!-- Preview -->
-    <div v-if="previewLoading" class="md:col-span-6 flex flex-col items-center gap-2 mb-8">
+    <div v-if="!previewLoading" class="md:col-span-6 flex flex-col items-center gap-2 mb-8">
       <h1 class="text-center text-xl">Preview</h1>
       <div
-        class="bg-surface-50 dark:bg-surface-800 border border-gray-300 rounded-2xl p-4 w-[420px] h-[747px] relative overflow-hidden"
-        :style="{
-          backgroundImage: designForm.bg_image
-            ? `url(${designForm.bg_image})`
-            : 'url(/demo/images/design/intro-inside-bg-sample.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }">
+        class="bg-surface-50 dark:bg-surface-800 border border-gray-300 rounded-2xl w-[420px] h-[747px] relative overflow-y-hidden overflow-x-hidden">
         <!-- Doors container -->
-        <div class="perspective-1000 absolute inset-0 flex z-10 transform-3d-preserve isolate">
+        <div class="perspective-1000 absolute inset-0 flex z-10 transform-3d-preserve isolate"
+          :class="{ 'pointer-events-none': doorsOpen }">
           <!-- Shadow -->
           <!-- NOTE: absolute bg-transparent top-1/2 left-0 -translate-y-1/2 w-1/2 h-3/4 rounded-full shadow-[8px_10px_30px_20px_rgba(0,0,0,0.2)] -->
           <div :class="doorsOpen ? `${animationForm.shadow} shadow-none` : `${animationForm.shadow}`"></div>
@@ -273,9 +305,23 @@ onMounted(async () => {
         </div>
 
         <!-- Content that will be revealed -->
-        <div class="flex flex-col justify-center items-center gap-4 w-full h-full relative">
+        <div class="relative w-full h-[747px] overflow-y-scroll overflow-x-hidden no-scrollbar"
+          :class="{ 'opacity-0': !doorsOpen }">
           <!-- Main content (initially hidden) -->
-          <div class="transition-opacity duration-1000 delay-700" :class="{ 'opacity-0': !doorsOpen }">
+          <!-- Only show particles if options are available -->
+          <div v-if="particleOptions">
+            <vue-particles class="absolute top-0 left-0 w-full min-h-full h-full pointer-events-none"
+              id="tsparticles" @particles-loaded="particlesLoaded" :options="particleOptions" />
+          </div>
+
+          <!-- front page (initially hidden) -->
+          <section class="min-h-[747px] flex flex-col items-center justify-center" :style="{
+            backgroundImage: designForm.bg_image
+              ? `url(${designForm.bg_image})`
+              : 'url(/demo/images/design/intro-inside-bg-sample.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }">
             <h1 class="text-black">WALIMATUL URUS</h1>
             <div class="flex flex-col items-center justify-center gap-2 mt-8">
               <h1 class="text-7xl text-black" style="font-family: 'Billabong', serif">Groom</h1>
@@ -285,17 +331,71 @@ onMounted(async () => {
             <div class="mt-8 mb-16">
               <h2 class="text-black">day | dd/mm/yyyy</h2>
             </div>
-          </div>
-        </div>
+            <div class="absolute bottom-4 right-4">
+              <Button @click="doorsOpen = !doorsOpen" severity="warn" icon="pi pi-info" rounded
+                v-tooltip="doorsOpen ? 'Close Doors' : 'Open Doors'" />
+            </div>
+          </section>
 
-        <!-- Open/close button for demo -->
-        <button @click="doorsOpen = !doorsOpen"
-          class="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30 bg-slate-800 text-white px-4 py-2 rounded-lg">
-          {{ doorsOpen ? 'Close Doors' : 'Open Doors' }}
-        </button>
+          <!-- Section 2 -->
+          <section class="min-h-[747px] flex flex-col gap-8 items-center px-12 py-16"
+            :style="{ backgroundColor: designForm.primary_color ? designForm.primary_color : '#F1EAFF' }">
+            <h3 class="text-black">WALIMATUL URUS</h3>
+
+            <div class="flex flex-col items-center">
+              <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">Nama Bapa Pengantin</h3>
+              <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">&</h3>
+              <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">Nama Ibu Pengantin</h3>
+            </div>
+
+            <div class="text-center text-black max-w-md">
+              <span>
+                Dengan penuh kesyukuran, kami mempersilakan
+                Dato' | Datin | Tuan | Puan | Encik | Cik
+                seisi keluarga hadir ke majlis perkahwinan anakanda kami
+              </span>
+            </div>
+
+            <div class="text-center">
+              <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">Nama Penuh Pengantin
+                Lelaki</h2>
+              <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">&</h2>
+              <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">Nama Penuh Pengantin
+                Perempuan</h2>
+            </div>
+
+            <div class="text-center">
+              <h3 class="font-semibold text-xl text-black">Tempat</h3>
+              <p class="text-black" style="font-family: 'Cinzel Decorative';">
+                Alamat Utama
+              </p>
+              <span class="text-black">
+                No 35, Jalan Kasih 3, Sungai Sekamat, 43000 Kajang, Selangor Daruh Ehsan
+              </span>
+            </div>
+
+            <div class="text-center">
+              <h3 class="font-semibold text-xl text-black">Tarikh</h3>
+              <p class="text-black">20 Ogos 2025</p>
+              <p class="text-black italic">28 Rabiul AKhir 1447</p>
+            </div>
+
+            <div class="text-center">
+              <h3 class="font-semibold text-xl text-black">Waktu</h3>
+              <p class="text-black">11:00AM - 04:00PM</p>
+            </div>
+          </section>
+
+          <!-- Section 3 -->
+          <section class="min-h-[747px] flex items-center justify-center bg-yellow-200">
+            <h1>Another Section</h1>
+          </section>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+
+</style>
