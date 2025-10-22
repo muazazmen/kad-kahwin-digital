@@ -28,6 +28,13 @@ class Design extends Model
         'updated_by',
     ];
 
+    protected $appends = ['theme_name'];
+
+    public function getThemeNameAttribute()
+    {
+        return $this->theme?->name;
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -36,6 +43,29 @@ class Design extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function ($design) {
+            if ($design->isForceDeleting()) {
+                // If permanently deleting
+                $design->images()->forceDelete();
+            } else {
+                // If soft deleting
+                $design->images()->delete();
+            }
+        });
+
+        static::restoring(function ($design) {
+            // Restore all related images
+            $design->images()->withTrashed()->restore();
+        });
+    }
+
+    public function images()
+    {
+        return $this->hasMany(DesignImage::class);
     }
 
     public function theme()

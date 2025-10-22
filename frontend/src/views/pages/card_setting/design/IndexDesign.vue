@@ -192,11 +192,17 @@ onMounted(() => {
         </div>
       </template>
     </Column>
-    <Column field="bg_image" header="Path" style="width: 15%">
+    <Column field="images" header="Backgrounds" style="width: 20%">
       <template #body="{ data }">
-        <div class="flex items-center gap-2">
-          <img :src="`${backendUrl}/storage/${data.bg_image}`" :alt="data.title" class="w-32 h-1w-32 object-cover" />
+        <div v-if="data.images && data.images.length" class="w-40">
+          <Carousel :value="data.images" :numVisible="1" :numScroll="1" circular autoplayInterval="4000">
+            <template #item="{ data: img }">
+              <img :src="`${backendUrl}/storage/${img.image_path}`" alt="Design background"
+                class="w-40 h-24 object-cover rounded-md shadow" />
+            </template>
+          </Carousel>
         </div>
+        <div v-else class="text-center text-gray-400 italic">No images</div>
       </template>
     </Column>
     <Column field="theme_name" header="Theme" style="width: 10%"></Column>

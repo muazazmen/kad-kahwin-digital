@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('primary_color');
             $table->string('secondary_color')->nullable();
             $table->string('tertiary_color')->nullable();
-            $table->string('bg_image')->nullable();
-
             
             $table->uuid('created_by');
             $table->uuid('updated_by')->nullable();
