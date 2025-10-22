@@ -34,7 +34,7 @@ const designForm = reactive({
   primary_color: '',
   secondary_color: '',
   tertiary_color: '',
-  bg_image: null,
+  bg_images: [],
   theme_id: null
 });
 
@@ -42,21 +42,6 @@ const themes = ref([]);
 
 const fileUploadRef = ref(null);
 const particleOptions = ref(null);
-
-// particleOptions.value = {
-//   fullScreen: { enable: false, zIndex: 9 }, // IMPORTANT
-//   detectRetina: true,
-//   particles: {
-//     number: { value: 40 },
-//     size: { value: 3 },
-//     move: { enable: true, speed: 1 },
-//     color: { value: "#ffffff" },
-//     opacity: { value: 0.9 }
-//   },
-//   interactivity: {
-//     events: { onHover: { enable: false }, onClick: { enable: false } }
-//   }
-// };
 
 async function fetchOpeningAnimation(id) {
   try {
@@ -79,7 +64,7 @@ async function fetchEffect(id) {
     const response = await getEffectById(id);
     const result = await response.json();
 
-    particleOptions.value = result.particle_config;
+    particleOptions.value = JSON.parse(result.particle_config);
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
   }
@@ -107,9 +92,9 @@ function submitForm() {
   formData.append('tertiary_color', designForm.tertiary_color);
   formData.append('theme_id', designForm.theme_id);
 
-  if (designForm.bg_file instanceof File) {
-    formData.append('bg_image', designForm.bg_file);
-  }
+  designForm.bg_images.forEach((imgObj, index) => {
+    formData.append(`bg_images[${index}]`, imgObj.file);
+  });
 
   // Debug: Check FormData contents
   for (let [key, value] of formData.entries()) {
@@ -131,20 +116,14 @@ function submitForm() {
           primary_color: '',
           secondary_color: '',
           tertiary_color: '',
-          bg_image: null,
+          bg_images: [],
           theme_id: null
         });
 
-        // Call the clearAll method from the FileUpload component
-        if (fileUploadRef.value) {
-          fileUploadRef.value.clearAll();
-        }
-
+        if (fileUploadRef.value) fileUploadRef.value.clearAll();
         router.push({ name: 'design-list' });
       } else {
-        if (data.errors) {
-          Object.assign(errors, data.errors);
-        }
+        if (data.errors) Object.assign(errors, data.errors);
         toast.add({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
       }
     })
@@ -172,15 +151,20 @@ function removeColor() {
   delete errors.primary_color; // Clear error if any
 }
 
-function onFileSelect(files) {
+function onFilesSelect(files) {
   if (files && files.length > 0) {
-    const file = files[0];
-    designForm.bg_image = URL.createObjectURL(file); // preview URL
-    designForm.bg_file = file; // store actual File for upload
+    designForm.bg_images = Array.from(files).map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
   } else {
-    designForm.bg_image = null;
-    designForm.bg_file = null;
+    designForm.bg_images = [];
   }
+}
+
+function removeImage(index) {
+  const removed = designForm.bg_images.splice(index, 1)[0];
+  if (removed?.preview) URL.revokeObjectURL(removed.preview);
 }
 
 const particlesLoaded = async (container) => {
@@ -188,9 +172,9 @@ const particlesLoaded = async (container) => {
 };
 
 onMounted(async () => {
-  await fetchThemes();
-  await fetchOpeningAnimation(1);
   await fetchEffect(1);
+  await fetchOpeningAnimation(1);
+  await fetchThemes();
 });
 </script>
 
@@ -242,12 +226,12 @@ onMounted(async () => {
             <small class="text-red-500" v-if="errors.tertiary_color">{{ errors.tertiary_color[0] }}</small>
           </div>
           <div class="col-span-2">
-            <label for="bg_image" class="block"><span class="text-red-500">* </span>Background Image <i
+            <label for="bg_images" class="block"><span class="text-red-500">* </span>Background Image <i
                 class="pi pi-info-circle text-xs"
                 v-tooltip="'Only PNG files. Max file size: 10MB. Image size: 540px * 1080px'"></i></label>
-            <FileUpload ref="fileUploadRef" name="bg_image" simple :supportedFiles="'PNG'" :maxFileSize="10"
-              @files-selected="onFileSelect" />
-            <small class="text-red-500" v-if="errors.bg_image">{{ errors.bg_image[0] }}</small>
+            <FileUpload ref="fileUploadRef" name="bg_images[]" multiple :supportedFiles="'PNG'" :maxFileSize="10"
+              @files-selected="onFilesSelect" />
+            <small class="text-red-500" v-if="errors.bg_images">{{ errors.bg_images[0] }}</small>
           </div>
         </div>
 
@@ -267,7 +251,7 @@ onMounted(async () => {
     <div v-if="!previewLoading" class="md:col-span-6 flex flex-col items-center gap-2 mb-8">
       <h1 class="text-center text-xl">Preview</h1>
       <div
-        class="bg-surface-50 dark:bg-surface-800 border border-gray-300 rounded-2xl w-[420px] h-[747px] relative overflow-y-hidden overflow-x-hidden">
+        class="bg-surface-50 dark:bg-surface-800 border border-gray-300 rounded-2xl w-[420px] h-[747px] relative overflow-x-hidden overflow-y-hidden">
         <!-- Doors container -->
         <div class="perspective-1000 absolute inset-0 flex z-10 transform-3d-preserve isolate"
           :class="{ 'pointer-events-none': doorsOpen }">
@@ -305,91 +289,90 @@ onMounted(async () => {
         </div>
 
         <!-- Content that will be revealed -->
-        <div class="relative w-full h-[747px] overflow-y-scroll overflow-x-hidden no-scrollbar"
-          :class="{ 'opacity-0': !doorsOpen }">
-          <!-- Main content (initially hidden) -->
-          <!-- Only show particles if options are available -->
-          <div v-if="particleOptions">
-            <vue-particles class="absolute top-0 left-0 w-full min-h-full h-full pointer-events-none"
-              id="tsparticles" @particles-loaded="particlesLoaded" :options="particleOptions" />
+        <div class="relative w-full h-full overflow-y-scroll overflow-x-hidden no-scrollbar">
+          <div class="relative w-full" :class="{ 'opacity-0': !doorsOpen }">
+            <!-- Main content (initially hidden) -->
+            <!-- Only show particles if options are available -->
+            <vue-particles class="absolute top-0 left-0 w-full h-full pointer-events-none" id="tsparticles"
+              @particles-loaded="particlesLoaded" :options="particleOptions" />
+  
+            <!-- front page (initially hidden) -->
+            <section class="min-h-[747px] flex flex-col items-center justify-center" :style="{
+              backgroundImage: designForm.bg_images?.length
+                ? `url(${designForm.bg_images[0].preview || designForm.bg_images[0]})`
+                : 'url(/demo/images/design/intro-inside-bg-sample.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }">
+              <h1 class="text-black">WALIMATUL URUS</h1>
+              <div class="flex flex-col items-center justify-center gap-2 mt-8">
+                <h1 class="text-7xl text-black" style="font-family: 'Billabong', serif">Groom</h1>
+                <h1 class="text-7xl text-black" style="font-family: 'Billabong', serif">&</h1>
+                <h1 class="text-7xl text-black" style="font-family: 'Billabong', serif">Spouse</h1>
+              </div>
+              <div class="mt-8 mb-16">
+                <h2 class="text-black">day | dd/mm/yyyy</h2>
+              </div>
+              <div class="absolute top-4 right-4">
+                <Button @click="doorsOpen = !doorsOpen" severity="warn" icon="pi pi-info" rounded
+                  v-tooltip="doorsOpen ? 'Close Doors' : 'Open Doors'" />
+              </div>
+            </section>
+  
+            <!-- Section 2 -->
+            <section class="min-h-[747px] flex flex-col gap-8 items-center px-12 py-16"
+              :style="{ backgroundColor: designForm.primary_color ? designForm.primary_color : '#F1EAFF' }">
+              <h3 class="text-black">WALIMATUL URUS</h3>
+  
+              <div class="flex flex-col items-center">
+                <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">Nama Bapa Pengantin</h3>
+                <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">&</h3>
+                <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">Nama Ibu Pengantin</h3>
+              </div>
+  
+              <div class="text-center text-black max-w-md">
+                <span>
+                  Dengan penuh kesyukuran, kami mempersilakan
+                  Dato' | Datin | Tuan | Puan | Encik | Cik
+                  seisi keluarga hadir ke majlis perkahwinan anakanda kami
+                </span>
+              </div>
+  
+              <div class="text-center">
+                <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">Nama Penuh Pengantin
+                  Lelaki</h2>
+                <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">&</h2>
+                <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">Nama Penuh Pengantin
+                  Perempuan</h2>
+              </div>
+  
+              <div class="text-center">
+                <h3 class="font-semibold text-xl text-black">Tempat</h3>
+                <p class="text-black" style="font-family: 'Cinzel Decorative';">
+                  Alamat Utama
+                </p>
+                <span class="text-black">
+                  No 35, Jalan Kasih 3, Sungai Sekamat, 43000 Kajang, Selangor Daruh Ehsan
+                </span>
+              </div>
+  
+              <div class="text-center">
+                <h3 class="font-semibold text-xl text-black">Tarikh</h3>
+                <p class="text-black">20 Ogos 2025</p>
+                <p class="text-black italic">28 Rabiul AKhir 1447</p>
+              </div>
+  
+              <div class="text-center">
+                <h3 class="font-semibold text-xl text-black">Waktu</h3>
+                <p class="text-black">11:00AM - 04:00PM</p>
+              </div>
+            </section>
+  
+            <!-- Section 3 -->
+            <section class="min-h-[747px] flex items-center justify-center bg-yellow-200">
+              <h1>Another Section</h1>
+            </section>
           </div>
-
-          <!-- front page (initially hidden) -->
-          <section class="min-h-[747px] flex flex-col items-center justify-center" :style="{
-            backgroundImage: designForm.bg_image
-              ? `url(${designForm.bg_image})`
-              : 'url(/demo/images/design/intro-inside-bg-sample.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }">
-            <h1 class="text-black">WALIMATUL URUS</h1>
-            <div class="flex flex-col items-center justify-center gap-2 mt-8">
-              <h1 class="text-7xl text-black" style="font-family: 'Billabong', serif">Groom</h1>
-              <h1 class="text-7xl text-black" style="font-family: 'Billabong', serif">&</h1>
-              <h1 class="text-7xl text-black" style="font-family: 'Billabong', serif">Spouse</h1>
-            </div>
-            <div class="mt-8 mb-16">
-              <h2 class="text-black">day | dd/mm/yyyy</h2>
-            </div>
-            <div class="absolute bottom-4 right-4">
-              <Button @click="doorsOpen = !doorsOpen" severity="warn" icon="pi pi-info" rounded
-                v-tooltip="doorsOpen ? 'Close Doors' : 'Open Doors'" />
-            </div>
-          </section>
-
-          <!-- Section 2 -->
-          <section class="min-h-[747px] flex flex-col gap-8 items-center px-12 py-16"
-            :style="{ backgroundColor: designForm.primary_color ? designForm.primary_color : '#F1EAFF' }">
-            <h3 class="text-black">WALIMATUL URUS</h3>
-
-            <div class="flex flex-col items-center">
-              <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">Nama Bapa Pengantin</h3>
-              <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">&</h3>
-              <h3 class="text-black text-2xl" style="font-family: 'Alex Brush', cursive;">Nama Ibu Pengantin</h3>
-            </div>
-
-            <div class="text-center text-black max-w-md">
-              <span>
-                Dengan penuh kesyukuran, kami mempersilakan
-                Dato' | Datin | Tuan | Puan | Encik | Cik
-                seisi keluarga hadir ke majlis perkahwinan anakanda kami
-              </span>
-            </div>
-
-            <div class="text-center">
-              <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">Nama Penuh Pengantin
-                Lelaki</h2>
-              <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">&</h2>
-              <h2 class="text-black text-xl" style="font-family: 'Cinzel Decorative', serif;">Nama Penuh Pengantin
-                Perempuan</h2>
-            </div>
-
-            <div class="text-center">
-              <h3 class="font-semibold text-xl text-black">Tempat</h3>
-              <p class="text-black" style="font-family: 'Cinzel Decorative';">
-                Alamat Utama
-              </p>
-              <span class="text-black">
-                No 35, Jalan Kasih 3, Sungai Sekamat, 43000 Kajang, Selangor Daruh Ehsan
-              </span>
-            </div>
-
-            <div class="text-center">
-              <h3 class="font-semibold text-xl text-black">Tarikh</h3>
-              <p class="text-black">20 Ogos 2025</p>
-              <p class="text-black italic">28 Rabiul AKhir 1447</p>
-            </div>
-
-            <div class="text-center">
-              <h3 class="font-semibold text-xl text-black">Waktu</h3>
-              <p class="text-black">11:00AM - 04:00PM</p>
-            </div>
-          </section>
-
-          <!-- Section 3 -->
-          <section class="min-h-[747px] flex items-center justify-center bg-yellow-200">
-            <h1>Another Section</h1>
-          </section>
         </div>
       </div>
     </div>

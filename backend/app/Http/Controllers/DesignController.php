@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Design;
 use App\Http\Requests\StoreDesignRequest;
 use App\Http\Requests\UpdateDesignRequest;
+use App\Models\DesignImage;
 use Auth;
+use Illuminate\Support\Facades\Storage;
 
 class DesignController extends Controller
 {
@@ -14,7 +16,8 @@ class DesignController extends Controller
      */
     public function index()
     {
-        $designs = Design::withTrashed()->leftJoin('themes', 'designs.theme_id', '=', 'themes.id')->paginate(10);
+        $designs = Design::with(['images', 'theme'])
+            ->paginate(10);
 
         return $designs;
     }
@@ -25,7 +28,9 @@ class DesignController extends Controller
      */
     public function indexWithoutTrashed()
     {
-        $designs = Design::latest()->paginate(10);
+        $designs = Design::with(['images', 'theme'])
+            ->withTrashed()
+            ->paginate(10);
 
         return $designs;
     }
@@ -38,15 +43,27 @@ class DesignController extends Controller
         $fields = $request->validated();
         $fields['created_by'] = Auth::id();
 
-        if ($request->hasFile('bg_image')) {
-            $fields['bg_image'] = $request->file('bg_image')->store('designs', 'public');
-        }
+        // Remove bg_images from the fields so they don’t conflict with fillable fields
+        unset($fields['bg_images']);
 
+        // 1️⃣ Create the design first
         $design = Design::create($fields);
+
+        // 2️⃣ Handle multiple bg_images
+        if ($request->hasFile('bg_images')) {
+            foreach ($request->file(key: 'bg_images') as $file) {
+                $path = $file->store('designs', 'public');
+
+                // Save each image to the related table
+                $design->images()->create([
+                    'image_path' => $path,
+                ]);
+            }
+        }
 
         return response([
             'message' => 'Design added successfully',
-            'design' => $design,
+            'design' => $design->load('images'),
         ], 201);
     }
 
@@ -65,18 +82,46 @@ class DesignController extends Controller
     {
         $fields = $request->validated();
 
-        if ($request->hasFile('bg_image')) {
-            $fields['bg_image'] = $request->file('bg_image')->store('designs', 'public');
-        }
+        // Exclude bg_images from fillable fields to prevent mass assignment issues
+        unset($fields['bg_images']);
 
         $fields['updated_by'] = Auth::id();
-        $fields['updated_at'] = now(); 
+        $fields['updated_at'] = now();
 
+        // 1️⃣ Update the design info (colors, name, etc.)
         $design->update($fields);
+
+        // 2️⃣ Handle new uploaded images (if any)
+        if ($request->hasFile('bg_images')) {
+            foreach ($request->file('bg_images') as $file) {
+                $path = $file->store('designs', 'public');
+
+                $design->images()->create([
+                    'image_path' => $path,
+                ]);
+            }
+        }
+
+        // 3️⃣ (Optional) Handle image removals if user requests it
+        // Example: request includes an array of image IDs to delete
+        if ($request->filled('delete_image_ids')) {
+            $idsToDelete = $request->input('delete_image_ids', []);
+
+            $images = DesignImage::whereIn('id', $idsToDelete)
+                ->where('design_id', $design->id)
+                ->get();
+
+            foreach ($images as $image) {
+                // delete file from storage
+                Storage::disk('public')->delete($image->image_path);
+                // delete record
+                $image->delete();
+            }
+        }
 
         return response([
             'message' => 'Design updated successfully',
-            'design' => $design,
+            'design' => $design->load('images'),
         ], 200);
     }
 
