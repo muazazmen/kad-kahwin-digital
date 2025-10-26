@@ -192,12 +192,12 @@ onMounted(() => {
         </div>
       </template>
     </Column>
-    <Column field="images" header="Backgrounds" style="width: 20%">
+    <Column field="images" header="Thumbnail" style="width: 20%">
       <template #body="{ data }">
-        <div v-if="data.images && data.images.length" class="w-40">
-          <Carousel :value="data.images" :numVisible="1" :numScroll="1" circular autoplayInterval="4000">
+        <div v-if="data.thumbnails && data.thumbnails.length" class="w-40">
+          <Carousel :value="data.thumbnails" :numVisible="1" :numScroll="1" circular autoplayInterval="4000">
             <template #item="{ data: img }">
-              <img :src="`${backendUrl}/storage/${img.image_path}`" alt="Design background"
+              <img :src="`${backendUrl}/storage/${img.image_path}`" alt="Design Thumbnail"
                 class="w-40 h-24 object-cover rounded-md shadow" />
             </template>
           </Carousel>

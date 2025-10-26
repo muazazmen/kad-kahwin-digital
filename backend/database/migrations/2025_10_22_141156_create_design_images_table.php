@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id()->primary();
             $table->foreignId('design_id')->references('id')->on('designs')->cascadeOnDelete();
             $table->string('image_path');
+            $table->boolean('is_thumbnail')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

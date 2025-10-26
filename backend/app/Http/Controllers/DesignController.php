@@ -17,7 +17,19 @@ class DesignController extends Controller
     public function index()
     {
         $designs = Design::with(['images', 'theme'])
+            ->withTrashed()
             ->paginate(10);
+
+        // Transform response to separate thumbnails and background images
+        $designs->getCollection()->transform(function ($design) {
+            $design->thumbnails = $design->images->where('is_thumbnail', true)->values();
+            $design->background_images = $design->images->where('is_thumbnail', false)->values();
+
+            // Optionally remove the raw `images` collection to keep response clean
+            unset($design->images);
+
+            return $design;
+        });
 
         return $designs;
     }
@@ -29,8 +41,18 @@ class DesignController extends Controller
     public function indexWithoutTrashed()
     {
         $designs = Design::with(['images', 'theme'])
-            ->withTrashed()
             ->paginate(10);
+
+        // Transform response to separate thumbnails and background images
+        $designs->getCollection()->transform(function ($design) {
+            $design->thumbnails = $design->images->where('is_thumbnail', true)->values();
+            $design->background_images = $design->images->where('is_thumbnail', false)->values();
+
+            // Optionally remove the raw `images` collection to keep response clean
+            unset($design->images);
+
+            return $design;
+        });
 
         return $designs;
     }
@@ -44,10 +66,23 @@ class DesignController extends Controller
         $fields['created_by'] = Auth::id();
 
         // Remove bg_images from the fields so they don’t conflict with fillable fields
-        unset($fields['bg_images']);
+        unset($fields['thumbnails'], $fields['bg_images']);
 
         // 1️⃣ Create the design first
         $design = Design::create($fields);
+
+        // Handle thumbnails
+        if ($request->hasFile('thumbnails')) {
+            foreach ($request->file('thumbnails') as $file) {
+                $path = $file->store('designs/thumbnails', 'public');
+
+                // Save each image to the related table
+                $design->images()->create([
+                    'image_path' => $path,
+                    'is_thumbnail' => true,
+                ]);
+            }
+        }
 
         // 2️⃣ Handle multiple bg_images
         if ($request->hasFile('bg_images')) {
@@ -83,13 +118,33 @@ class DesignController extends Controller
         $fields = $request->validated();
 
         // Exclude bg_images from fillable fields to prevent mass assignment issues
-        unset($fields['bg_images']);
+        unset($fields['thumbnails'], $fields['bg_images']);
 
         $fields['updated_by'] = Auth::id();
         $fields['updated_at'] = now();
 
         // 1️⃣ Update the design info (colors, name, etc.)
         $design->update($fields);
+
+        // Handle thumbnails
+        if ($request->hasFile('thumbnails')) {
+            // Delete old thumbnails
+            $oldThumbnails = $design->images()->where('is_thumbnail', true)->get();
+            foreach ($oldThumbnails as $thumb) {
+                Storage::disk('public')->delete($thumb->image_path);
+                $thumb->delete();
+            }
+
+            // Upload new thumbnails
+            foreach ($request->file('thumbnails') as $file) {
+                $path = $file->store('designs/thumbnails', 'public');
+
+                $design->images()->create([
+                    'image_path' => $path,
+                    'is_thumbnail' => true,
+                ]);
+            }
+        }
 
         // 2️⃣ Handle new uploaded images (if any)
         if ($request->hasFile('bg_images')) {

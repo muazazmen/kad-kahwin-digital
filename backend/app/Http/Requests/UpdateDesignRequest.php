@@ -28,6 +28,8 @@ class UpdateDesignRequest extends FormRequest
             'primary_color' => 'sometimes|required|max:50',
             'secondary_color' => 'sometimes|required|max:50',
             'tertiary_color' => 'nullable|max:50',
+            'thumbnails' => 'required|array|min:1',
+            'thumbnails.*' => 'file|mimes:png,webp|max:10240|dimensions:min_width=540,min_height=1080',
             'bg_images' => 'required|array|min:1',
             'bg_images.*' => 'file|mimes:png,webp|max:10240|dimensions:min_width=540,min_height=1080',
         ];
