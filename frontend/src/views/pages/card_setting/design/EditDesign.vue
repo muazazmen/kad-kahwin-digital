@@ -19,7 +19,7 @@ const frameForm = reactive({
     frame_path: null
 });
 
-// Edit a ref for the FileUpload component
+// TODO: Edit design
 const fileUploadRef = ref(null);
 const frame = ref(null);
 const currentFileName = ref('');

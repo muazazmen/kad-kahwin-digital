@@ -42,13 +42,18 @@ const designForm = reactive({
   tertiary_color: '',
   thumbnails: [],
   bg_images: [],
+  tentative_bg_images: [],
   theme_id: null
 });
 
 const themes = ref([]);
 
 const fileUploadThumbnailRef = ref(null);
-const fileUploadRef = ref(null);
+const fileUploadRefs = reactive({
+  thumbnails: null,
+  bg_images: null,
+  tentative_bg_images: null
+});
 const particleOptions = ref(null);
 
 async function fetchOpeningAnimation(id) {
@@ -110,6 +115,12 @@ function submitForm() {
     formData.append(`bg_images[${index}]`, imgObj.file);
   });
 
+  if (designForm.tentative_bg_images.length > 0) {
+    designForm.tentative_bg_images.forEach((imgObj, index) => {
+      formData.append(`tentative_bg_images[${index}]`, imgObj.file);
+    });
+  }
+
   // Debug: Check FormData contents
   for (let [key, value] of formData.entries()) {
     console.log(key, value);
@@ -132,11 +143,14 @@ function submitForm() {
           tertiary_color: '',
           thumbnails: [],
           bg_images: [],
+          tentative_bg_images: [],
           theme_id: null
         });
 
-        if (fileUploadThumbnailRef.value) fileUploadThumbnailRef.value.clearAll();
-        if (fileUploadRef.value) fileUploadRef.value.clearAll();
+        Object.values(fileUploadRefs).forEach(ref => {
+          if (ref) ref.clearAll();
+        });
+
         router.push({ name: 'design-list' });
       } else {
         if (data.errors) Object.assign(errors, data.errors);
@@ -173,25 +187,14 @@ function removeColor() {
   delete errors.tertiary_color;
 }
 
-function onFilesSelectThumbnails(files) {
+function onFilesSelect(field, files) {
   if (files && files.length > 0) {
-    designForm.thumbnails = Array.from(files).map(file => ({
+    designForm[field] = Array.from(files).map(file => ({
       file,
       preview: URL.createObjectURL(file)
     }));
   } else {
-    designForm.thumbnails = [];
-  }
-}
-
-function onFilesSelect(files) {
-  if (files && files.length > 0) {
-    designForm.bg_images = Array.from(files).map(file => ({
-      file,
-      preview: URL.createObjectURL(file)
-    }));
-  } else {
-    designForm.bg_images = [];
+    designForm[field] = [];
   }
 }
 
@@ -257,17 +260,26 @@ onMounted(async () => {
             <label for="thumbnails" class="block"><span class="text-red-500">* </span>Thumbnails <i
                 class="pi pi-info-circle text-xs"
                 v-tooltip="'Only PNG files. Max file size: 10MB. Image size: 540px * 1080px'"></i></label>
-            <FileUpload ref="fileUploadThumbnailRef" name="thumbnails[]" multiple :supportedFiles="'PNG'"
-              :maxFileSize="10" @files-selected="onFilesSelectThumbnails" />
+            <FileUpload :ref="el => fileUploadRefs.thumbnails = el" name="thumbnails[]" multiple :supportedFiles="'PNG'"
+              :maxFileSize="10" @files-selected="files => onFilesSelect('thumbnails', files)" />
             <small class="text-red-500" v-if="errors.thumbnails">{{ errors.thumbnails[0] }}</small>
           </div>
           <div class="col-span-2">
             <label for="bg_images" class="block"><span class="text-red-500">* </span>Background Image <i
                 class="pi pi-info-circle text-xs"
                 v-tooltip="'Only PNG files. Max file size: 10MB. Image size: 540px * 1080px'"></i></label>
-            <FileUpload ref="fileUploadRef" name="bg_images[]" multiple :supportedFiles="'PNG'" :maxFileSize="10"
-              @files-selected="onFilesSelect" />
+            <FileUpload :ref="el => fileUploadRefs.bg_images = el" name="bg_images[]" multiple :supportedFiles="'PNG'" :maxFileSize="10"
+              @files-selected="files => onFilesSelect('bg_images', files)" />
             <small class="text-red-500" v-if="errors.bg_images">{{ errors.bg_images[0] }}</small>
+          </div>
+          
+          <div class="col-span-2">
+            <label for="tentative_bg_images" class="block">Tentative Background Image <i
+                class="pi pi-info-circle text-xs"
+                v-tooltip="'Only PNG files. Max file size: 10MB. Image size: 540px * 1080px'"></i></label>
+            <FileUpload :ref="el => fileUploadRefs.tentative_bg_images = el" name="tentative_bg_images[]" multiple :supportedFiles="'PNG'" :maxFileSize="10"
+              @files-selected="files => onFilesSelect('tentative_bg_images', files)" />
+            <small class="text-red-500" v-if="errors.tentative_bg_images">{{ errors.tentative_bg_images[0] }}</small>
           </div>
         </div>
 
@@ -406,8 +418,8 @@ onMounted(async () => {
 
             <!-- Section 3 (tentative) -->
             <section class="min-h-[450px] flex items-center justify-center" :style="{
-              backgroundImage: designForm.bg_images?.length
-                ? `url(${designForm.bg_images[1].preview || designForm.bg_images[1]})`
+              backgroundImage: designForm.tentative_bg_images?.length
+                ? `url(${designForm.tentative_bg_images[0].preview || designForm.bg_images[0]})`
                 : 'url(/demo/images/design/intro-inside-bg-sample.png)',
               backgroundSize: 'cover',
             }">

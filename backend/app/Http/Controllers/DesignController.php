@@ -22,8 +22,9 @@ class DesignController extends Controller
 
         // Transform response to separate thumbnails and background images
         $designs->getCollection()->transform(function ($design) {
-            $design->thumbnails = $design->images->where('is_thumbnail', true)->values();
-            $design->background_images = $design->images->where('is_thumbnail', false)->values();
+            $design->thumbnails = $design->images->where('image_type', 'thumbnail')->values();
+            $design->background_images = $design->images->where('image_type', 'background')->values();
+            $design->tentative_background_images = $design->images->where('image_type', 'tentative')->values();
 
             // Optionally remove the raw `images` collection to keep response clean
             unset($design->images);
@@ -45,11 +46,12 @@ class DesignController extends Controller
 
         // Transform response to separate thumbnails and background images
         $designs->getCollection()->transform(function ($design) {
-            $design->thumbnails = $design->images->where('is_thumbnail', true)->values();
-            $design->background_images = $design->images->where('is_thumbnail', false)->values();
+            $design->thumbnails = $design->imagesWithoutTrashed->where('image_type', 'thumbnail')->values();
+            $design->background_images = $design->imagesWithoutTrashed->where('image_type', 'background')->values();
+            $design->tentative_background_images = $design->imagesWithoutTrashed->where('image_type', 'tentative')->values();
 
-            // Optionally remove the raw `images` collection to keep response clean
-            unset($design->images);
+            // Optionally remove the raw `imagesWithoutTrashed` collection to keep response clean
+            unset($design->imagesWithoutTrashed);
 
             return $design;
         });
@@ -79,7 +81,7 @@ class DesignController extends Controller
                 // Save each image to the related table
                 $design->images()->create([
                     'image_path' => $path,
-                    'is_thumbnail' => true,
+                    'image_type' => 'thumbnail',
                 ]);
             }
         }
@@ -92,6 +94,19 @@ class DesignController extends Controller
                 // Save each image to the related table
                 $design->images()->create([
                     'image_path' => $path,
+                    'image_type' => 'background',
+                ]);
+            }
+        }
+        
+        if ($request->hasFile('tentative_bg_images')) {
+            foreach ($request->file(key: 'tentative_bg_images') as $file) {
+                $path = $file->store('designs/tentative', 'public');
+
+                // Save each image to the related table
+                $design->images()->create([
+                    'image_path' => $path,
+                    'image_type' => 'tentative',
                 ]);
             }
         }
@@ -141,7 +156,7 @@ class DesignController extends Controller
 
                 $design->images()->create([
                     'image_path' => $path,
-                    'is_thumbnail' => true,
+                    'image_type' => 'thumbnail',
                 ]);
             }
         }
@@ -153,6 +168,18 @@ class DesignController extends Controller
 
                 $design->images()->create([
                     'image_path' => $path,
+                    'image_type' => 'background',
+                ]);
+            }
+        }
+
+        if ($request->hasFile('tentative_bg_images')) {
+            foreach ($request->file('tentative_bg_images') as $file) {
+                $path = $file->store('designs/tentative', 'public');
+
+                $design->images()->create([
+                    'image_path' => $path,
+                    'image_type' => 'tentative',
                 ]);
             }
         }

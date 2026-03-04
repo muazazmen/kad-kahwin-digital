@@ -27,6 +27,8 @@ return new class extends Migration
             // Define foreign key constraints explicitly
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('updated_by')->references('id')->on('users');
+            $table->foreignId('effect_id')->default(1)->constrained('effects')->cascadeOnDelete();
+            $table->foreignId('opening_id')->default(1)->constrained('opening_animations')->cascadeOnDelete();
             $table->foreignId('theme_id')->references('id')->on('themes')->cascadeOnDelete();
         });
     }

@@ -24,6 +24,8 @@ class Design extends Model
         'tertiary_color',
         'bg_image',
         'theme_id',
+        'effect_id',
+        'opening_id',
         'created_by',
         'updated_by',
     ];
@@ -65,6 +67,11 @@ class Design extends Model
 
     public function images()
     {
+        return $this->hasMany(DesignImage::class)->withTrashed();
+    }
+    
+    public function imagesWithoutTrashed()
+    {
         return $this->hasMany(DesignImage::class);
     }
 
@@ -76,5 +83,15 @@ class Design extends Model
     public function events()
     {
         return $this->hasMany(Event::class);
+    }
+
+    public function effect()
+    {
+        return $this->belongsTo(Effect::class);
+    }
+
+    public function opening()
+    {
+        return $this->belongsTo(OpeningAnimation::class);
     }
 }

@@ -27,6 +27,8 @@ class Event extends Model
         'organiser_id',
         'music_id',
         'frame_id',
+        'effect_id',
+        'opening_id',
         'youtube_music_url',
         'created_by',
         'updated_by',
@@ -44,6 +46,16 @@ class Event extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function effects()
+    {
+        return $this->belongsTo(Effect::class);
+    }
+
+    public function opening()
+    {
+        return $this->belongsTo(OpeningAnimation::class);
     }
 
     public function package()

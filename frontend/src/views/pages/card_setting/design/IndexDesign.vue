@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useConfirm, useToast } from 'primevue';
+import Carousel from 'primevue/carousel'
 import { useAuthStore } from '@/stores/auth';
 import { backendUrl } from '@/constants/env.constant';
 import { deleteDesign, getDesignsWithTrashed, restoreDesign } from '@/service/DesignService';
@@ -139,7 +140,7 @@ onMounted(() => {
 
 <template>
   <ConfirmPopup />
-  <DataTable :value="designs.data" paginator lazy :rows="designs.per_page" :totalRecords="designs.total"
+  <DataTable :value="designs.data" scrollable paginator lazy :rows="designs.per_page" :totalRecords="designs.total"
     :first="(designs.current_page - 1) * designs.per_page" @page="onPageChange" tableStyle="min-width: 50rem"
     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records">
@@ -153,14 +154,14 @@ onMounted(() => {
       <div class="text-center">No designs found.</div>
     </template>
     <!-- Running Number Column -->
-    <Column header="#" style="width: 5%">
+    <Column header="#">
       <template #body="{ index }">
         {{ (designs.current_page - 1) * designs.per_page + index + 1 }}
       </template>
     </Column>
-    <Column field="code" header="Code" style="width: 10%"></Column>
-    <Column field="name" header="Name" style="width: 10%"></Column>
-    <Column field="primary_color" header="Primary Color" style="width: 10%">
+    <Column field="code" header="Code"></Column>
+    <Column field="name" header="Name" style="min-width: 200px"></Column>
+    <Column field="primary_color" header="Primary Color">
       <template #body="{ data }">
         <div class="flex items-center justify-center h-10 rounded-md" :style="{
           backgroundColor: data.primary_color,
@@ -171,7 +172,7 @@ onMounted(() => {
       </template>
     </Column>
 
-    <Column field="secondary_color" header="Secondary Color" style="width: 10%">
+    <Column field="secondary_color" header="Secondary Color">
       <template #body="{ data }">
         <div class="flex items-center justify-center h-10 rounded-md" :style="{
           backgroundColor: data.secondary_color,
@@ -182,7 +183,7 @@ onMounted(() => {
       </template>
     </Column>
 
-    <Column field="tertiary_color" header="Tertiary Color" style="width: 10%">
+    <Column field="tertiary_color" header="Tertiary Color">
       <template #body="{ data }">
         <div class="flex items-center justify-center h-10 rounded-md" :style="{
           backgroundColor: data.tertiary_color || '#ffffff',
@@ -192,10 +193,10 @@ onMounted(() => {
         </div>
       </template>
     </Column>
-    <Column field="images" header="Thumbnail" style="width: 20%">
+    <Column field="thumbnails" header="Thumbnail">
       <template #body="{ data }">
         <div v-if="data.thumbnails && data.thumbnails.length" class="w-40">
-          <Carousel :value="data.thumbnails" :numVisible="1" :numScroll="1" circular autoplayInterval="4000">
+          <Carousel :value="data.thumbnails" :numVisible="1" :numScroll="1" circular :autoplayInterval="4000">
             <template #item="{ data: img }">
               <img :src="`${backendUrl}/storage/${img.image_path}`" alt="Design Thumbnail"
                 class="w-40 h-24 object-cover rounded-md shadow" />
@@ -205,14 +206,40 @@ onMounted(() => {
         <div v-else class="text-center text-gray-400 italic">No images</div>
       </template>
     </Column>
-    <Column field="theme_name" header="Theme" style="width: 10%"></Column>
-    <Column field="deleted_at" header="Status" style="width: 10%">
+    <Column field="background_images" header="BG Image">
+      <template #body="{ data }">
+        <div v-if="data.background_images && data.background_images.length" class="w-40">
+          <Carousel :value="data.background_images" :numVisible="1" :numScroll="1" circular :autoplayInterval="4000">
+            <template #item="{ data: img }">
+              <img :src="`${backendUrl}/storage/${img.image_path}`" alt="Design Background Image"
+                class="w-40 h-24 object-cover rounded-md shadow" />
+            </template>
+          </Carousel>
+        </div>
+        <div v-else class="text-center text-gray-400 italic">No images</div>
+      </template>
+    </Column>
+    <Column field="tentative_background_images" header="BG Image">
+      <template #body="{ data }">
+        <div v-if="data.tentative_background_images && data.tentative_background_images.length" class="w-40">
+          <Carousel :value="data.tentative_background_images" :numVisible="1" :numScroll="1" circular :autoplayInterval="4000">
+            <template #item="{ data: img }">
+              <img :src="`${backendUrl}/storage/${img.image_path}`" alt="Design tentative"
+                class="w-40 h-24 object-cover rounded-md shadow" />
+            </template>
+          </Carousel>
+        </div>
+        <div v-else class="text-center text-gray-400 italic">No images</div>
+      </template>
+    </Column>
+    <Column field="theme_name" header="Theme"></Column>
+    <Column field="deleted_at" header="Status">
       <template #body="{ data }">
         <Tag :value="data.deleted_at === null ? 'Active' : 'Inactive'"
           :severity="data.deleted_at === null ? 'success' : 'danger'" />
       </template>
     </Column>
-    <Column header="Actions" style="width: 15%">
+    <Column header="Actions" frozen alignFrozen="right">
       <template #body="{ data }">
         <div class="flex gap-2">
           <!-- Show edit button only for active records -->

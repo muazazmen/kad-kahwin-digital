@@ -14,7 +14,7 @@ class DesignImage extends Model
     protected $fillable = [
         'design_id',
         'image_path',
-        'is_thumbnail',
+        'image_type', // e.g., 'thumbnail', 'tentatives', 'background etc.
     ];
 
     public function design()

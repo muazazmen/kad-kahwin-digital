@@ -34,6 +34,8 @@ return new class extends Migration
             $table->softDeletes();
 
             // Define foreign key constraints explicitly
+            $table->foreignId('effect_id')->default(1)->constrained('effects')->cascadeOnDelete();
+            $table->foreignId('opening_id')->default(1)->constrained('opening_animations')->cascadeOnDelete();
             $table->foreign('created_by')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('updated_by')->references('id')->on('users')->cascadeOnDelete();
         });
