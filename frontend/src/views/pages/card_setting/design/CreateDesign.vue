@@ -1,5 +1,5 @@
 <script setup>
-import Carousel from '@/components/Carousel.vue';
+import CarouselV1 from '@/components/CarouselV1.vue';
 import { addDesign } from '@/service/DesignService';
 import { getEffectById } from '@/service/EffectService';
 import { getOpeningById } from '@/service/OpeningAnimationService';
@@ -37,9 +37,9 @@ const animationForm = reactive({
 
 const designForm = reactive({
   name: '',
-  primary_color: '',
-  secondary_color: '',
-  tertiary_color: '',
+  primary_color: '#F1EAFF',
+  secondary_color: '#F1EAFF',
+  tertiary_color: '#F1EAFF',
   thumbnails: [],
   bg_images: [],
   tentative_bg_images: [],
@@ -138,9 +138,9 @@ function submitForm() {
         // Reset form
         Object.assign(designForm, {
           name: '',
-          primary_color: '',
-          secondary_color: '',
-          tertiary_color: '',
+          primary_color: '#F1EAFF',
+          secondary_color: '#F1EAFF',
+          tertiary_color: '#F1EAFF',
           thumbnails: [],
           bg_images: [],
           tentative_bg_images: [],
@@ -249,7 +249,7 @@ onMounted(async () => {
             <small class="text-red-500" v-if="errors.tertiary_color">{{ errors.secondary_color[0] }}</small>
           </div>
           <div class="col-span-2">
-            <label for="secondary_color" class="block">Tertiary Color</label>
+            <label for="tertiary_color" class="block">Tertiary Color</label>
             <input type="color" v-model="designForm.tertiary_color" @input="validateHex"
               :invalid="errors.tertiary_color" fluid />
             <button type="button" class="ml-4" @click="removeColor"><i
@@ -260,7 +260,7 @@ onMounted(async () => {
             <label for="thumbnails" class="block"><span class="text-red-500">* </span>Thumbnails <i
                 class="pi pi-info-circle text-xs"
                 v-tooltip="'Only PNG files. Max file size: 10MB. Image size: 540px * 1080px'"></i></label>
-            <FileUpload :ref="el => fileUploadRefs.thumbnails = el" name="thumbnails[]" multiple :supportedFiles="'PNG'"
+            <FileUpload :ref="el => fileUploadRefs.thumbnails = el" name="thumbnails[]" multiple simple :supportedFiles="'PNG'"
               :maxFileSize="10" @files-selected="files => onFilesSelect('thumbnails', files)" />
             <small class="text-red-500" v-if="errors.thumbnails">{{ errors.thumbnails[0] }}</small>
           </div>
@@ -268,7 +268,7 @@ onMounted(async () => {
             <label for="bg_images" class="block"><span class="text-red-500">* </span>Background Image <i
                 class="pi pi-info-circle text-xs"
                 v-tooltip="'Only PNG files. Max file size: 10MB. Image size: 540px * 1080px'"></i></label>
-            <FileUpload :ref="el => fileUploadRefs.bg_images = el" name="bg_images[]" multiple :supportedFiles="'PNG'" :maxFileSize="10"
+            <FileUpload :ref="el => fileUploadRefs.bg_images = el" name="bg_images[]" simple :supportedFiles="'PNG'" :maxFileSize="10"
               @files-selected="files => onFilesSelect('bg_images', files)" />
             <small class="text-red-500" v-if="errors.bg_images">{{ errors.bg_images[0] }}</small>
           </div>
@@ -277,7 +277,7 @@ onMounted(async () => {
             <label for="tentative_bg_images" class="block">Tentative Background Image <i
                 class="pi pi-info-circle text-xs"
                 v-tooltip="'Only PNG files. Max file size: 10MB. Image size: 540px * 1080px'"></i></label>
-            <FileUpload :ref="el => fileUploadRefs.tentative_bg_images = el" name="tentative_bg_images[]" multiple :supportedFiles="'PNG'" :maxFileSize="10"
+            <FileUpload :ref="el => fileUploadRefs.tentative_bg_images = el" name="tentative_bg_images[]" simple :supportedFiles="'PNG'" :maxFileSize="10"
               @files-selected="files => onFilesSelect('tentative_bg_images', files)" />
             <small class="text-red-500" v-if="errors.tentative_bg_images">{{ errors.tentative_bg_images[0] }}</small>
           </div>
@@ -496,22 +496,13 @@ onMounted(async () => {
 
             <!-- TODO: Section 5 (gallery) -->
             <section class="min-h-[420px] flex flex-col items-center justify-center" style="background-color: #f1eafe;">
-              <!-- <Carousel :value="galleryImages" :numVisible="1" :numScroll="1" circular autoplayInterval="3000"
-                class="w-full max-w-4xl">
-                <template #item="slotProps">
-                  <div class="flex flex-col items-center">
-                    <img :src="slotProps.data.src" alt="Gallery Image"
-                      class="rounded-xl shadow-md w-full min-h-[420px] object-cover" />
-                  </div>
-                </template>
-              </Carousel> -->
-              <Carousel :items="galleryImages" :visible="1" :loop="true" :show-arrows="false" autoplay :autoPlayInterval="5000">
+              <CarouselV1 :items="galleryImages" :visible="1" :loop="true" :show-arrows="false" autoplay :autoPlayInterval="5000">
                 <template #default="{ item }">
                   <div class="min-h-[420px] flex flex-col items-center justify-center">
                     <img :src="item.src" class="w-full min-h-[420px] object-cover shadow-md" />
                   </div>
                 </template>
-              </Carousel>
+              </CarouselV1>
             </section>
             <!-- TODO: Section 6 (kehadiran & ucapan) -->
             <section class="flex flex-col items-center justify-center" style="background-color: #f1eafe;">

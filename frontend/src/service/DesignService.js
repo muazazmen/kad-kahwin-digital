@@ -22,8 +22,8 @@ export const addDesign = async (data) => {
   return await apiService(ENDPOINTS.ADMIN_DESIGNS, METHOD.POST, data, { 'Content-Type': 'multipart/form-data' });
 }
 
-export const updateDesign = async (designId, data) => {
-  return await apiService(ENDPOINTS.ADMIN_DESIGN(designId), METHOD.PUT, data, { 'Content-Type': 'multipart/form-data' });
+export const updateDesignById = async (designId, data) => {
+  return await apiService(ENDPOINTS.ADMIN_DESIGN(designId), METHOD.POST, data, { 'Content-Type': 'multipart/form-data' });
 }
 
 export const deleteDesign = async (designId) => {
