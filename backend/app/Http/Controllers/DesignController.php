@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateDesignRequest;
 use App\Models\DesignImage;
 use Auth;
 use Illuminate\Support\Facades\Storage;
+use Log;
 
 class DesignController extends Controller
 {
@@ -122,7 +123,9 @@ class DesignController extends Controller
      */
     public function show(Design $design)
     {
-        return $design;
+        $design->load(['thumbnails', 'backgroundImage', 'tentativeImage']);
+
+        return response()->json($design);
     }
 
     /**
@@ -133,7 +136,7 @@ class DesignController extends Controller
         $fields = $request->validated();
 
         // Exclude bg_images from fillable fields to prevent mass assignment issues
-        unset($fields['thumbnails'], $fields['bg_images']);
+        unset($fields['thumbnails'], $fields['bg_image'], $fields['tentative_bg_image']);
 
         $fields['updated_by'] = Auth::id();
         $fields['updated_at'] = now();
@@ -144,10 +147,10 @@ class DesignController extends Controller
         // Handle thumbnails
         if ($request->hasFile('thumbnails')) {
             // Delete old thumbnails
-            $oldThumbnails = $design->images()->where('is_thumbnail', true)->get();
+            $oldThumbnails = $design->images()->where('image_type', 'thumbnail')->get();
             foreach ($oldThumbnails as $thumb) {
                 Storage::disk('public')->delete($thumb->image_path);
-                $thumb->delete();
+                $thumb->forceDelete();
             }
 
             // Upload new thumbnails
@@ -162,26 +165,40 @@ class DesignController extends Controller
         }
 
         // 2️⃣ Handle new uploaded images (if any)
-        if ($request->hasFile('bg_images')) {
-            foreach ($request->file('bg_images') as $file) {
-                $path = $file->store('designs', 'public');
+        if ($request->hasFile('bg_image')) {
 
-                $design->images()->create([
-                    'image_path' => $path,
-                    'image_type' => 'background',
-                ]);
+            $oldBg = $design->images()->where('image_type', 'background')->first();
+
+            if ($oldBg) {
+                Storage::disk('public')->delete($oldBg->image_path);
+                $oldBg->forceDelete();
             }
+
+            $path = $request->file('bg_image')->store('designs', 'public');
+
+            $design->images()->create([
+                'image_path' => $path,
+                'image_type' => 'background',
+            ]);
         }
 
-        if ($request->hasFile('tentative_bg_images')) {
-            foreach ($request->file('tentative_bg_images') as $file) {
-                $path = $file->store('designs/tentative', 'public');
+        if ($request->hasFile('tentative_bg_image')) {
 
-                $design->images()->create([
-                    'image_path' => $path,
-                    'image_type' => 'tentative',
-                ]);
+            Log::info('Processing tentative image upload');
+
+            $oldTentative = $design->images()->where('image_type', 'tentative')->first();
+
+            if ($oldTentative) {
+                Storage::disk('public')->delete($oldTentative->image_path);
+                $oldTentative->forceDelete();
             }
+
+            $path = $request->file('tentative_bg_image')->store('designs/tentative', 'public');
+
+            $design->images()->create([
+                'image_path' => $path,
+                'image_type' => 'tentative',
+            ]);
         }
 
         // 3️⃣ (Optional) Handle image removals if user requests it
@@ -203,7 +220,7 @@ class DesignController extends Controller
 
         return response([
             'message' => 'Design updated successfully',
-            'design' => $design->load('images'),
+            'design' => $design->load(['thumbnails', 'backgroundImage', 'tentativeImage']),
         ], 200);
     }
 

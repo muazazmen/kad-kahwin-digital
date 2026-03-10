@@ -209,25 +209,17 @@ onMounted(() => {
     <Column field="background_images" header="BG Image">
       <template #body="{ data }">
         <div v-if="data.background_images && data.background_images.length" class="w-40">
-          <Carousel :value="data.background_images" :numVisible="1" :numScroll="1" circular :autoplayInterval="4000">
-            <template #item="{ data: img }">
-              <img :src="`${backendUrl}/storage/${img.image_path}`" alt="Design Background Image"
-                class="w-40 h-24 object-cover rounded-md shadow" />
-            </template>
-          </Carousel>
+              <img :src="`${backendUrl}/storage/${data.background_images[0].image_path}`" alt="Design Background Image"
+                class="w-32 h-40 object-cover rounded-md shadow" />
         </div>
         <div v-else class="text-center text-gray-400 italic">No images</div>
       </template>
     </Column>
-    <Column field="tentative_background_images" header="BG Image">
+    <Column field="tentative_background_images" header="Tentative BG Image">
       <template #body="{ data }">
         <div v-if="data.tentative_background_images && data.tentative_background_images.length" class="w-40">
-          <Carousel :value="data.tentative_background_images" :numVisible="1" :numScroll="1" circular :autoplayInterval="4000">
-            <template #item="{ data: img }">
-              <img :src="`${backendUrl}/storage/${img.image_path}`" alt="Design tentative"
-                class="w-40 h-24 object-cover rounded-md shadow" />
-            </template>
-          </Carousel>
+              <img :src="`${backendUrl}/storage/${data.tentative_background_images[0].image_path}`" alt="Design tentative"
+                class="w-32 h-40 object-cover rounded-md shadow" />
         </div>
         <div v-else class="text-center text-gray-400 italic">No images</div>
       </template>

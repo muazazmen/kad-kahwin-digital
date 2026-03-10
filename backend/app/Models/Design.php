@@ -75,6 +75,21 @@ class Design extends Model
         return $this->hasMany(DesignImage::class);
     }
 
+    public function thumbnails()
+    {
+        return $this->hasMany(DesignImage::class)->where('image_type', 'thumbnail');
+    }
+
+    public function backgroundImage()
+    {
+        return $this->hasOne(DesignImage::class)->where('image_type', 'background');
+    }
+
+    public function tentativeImage()
+    {
+        return $this->hasOne(DesignImage::class)->where('image_type', 'tentative');
+    }
+
     public function theme()
     {
         return $this->belongsTo(Theme::class);
